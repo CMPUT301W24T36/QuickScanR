@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/organiz"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginLeft="40dp"
     android:layout_marginTop="50dp"
     android:layout_marginRight="40dp"
-    android:layout_marginBottom="50dp"
-    android:orientation="vertical">
+    android:layout_marginBottom="50dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -28,7 +26,7 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/user_name"
+                android:id="@+id/organizer_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Name"
@@ -48,7 +46,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="20sp"
             android:paddingBottom="10sp"
-            android:text="Announcements"
+            android:text="Milestones"
             android:textSize="15sp" />
 
         <ListView
@@ -57,6 +55,9 @@
 
     </LinearLayout>
 
-    <include layout="@layout/attendee_nav_bar"></include>
-
+    <include
+        layout="@layout/organizer_nav_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"></include>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
