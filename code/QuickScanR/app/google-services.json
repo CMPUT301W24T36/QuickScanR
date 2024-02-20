@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "639286039853",
+    "project_id": "quickscanr-74a55",
+    "storage_bucket": "quickscanr-74a55.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:639286039853:android:3c4ed30b6a4435ea242fa4",
+        "android_client_info": {
+          "package_name": "com.example.quickscanr"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAIfq3uhjKrCKOdBlowYxC-dLMB1HLPeMA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
