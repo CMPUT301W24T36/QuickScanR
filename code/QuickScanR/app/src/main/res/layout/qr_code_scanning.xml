@@ -11,7 +11,7 @@
 >
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/scan_qr_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Scan a QR Code"
@@ -37,11 +37,11 @@
         app:layout_constraintBottom_toBottomOf="@+id/include_nav_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView"
+        app:layout_constraintTop_toBottomOf="@+id/qr_card_view"
         app:srcCompat="@drawable/flash_outline" />
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/cardView"
+        android:id="@+id/qr_card_view"
         android:layout_width="290dp"
         android:layout_height="300dp"
         android:layout_marginTop="120dp"
@@ -49,7 +49,7 @@
         app:cardUseCompatPadding="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView">
+        app:layout_constraintTop_toBottomOf="@+id/scan_qr_text">
 
         <ImageView
             android:id="@+id/camera_view"
@@ -62,5 +62,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.80"
             app:srcCompat="@drawable/ic_launcher_background" />
+
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>
