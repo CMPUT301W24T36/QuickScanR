@@ -77,7 +77,6 @@
                 android:id="@+id/evdetail_img_host"
                 android:layout_width="47dp"
                 android:layout_height="48dp"
-                android:src="@tools:sample/avatars"
                 app:srcCompat="@drawable/round_button" />
 
             <TextView
