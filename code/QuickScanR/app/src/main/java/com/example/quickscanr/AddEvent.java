@@ -24,7 +24,7 @@ public class AddEvent extends InnerPageFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.add_event, container, false);
-        addButtonListeners(getActivity(), v);
+        addButtonListeners(getActivity(), v, new OrganizerEventList());
         return v;
     }
 }
