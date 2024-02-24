@@ -8,12 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class OrganizerHome extends OrganizerFragment {
+public class OrganizerEventList extends OrganizerFragment {
 
-    public OrganizerHome() {}
+    public OrganizerEventList() {}
 
-    public static OrganizerHome newInstance(String param1, String param2) {
-        OrganizerHome fragment = new OrganizerHome();
+    public static OrganizerEventList newInstance(String param1, String param2) {
+        OrganizerEventList fragment = new OrganizerEventList();
         return fragment;
     }
 
@@ -25,7 +25,7 @@ public class OrganizerHome extends OrganizerFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.organizer_home, container, false);
+        View v = inflater.inflate(R.layout.organizer_event_list, container, false);
         addNavBarListeners(getActivity(), v);
         return v;
     }

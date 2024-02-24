@@ -14,8 +14,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        this.getSupportFragmentManager().beginTransaction().replace(R.id.content_main, new AttendeeHome())
-                .addToBackStack(null).commit();
+        if (userType == UserType.ATTENDEE) {
+            this.getSupportFragmentManager().beginTransaction().replace(R.id.content_main, new AttendeeHome())
+                    .addToBackStack(null).commit();
+        }
+        else if (userType == UserType.ORGANIZER) {
+            this.getSupportFragmentManager().beginTransaction().replace(R.id.content_main, new OrganizerHome())
+                    .addToBackStack(null).commit();
+        }
     }
 
 }
