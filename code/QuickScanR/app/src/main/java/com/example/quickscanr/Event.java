@@ -6,6 +6,7 @@ import android.widget.EditText;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Event implements Serializable {
@@ -18,6 +19,7 @@ public class Event implements Serializable {
     private String restrictions;
     private Image poster;
     private User organizer;
+    private ArrayList<User> attendees;
 
     public Event() {}
 
@@ -104,6 +106,14 @@ public class Event implements Serializable {
 
     public void setOrganizer(User organizer) {
         this.organizer = organizer;
+    }
+
+    public ArrayList<User> getAttendees() {
+        return attendees;
+    }
+
+    public void addAttendee(User attendee) {
+        attendees.add(attendee);
     }
 
     public boolean isErrors (TextInputEditText name, TextInputEditText location, TextInputEditText startDateInput, TextInputEditText endDateInput) {
