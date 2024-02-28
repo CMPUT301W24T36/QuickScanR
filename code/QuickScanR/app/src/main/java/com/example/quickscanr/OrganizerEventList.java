@@ -104,7 +104,8 @@ public class OrganizerEventList extends OrganizerFragment {
      * @param event Event object clicked by user
      */
     private void eventClickAction(Event event) {
-        // TBD, for now just announces clicked event
-        Toast.makeText(getContext(), event.getName(), Toast.LENGTH_SHORT).show();
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.content_main, EventDashboard.newInstance(event))
+                .addToBackStack(null).commit();
     }
 }

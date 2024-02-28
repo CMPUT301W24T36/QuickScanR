@@ -2,6 +2,8 @@ package com.example.quickscanr;
 
 import android.os.Bundle;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -104,7 +106,8 @@ public class AttendeeEventList extends AttendeeFragment {
      * @param event Event object clicked by user
      */
     private void eventClickAction(Event event) {
-        // TBD, for now just announces clicked event
-        Toast.makeText(getContext(), event.getName(), Toast.LENGTH_SHORT).show();
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.content_main, EventDetails.newInstance(event))
+                .addToBackStack(null).commit();
     }
 }
