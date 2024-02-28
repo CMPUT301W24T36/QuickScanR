@@ -76,12 +76,12 @@ public class OrganizerEventList extends OrganizerFragment {
 
             eventDataList.clear();
             for (QueryDocumentSnapshot doc: value) {
-                String eventName = doc.getString("name");
-                String eventDesc = doc.getString("description");
-                String eventLoc = doc.getString("location");
-                String eventRest = doc.getString("restrictions");
-                String eventStart = doc.getString("startDate");
-                String eventEnd = doc.getString("endDate");
+                String eventName = doc.getString(DatabaseConstants.evNameKey);
+                String eventDesc = doc.getString(DatabaseConstants.evDescKey);
+                String eventLoc = doc.getString(DatabaseConstants.evLocKey);
+                String eventRest = doc.getString(DatabaseConstants.evRestricKey);
+                String eventStart = doc.getString(DatabaseConstants.evStartKey);
+                String eventEnd = doc.getString(DatabaseConstants.evEndKey);
                 User orgTemp = new User("Test","Test","test",0);  // TO BE REMOVED
 
                 Log.d("DEBUG", String.format("Event (%s) fetched", eventName));
@@ -104,7 +104,8 @@ public class OrganizerEventList extends OrganizerFragment {
      * @param event Event object clicked by user
      */
     private void eventClickAction(Event event) {
-        // TBD, for now just announces clicked event
-        Toast.makeText(getContext(), event.getName(), Toast.LENGTH_SHORT).show();
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.content_main, EventDashboard.newInstance(event))
+                .addToBackStack(null).commit();
     }
 }

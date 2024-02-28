@@ -1,5 +1,6 @@
 package com.example.quickscanr;
 
+import android.media.Image;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -7,6 +8,9 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
 public class EventDetails extends InnerPageFragment {
 
     private static final String EVENT = "event";
@@ -36,6 +40,29 @@ public class EventDetails extends InnerPageFragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.event_details, container, false);
         addButtonListeners(getActivity(), v, new AttendeeEventList());
+        populatePage(v);
         return v;
+    }
+
+    /**
+     * Populates the page with the given event data
+     * @param v View required to find IDs
+     */
+    private void populatePage(View v) {
+        TextView host = v.findViewById(R.id.evdetail_txt_host);
+        TextView location = v.findViewById(R.id.evdetail_txt_loc);
+        TextView start = v.findViewById(R.id.evdetail_txt_start);
+        TextView end = v.findViewById(R.id.evdetail_txt_end);
+        TextView restrictions = v.findViewById(R.id.evdetail_txt_restrictions);
+        ImageView hostPic = v.findViewById(R.id.evdetail_img_host);
+        ImageView poster = v.findViewById(R.id.evdetail_img_poster);
+
+        host.setText(event.getOrganizer().getName());
+        hostPic.setImageResource(R.drawable.ic_launcher_background); // TO BE REPLACED
+        poster.setImageResource(R.drawable.ic_launcher_background); // TO BE REPLACED
+        location.setText(event.getLocation());
+        start.setText(event.getStart());
+        end.setText(event.getEnd());
+        restrictions.setText(event.getRestrictions());
     }
 }
