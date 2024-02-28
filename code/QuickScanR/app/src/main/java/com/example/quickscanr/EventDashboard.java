@@ -58,7 +58,7 @@ public class EventDashboard extends InnerPageFragment {
         ImageView poster = v.findViewById(R.id.evdash_img_poster);
 
         name.setText(event.getName());
-        poster.setImageResource(R.drawable.ic_launcher_foreground); // TO BE REPLACED
+        poster.setImageResource(R.drawable.ic_launcher_background); // TO BE REPLACED
         stat1.setText("Event Statistic 1"); // TO BE REPLACED
         stat2.setText("Event Statistic 2"); // TO BE REPLACED
         stat3.setText("Event Statistic 3"); // TO BE REPLACED
