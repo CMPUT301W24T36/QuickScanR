@@ -5,19 +5,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    android:paddingTop="50dp"
-    android:paddingBottom="50dp"
     android:paddingLeft="40dp"
-    android:paddingRight="40dp">
+    android:paddingTop="50dp"
+    android:paddingRight="40dp"
+    android:paddingBottom="50dp"
+    >
 
 
     <include layout="@layout/profilepage"></include>
 
-
     <include
-        layout="@layout/admin_nav_bar">
-
-    </include>
+        layout="@layout/attendee_nav_bar"
+        android:layout_gravity="bottom"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
