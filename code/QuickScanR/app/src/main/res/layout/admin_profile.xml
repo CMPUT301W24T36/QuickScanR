@@ -8,7 +8,8 @@
     android:paddingTop="50dp"
     android:paddingBottom="50dp"
     android:paddingLeft="40dp"
-    android:paddingRight="40dp">
+    android:paddingRight="40dp"
+    tools:context=".Profile">
 
 
     <include layout="@layout/profilepage"></include>

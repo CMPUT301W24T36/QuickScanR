@@ -1,4 +1,4 @@
 package com.example.quickscanr;
 
-public class AdminEventsList {
+public class AdminEventsList extends AdminFragment {
 }

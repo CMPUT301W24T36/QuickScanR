@@ -1,4 +1,4 @@
 package com.example.quickscanr;
 
-public class AdminProfilesList {
+public class AdminProfilesList extends AdminFragment {
 }

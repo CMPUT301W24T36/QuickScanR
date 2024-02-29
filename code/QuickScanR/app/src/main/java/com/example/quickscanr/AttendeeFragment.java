@@ -1,6 +1,5 @@
 package com.example.quickscanr;
 
-import android.media.Image;
 import android.view.View;
 import android.widget.ImageButton;
 
@@ -33,6 +32,15 @@ public class AttendeeFragment extends Fragment {
             public void onClick(View view){
                 activity.getSupportFragmentManager()
                         .beginTransaction().replace(R.id.content_main, new ScanQR())
+                        .addToBackStack(null).commit();
+            }
+        });
+        ImageButton profileBtn = v.findViewById(R.id.nav_a_profile_btn);
+        profileBtn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                activity.getSupportFragmentManager()
+                        .beginTransaction().replace(R.id.content_main, Profile.newInstance(MainActivity.user))
                         .addToBackStack(null).commit();
             }
         });
