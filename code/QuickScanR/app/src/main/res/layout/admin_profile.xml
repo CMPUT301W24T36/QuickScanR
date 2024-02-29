@@ -1,6 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/admin_profile"
+        android:layout_width="156dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="116dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/rounded_image_border" />
+
+    <TextView
+        android:id="@+id/admin_initials"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="FL"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/admin_profile"
+        app:layout_constraintEnd_toEndOf="@+id/admin_profile"
+        app:layout_constraintStart_toStartOf="@+id/admin_profile"
+        app:layout_constraintTop_toTopOf="@+id/admin_profile" />
+
+    <TextView
+        android:id="@+id/admin_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="44dp"
+        android:text="First/Last Name"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/admin_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/admin_profile"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/admin_container"
+        android:layout_width="353dp"
+        android:layout_height="194dp"
+        android:layout_marginTop="104dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/admin_profile"
+        app:srcCompat="@drawable/rounded_image_border" />
+
+    <TextView
+        android:id="@+id/admin_phone_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="60dp"
+        android:text="Phone:"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/admin_number"
+        app:layout_constraintStart_toStartOf="@+id/admin_container"
+        app:layout_constraintTop_toTopOf="@+id/admin_container"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/admin_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="52dp"
+        android:text="xxx-xxx-xxx"
+        app:layout_constraintEnd_toEndOf="@+id/admin_container"
+        app:layout_constraintHorizontal_bias="0.281"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/admin_container" />
+
+    <TextView
+        android:id="@+id/admin_email_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="60dp"
+        android:text="Email:"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/admin_email"
+        app:layout_constraintStart_toStartOf="@+id/admin_container"
+        app:layout_constraintTop_toBottomOf="@+id/admin_number"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/admin_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="139dp"
+        android:text="name@domain.com"
+        app:layout_constraintStart_toStartOf="@+id/admin_container"
+        app:layout_constraintTop_toTopOf="@+id/admin_container" />
+
+    <include
+        layout="@layout/attendee_nav_bar"
+        android:layout_width="343dp"
+        android:layout_height="48dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/admin_container"
+        app:layout_constraintVertical_bias="0.874"
+        tools:layout_editor_absoluteX="34dp"></include>
+
+    <ImageButton
+        android:id="@+id/admin_profile_edit"
+        android:layout_width="40dp"
+        android:layout_height="34dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="72dp"
+        android:background="#B8DA91"
+        android:backgroundTint="#B9DC90"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/account_edit" />
+
+    <ImageButton
+        android:id="@+id/admin_browse_events"
+        android:layout_width="42dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="20dp"
+        android:background="#BDE88B"
+        android:backgroundTint="#C3E39D"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/card_multiple" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
