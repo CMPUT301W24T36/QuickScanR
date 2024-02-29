@@ -11,7 +11,6 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Calendar;
@@ -20,7 +19,6 @@ import java.util.Map;
 
 public class AddEvent extends InnerPageFragment {
 
-    private CollectionReference eventsRef;
     private FirebaseFirestore db;
 
     public AddEvent() {}
@@ -34,7 +32,6 @@ public class AddEvent extends InnerPageFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = FirebaseFirestore.getInstance();
-        eventsRef = db.collection(DatabaseConstants.eventColName);
     }
 
     @Override
