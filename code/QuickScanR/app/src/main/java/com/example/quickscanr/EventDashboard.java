@@ -2,15 +2,11 @@ package com.example.quickscanr;
 
 import android.os.Bundle;
 
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.io.Serializable;
 
 public class EventDashboard extends InnerPageFragment {
 
@@ -59,9 +55,9 @@ public class EventDashboard extends InnerPageFragment {
 
         name.setText(event.getName());
         poster.setImageResource(R.drawable.ic_launcher_background); // TO BE REPLACED
-        stat1.setText("Event Statistic 1"); // TO BE REPLACED
-        stat2.setText("Event Statistic 2"); // TO BE REPLACED
-        stat3.setText("Event Statistic 3"); // TO BE REPLACED
-        stat4.setText("Event Statistic 4"); // TO BE REPLACED
+        stat1.setText(event.getLocation());
+        stat2.setText(event.getStart());
+        stat3.setText(String.valueOf(event.getRSVPCount()));
+        stat4.setText(String.valueOf(event.getTotalCheckInCount()));
     }
 }
