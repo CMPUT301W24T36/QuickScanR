@@ -1,13 +1,12 @@
 package com.example.quickscanr;
 
 import android.media.Image;
-import android.widget.EditText;
 
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 
 public class Event implements Serializable {
 
@@ -20,8 +19,7 @@ public class Event implements Serializable {
     private Image poster;
     private User organizer;
     private ArrayList<User> attendees;
-
-    public Event() {}
+    private HashMap<User, Integer> checkedInCounts;
 
     public Event(String name, String description, String location, String start, String end, String restrictions, User organizer) {
         this.name = name;
@@ -31,6 +29,8 @@ public class Event implements Serializable {
         this.end = end;
         this.restrictions = restrictions;
         this.organizer = organizer;
+        this.attendees = new ArrayList<>();
+        this.checkedInCounts = new HashMap<>();
     }
 
     public Event(String name, String description, String location, String start, String end, String restrictions, Image poster, User organizer) {
@@ -42,6 +42,33 @@ public class Event implements Serializable {
         this.restrictions = restrictions;
         this.poster = poster;
         this.organizer = organizer;
+        this.attendees = new ArrayList<>();
+        this.checkedInCounts = new HashMap<>();
+    }
+
+    public Event(String name, String description, String location, String start, String end, String restrictions, Image poster, User organizer, ArrayList<User> attendees, HashMap<User, Integer> checkedInCounts) {
+        this.name = name;
+        this.description = description;
+        this.location = location;
+        this.start = start;
+        this.end = end;
+        this.restrictions = restrictions;
+        this.poster = poster;
+        this.organizer = organizer;
+        this.attendees = attendees;
+        this.checkedInCounts = checkedInCounts;
+    }
+
+    public Event(String name, String description, String location, String start, String end, String restrictions, User organizer, ArrayList<User> attendees, HashMap<User, Integer> checkedInCounts) {
+        this.name = name;
+        this.description = description;
+        this.location = location;
+        this.start = start;
+        this.end = end;
+        this.restrictions = restrictions;
+        this.organizer = organizer;
+        this.attendees = attendees;
+        this.checkedInCounts = checkedInCounts;
     }
 
     public String getName() {
@@ -116,27 +143,47 @@ public class Event implements Serializable {
         attendees.add(attendee);
     }
 
+    public HashMap<User, Integer> getCheckedInCounts() {
+        return checkedInCounts;
+    }
+
+    public void addCheckedInAttendee(User checkedIn) {
+        if (checkedInCounts.getOrDefault(checkedIn, -1) == -1) {
+            checkedInCounts.put(checkedIn, 1);
+        }
+        else {
+            checkedInCounts.put(checkedIn, checkedInCounts.get(checkedIn) + 1);
+        }
+    }
+
+    public int getRSVPCount() {
+        return getAttendees().size();
+    }
+
+    public int getTotalCheckInCount() {
+        int checkInCount = 0;
+        for (int count : checkedInCounts.values()) {
+            checkInCount += count;
+        }
+        return checkInCount;
+    }
+
     public boolean isErrors (TextInputEditText name, TextInputEditText location, TextInputEditText startDateInput, TextInputEditText endDateInput) {
         boolean wasErrors = false;
 
-        String eventName = name.getText().toString();
-        String eventLoc = location.getText().toString();
-        String startDateString = startDateInput.getText().toString();
-        String endDateString = endDateInput.getText().toString();
-
-        if (eventName.equals("")) {
+        if (name.equals("")) {
             name.setError("Event must have a name!");
             wasErrors = true;
         }
-        if (eventLoc.equals("")) {
+        if (location.equals("")) {
             location.setError("Event must have a location!");
             wasErrors = true;
         }
-        if (startDateString.equals("")) {
+        if (start.equals("")) {
             startDateInput.setError("Event must have a start date!");
             wasErrors = true;
         }
-        if (endDateString.equals("")) {
+        if (end.equals("")) {
             endDateInput.setError("Event must have an end date!");
             wasErrors = true;
         }

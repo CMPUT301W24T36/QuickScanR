@@ -8,7 +8,8 @@ import android.widget.ImageButton;
 
 public class MainActivity extends AppCompatActivity {
 
-    Integer userType = UserType.ATTENDEE;
+    Integer userType = UserType.ORGANIZER;
+    public static User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

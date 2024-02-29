@@ -156,7 +156,7 @@
                     android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:paddingStart="12dp"
-                    android:text="Event Statistic 1"
+                    android:text="Location"
                     android:textSize="16sp"
                     tools:ignore="RtlSymmetry" />
 
@@ -169,12 +169,12 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:contentDescription="Event Statistic 2"
                     android:id="@+id/evdash_img_stat2"
                     android:layout_width="60dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    app:srcCompat="@drawable/map_icon" />
+                    android:contentDescription="Event Statistic 2"
+                    app:srcCompat="@drawable/calendar_icon" />
 
                 <TextView
                     android:id="@+id/evdash_txt_stat2"
@@ -183,7 +183,7 @@
                     android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:paddingStart="12dp"
-                    android:text="Event Statistic 2"
+                    android:text="Start Date"
                     android:textSize="16sp"
                     tools:ignore="RtlSymmetry" />
 
@@ -196,12 +196,12 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:contentDescription="Event Statistic 3"
                     android:id="@+id/evdash_img_stat3"
                     android:layout_width="60dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    app:srcCompat="@drawable/calendar_icon" />
+                    android:contentDescription="Event Statistic 3"
+                    app:srcCompat="@drawable/people_symbol" />
 
                 <TextView
                     android:id="@+id/evdash_txt_stat3"
@@ -210,7 +210,7 @@
                     android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:paddingStart="12dp"
-                    android:text="Event Statistic 3"
+                    android:text="# RSVP'd"
                     android:textSize="16sp"
                     tools:ignore="RtlSymmetry" />
 
@@ -223,12 +223,12 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:contentDescription="Event Statistic 4"
                     android:id="@+id/evdash_img_stat4"
                     android:layout_width="60dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    app:srcCompat="@drawable/restrictions_icon" />
+                    android:contentDescription="Event Statistic 4"
+                    app:srcCompat="@drawable/people_symbol" />
 
                 <TextView
                     android:id="@+id/evdash_txt_stat4"
@@ -237,7 +237,7 @@
                     android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:paddingStart="12dp"
-                    android:text="Event Statistic 4"
+                    android:text="# Checked-In"
                     android:textSize="16sp"
                     tools:ignore="RtlSymmetry" />
 
