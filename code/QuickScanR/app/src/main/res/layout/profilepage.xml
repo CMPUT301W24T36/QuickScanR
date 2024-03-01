@@ -30,6 +30,7 @@
 
 
     <LinearLayout
+        android:id="@+id/geoloc_section"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
