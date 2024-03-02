@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -42,6 +43,29 @@
                 android:textSize="25sp" />
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+
+            <ImageView
+                android:id="@+id/organizer_profile_pic"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                tools:src="@drawable/rounded_image_border" />
+
+            <EditText
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:hint="Make an announcement!"
+
+
+                />
+
+
+        </LinearLayout>
+
         <TextView
             android:id="@+id/textView4"
             android:layout_width="wrap_content"
@@ -51,9 +75,13 @@
             android:text="Milestones"
             android:textSize="15sp" />
 
-        <ListView
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/milestones_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            tools:listitem="@layout/milestone_item"
+
+             />
 
     </LinearLayout>
 
