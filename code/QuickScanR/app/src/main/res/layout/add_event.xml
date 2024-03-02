@@ -161,7 +161,8 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/evadd_txt_start"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        android:editable="false" />
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
@@ -189,7 +190,8 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/evadd_txt_end"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        android:editable="false" />
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
@@ -224,21 +226,21 @@
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/evadd_chip_upload"
-                android:layout_width="174dp"
+                android:layout_width="wrap_content"
                 android:layout_height="63dp"
-                android:layout_gravity="center_horizontal"
-                app:chipBackgroundColor="@color/white"
                 android:clickable="true"
                 android:text="Attach Poster File"
+                app:chipBackgroundColor="@color/white"
                 app:chipIcon="@android:drawable/ic_menu_gallery"
                 app:rippleColor="#FFFFFF" />
 
             <Button
                 android:id="@+id/evadd_btn_add"
-                android:layout_width="291dp"
-                android:layout_height="62dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Add event"
+                android:backgroundTint="@color/color_primary"
+                android:text="Add Event"
                 android:textColor="@color/black"
                 android:textSize="20sp" />
 

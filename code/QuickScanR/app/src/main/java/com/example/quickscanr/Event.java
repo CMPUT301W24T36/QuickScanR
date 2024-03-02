@@ -5,7 +5,10 @@ import android.media.Image;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 public class Event implements Serializable {
@@ -168,15 +171,15 @@ public class Event implements Serializable {
         return checkInCount;
     }
 
-    public boolean isErrors (TextInputEditText name, TextInputEditText location, TextInputEditText startDateInput, TextInputEditText endDateInput) {
+    public boolean isErrors (TextInputEditText nameInput, TextInputEditText locationInput, TextInputEditText startDateInput, TextInputEditText endDateInput) {
         boolean wasErrors = false;
 
         if (name.equals("")) {
-            name.setError("Event must have a name!");
+            nameInput.setError("Event must have a name!");
             wasErrors = true;
         }
         if (location.equals("")) {
-            location.setError("Event must have a location!");
+            locationInput.setError("Event must have a location!");
             wasErrors = true;
         }
         if (start.equals("")) {
@@ -186,6 +189,20 @@ public class Event implements Serializable {
         if (end.equals("")) {
             endDateInput.setError("Event must have an end date!");
             wasErrors = true;
+        }
+        else if (!start.equals("") && !end.equals("")) {
+            SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+            try {
+                Date startDate = format.parse(start);
+                Date endDate = format.parse(end);
+
+                if (endDate.before(startDate)) {
+                    endDateInput.setError("Event must end on or after the start date!");
+                    wasErrors = true;
+                }
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         return wasErrors;
