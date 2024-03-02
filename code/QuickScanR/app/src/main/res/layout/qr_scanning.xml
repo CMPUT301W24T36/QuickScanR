@@ -19,18 +19,12 @@
             android:id="@+id/scan_qr_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/inter"
             android:text="Scan a QR Code"
             android:textSize="25sp"
+            android:typeface="normal"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/include_nav_bar" />
-
-        <include
-            android:id="@+id/include_nav_bar"
-            layout="@layout/attendee_nav_bar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="0dp" />
 
         <ImageButton
             android:id="@+id/flash_button"
@@ -69,6 +63,14 @@
                 app:srcCompat="@drawable/ic_launcher_background" />
 
         </androidx.cardview.widget.CardView>
+
+        <include
+            android:id="@+id/include_nav_bar"
+            layout="@layout/attendee_nav_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout_editor_absoluteX="29dp"
+            tools:layout_editor_absoluteY="301dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
