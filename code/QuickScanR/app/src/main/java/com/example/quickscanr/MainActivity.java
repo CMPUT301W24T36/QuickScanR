@@ -13,7 +13,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        user = new User("Test User", "111-111-1111", "x@gmail.com", UserType.ORGANIZER);
+        user = new User("Test User", "111-111-1111", "x@gmail.com", UserType.ATTENDEE);
         setContentView(R.layout.activity_main);
         if (user.getUserType() == UserType.ATTENDEE) {
             this.getSupportFragmentManager().beginTransaction().replace(R.id.content_main, new AttendeeHome())

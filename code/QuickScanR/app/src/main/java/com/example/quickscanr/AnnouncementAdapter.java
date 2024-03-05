@@ -54,8 +54,9 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementViewHo
     public void onBindViewHolder(@NonNull AnnouncementViewHolder holder, int position) {
         // Bind data to views in the ViewHolder
         Announcement announcement = announcements.get(position);
-//        holder.titleTextView.setText(announcements.getTitle());
-//        holder.descriptionTextView.setText(milestone.getDescription());
+        holder.titleTextView.setText(announcement.getTitle());
+        holder.organizerTextView.setText(String.valueOf(announcement.getUserID())); // TEMPORARY IMPLEMENTATION
+        holder.bodyTextView.setText(announcement.getBody());
     }
 
 

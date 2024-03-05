@@ -60,7 +60,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/announcement_item_text"
+        android:id="@+id/announcement_item_body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="10dp"

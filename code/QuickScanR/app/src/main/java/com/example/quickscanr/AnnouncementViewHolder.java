@@ -13,12 +13,16 @@ import com.example.quickscanr.R;
  */
 public class AnnouncementViewHolder extends RecyclerView.ViewHolder {
     public TextView titleTextView;
-    public TextView descriptionTextView;
+    public TextView organizerTextView;
+
+    public TextView bodyTextView;
 
     public AnnouncementViewHolder(View itemView) {
         super(itemView);
         // Initialize views in the ViewHolder
-        titleTextView = itemView.findViewById(R.id.milestone_item_title);
-        descriptionTextView = itemView.findViewById(R.id.milestone_description);
+        titleTextView = itemView.findViewById(R.id.announcement_item_title);
+        organizerTextView = itemView.findViewById(R.id.announcement_item_organizer);
+        bodyTextView = itemView.findViewById(R.id.announcement_item_body);
+
     }
 }
