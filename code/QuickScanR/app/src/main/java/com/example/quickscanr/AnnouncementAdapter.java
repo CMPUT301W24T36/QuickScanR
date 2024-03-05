@@ -1,5 +1,6 @@
 package com.example.quickscanr;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,22 +9,22 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
- * Milestone adapter: allows us to add values in our RecyclerView with our milestones.
+ * Announcement adapter: allows us to add values in our RecyclerView
+ * Very similar to Milestone Adapter code
  */
-public class MilestoneAdapter extends RecyclerView.Adapter<MilestoneViewHolder> {
+public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementViewHolder> {
 
-    private List<Milestone> milestoneList;
-
+    private ArrayList<Announcement> announcements;
     /**
-     * Constructor to instantiate our adapter with our milestone list
-     * @param milestoneList
+     * Constructor to instantiate our adapter with our Announcement list
      */
-    public MilestoneAdapter(List<Milestone> milestoneList) {
-        this.milestoneList = milestoneList;
+    public AnnouncementAdapter(ArrayList<Announcement> announcements) {
+        this.announcements = announcements;
     }
+
 
 
     /**
@@ -37,10 +38,10 @@ public class MilestoneAdapter extends RecyclerView.Adapter<MilestoneViewHolder> 
      */
     @NonNull
     @Override
-    public MilestoneViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public AnnouncementViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // Inflate the item layout and return a new ViewHolder
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.milestone_item, parent, false);
-        return new MilestoneViewHolder(itemView);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.announcement_item, parent, false);
+        return new AnnouncementViewHolder(itemView);
     }
 
     /**
@@ -50,11 +51,12 @@ public class MilestoneAdapter extends RecyclerView.Adapter<MilestoneViewHolder> 
      * @param position The position of the item within the adapter's data set.
      */
     @Override
-    public void onBindViewHolder(@NonNull MilestoneViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull AnnouncementViewHolder holder, int position) {
         // Bind data to views in the ViewHolder
-        Milestone milestone = milestoneList.get(position);
-        holder.titleTextView.setText(milestone.getTitle());
-        holder.descriptionTextView.setText(milestone.getDescription());
+        Announcement announcement = announcements.get(position);
+        holder.titleTextView.setText(announcement.getTitle());
+        holder.organizerTextView.setText(String.valueOf(announcement.getUserID())); // TEMPORARY IMPLEMENTATION
+        holder.bodyTextView.setText(announcement.getBody());
     }
 
 
@@ -65,7 +67,7 @@ public class MilestoneAdapter extends RecyclerView.Adapter<MilestoneViewHolder> 
     @Override
     public int getItemCount() {
         // Return the size of the dataset
-        return milestoneList.size();
+        return announcements.size();
     }
 }
 
