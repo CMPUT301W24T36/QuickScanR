@@ -39,7 +39,7 @@ public class EventDetails extends InnerPageFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.event_details, container, false);
-        addButtonListeners(getActivity(), v, new AttendeeEventList());
+        addButtonListeners(getActivity(), v);
         populatePage(v);
         return v;
     }
