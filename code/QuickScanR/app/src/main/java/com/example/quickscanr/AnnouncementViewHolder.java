@@ -9,7 +9,6 @@ import com.example.quickscanr.R;
 
 /**
  * ViewHolder represents our object (announcement) in the RecyclerView, per row.
- * Can be its own class
  */
 public class AnnouncementViewHolder extends RecyclerView.ViewHolder {
     public TextView titleTextView;

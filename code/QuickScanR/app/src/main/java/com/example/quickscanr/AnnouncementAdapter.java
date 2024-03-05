@@ -40,7 +40,7 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementViewHo
     @Override
     public AnnouncementViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // Inflate the item layout and return a new ViewHolder
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.milestone_item, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.announcement_item, parent, false);
         return new AnnouncementViewHolder(itemView);
     }
 

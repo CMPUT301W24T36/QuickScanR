@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 /**
- * Milestone adapter: allows us to add values in our RecyclerView
+ * Milestone adapter: allows us to add values in our RecyclerView with our milestones.
  */
 public class MilestoneAdapter extends RecyclerView.Adapter<MilestoneViewHolder> {
 

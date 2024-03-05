@@ -7,7 +7,7 @@ import java.util.*; // for Date
  * title: user input
  * body: user input
  * date: date of post, date and time
- * userID: unique ID
+ * userID: unique ID, will translate to the name in the UI
  *
  */
 public class Announcement {
