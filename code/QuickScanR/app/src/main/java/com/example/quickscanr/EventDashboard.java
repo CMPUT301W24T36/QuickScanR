@@ -39,7 +39,6 @@ public class EventDashboard extends InnerPageFragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.event_dashboard, container, false);
         addButtonListeners(getActivity(), v);
-        setupAdditionalListeners(v);
         populatePage(v);
         return v;
     }
