@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
+
 public class EventDashboard extends InnerPageFragment {
 
     private static final String EVENT = "event";
@@ -35,8 +37,8 @@ public class EventDashboard extends InnerPageFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v =  inflater.inflate(R.layout.event_dashboard, container, false);
-        addButtonListeners(getActivity(), v, new OrganizerEventList());
+        View v = inflater.inflate(R.layout.event_dashboard, container, false);
+        addButtonListeners(getActivity(), v);
         populatePage(v);
         return v;
     }
