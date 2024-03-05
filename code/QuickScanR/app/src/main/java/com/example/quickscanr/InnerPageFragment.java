@@ -8,15 +8,14 @@ import androidx.fragment.app.FragmentActivity;
 import com.google.android.material.button.MaterialButton;
 
 public class InnerPageFragment extends Fragment {
-    public void addButtonListeners(FragmentActivity activity, View v, Fragment prevPage) {
+    public void addButtonListeners(FragmentActivity activity, View v) {
 
         MaterialButton backBtn = v.findViewById(R.id.back_btn);
-        backBtn.setOnClickListener(new View.OnClickListener(){
+        backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view){
-                activity.getSupportFragmentManager()
-                        .beginTransaction().replace(R.id.content_main, prevPage)
-                        .addToBackStack(null).commit();
+            public void onClick(View view) {
+                // Pop the current fragment off the stack
+                activity.getSupportFragmentManager().popBackStack();
             }
         });
     }
