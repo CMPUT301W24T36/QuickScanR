@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.annotation.Nullable;
 
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -21,54 +22,52 @@ import java.util.Locale;
 import java.util.Map;
 
 public class CheckedInAttendeeList extends AppCompatActivity {
-
-    private TextView attendeeCountTextView;
-
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private List<CheckInAttendee> attendeesList = new ArrayList<>();
     private CheckedInAttendeeAdapter adapter;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.checked_users_list);
 
-        RecyclerView attendeesRecyclerView = findViewById(R.id.chkd_usrs_list);
+        recyclerView = findViewById(R.id.chkd_usrs_list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        attendeesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new CheckedInAttendeeAdapter(attendeesList);
+        recyclerView.setAdapter(adapter);
 
-        adapter = new CheckedInAttendeeAdapter(this, new ArrayList<>());
-        attendeesRecyclerView.setAdapter(adapter);
-
-        String eventId = "event_id_here";
-        listenForAttendeeUpdates(eventId);
+        setupFirestoreRealtimeUpdate();
     }
 
-    private void listenForAttendeeUpdates(String eventId) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private void setupFirestoreRealtimeUpdate() {
+        // replace 'YOUR_EVENT_ID' with the actual event ID
+        final CollectionReference attendeesRef = db.collection("events").document("YOUR_EVENT_ID").collection("attendees");
 
-        db.collection("events").document(eventId).collection("attendees")
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
-                        if (e != null) {
-                            Log.w("AttendeeList", "Listen failed.", e);
-                            return;
-                        }
+        attendeesRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w("CheckedInAttendeeList", "Listen failed.", e);
+                    return;
+                }
 
-                        List<User> users = new ArrayList<>();
-                        for (DocumentSnapshot doc : snapshots) {
-                            User user = doc.toObject(User.class);
-                            users.add(user);
-                        }
-                        adapter.setUserList(users);
+                List<CheckInAttendee> updatedAttendees = new ArrayList<>();
+                for (DocumentSnapshot doc : snapshots.getDocuments()) {
+                    String userId = doc.getId();
+                    String name = doc.getString("name");
+                    // Assume that 'checkIns' is a List of Timestamps representing each check-in
+                    List<Timestamp> checkIns = (List<Timestamp>) doc.get("checkIns");
+                    int checkInCount = (checkIns != null) ? checkIns.size() : 0;
 
-                        // calculates the total count of checked-in attendees
-                        int checkedInCount = users.size();
-                        // updates the count TextView
-                        if (attendeeCountTextView != null) {
-                            attendeeCountTextView.setText(String.valueOf(checkedInCount));
-                        }
-                    }
-                });
+                    updatedAttendees.add(new CheckInAttendee(userId, name, checkInCount));
+                }
+
+                // Update the list and the adapter
+                attendeesList = updatedAttendees;
+                adapter.updateAttendees(updatedAttendees);
+            }
+        });
     }
-
 }
