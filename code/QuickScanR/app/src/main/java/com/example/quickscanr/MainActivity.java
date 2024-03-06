@@ -1,3 +1,7 @@
+/**
+ * This file acts as the main hub when a user opens the app.
+ */
+
 package com.example.quickscanr;
 
 import androidx.annotation.NonNull;
@@ -16,6 +20,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
+
+/**
+ * This is the main hub when a user opens the app. Depending on
+ * the type of user you are, it will show a different home page.
+ */
 public class MainActivity extends AppCompatActivity {
 
     static User user;
@@ -60,6 +69,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
+    /**
+     * shows a different home page depending on the type of user you are
+     * Reference: https://stackoverflow.com/questions/7793576/switching-between-fragment-view
+     * @param userType type of the user
+     */
     public void showHome(Integer userType) {
         if (userType == UserType.ATTENDEE) {
             this.getSupportFragmentManager().beginTransaction().replace(R.id.content_main, new AttendeeHome())
@@ -75,6 +89,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * used when editing your profile. updates your user information
+     * in MainActivity.
+     * @param newUserInfo the User object containing the new user information
+     */
     public static void updateUser(User newUserInfo) {
         user = newUserInfo;
     }
