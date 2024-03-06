@@ -1,5 +1,7 @@
 package com.example.quickscanr;
 
+import android.graphics.Bitmap;
+import android.media.Image;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -12,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.firestore.CollectionReference;
@@ -19,6 +22,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * Attendee Event List Page functionality
@@ -85,12 +89,23 @@ public class AttendeeEventList extends AttendeeFragment {
                 String eventRest = doc.getString(DatabaseConstants.evRestricKey);
                 String eventStart = doc.getString(DatabaseConstants.evStartKey);
                 String eventEnd = doc.getString(DatabaseConstants.evEndKey);
+                String eventPosterID = doc.getString(DatabaseConstants.evPosterKey);
                 User orgTemp = new User("Test","Test","test",0);  // TO BE REMOVED
 
                 Log.d("DEBUG", String.format("Event (%s) fetched", eventName));
-                eventDataList.add(new Event(eventName, eventDesc, eventLoc, eventStart, eventEnd, eventRest, orgTemp));
+                Event newEvent = new Event(eventName, eventDesc, eventLoc, eventStart, eventEnd, eventRest, orgTemp);
+                if (eventPosterID != "") {
+                    ImgHandler imgHandler = new ImgHandler(getContext());
+                    imgHandler.getImage(eventPosterID, bitmap -> {
+                        newEvent.setPoster(bitmap);
+                        eventDataList.add(newEvent);
+                        eventArrayAdapter.notifyDataSetChanged();
+                    });
+                } else {
+                    eventDataList.add(newEvent);
+                    eventArrayAdapter.notifyDataSetChanged();
+                }
             }
-            eventArrayAdapter.notifyDataSetChanged();
         });
     }
 

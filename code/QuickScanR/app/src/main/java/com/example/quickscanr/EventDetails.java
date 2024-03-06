@@ -1,9 +1,7 @@
 package com.example.quickscanr;
 
-import android.media.Image;
 import android.os.Bundle;
 
-import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,7 +57,7 @@ public class EventDetails extends InnerPageFragment {
 
         host.setText(event.getOrganizer().getName());
         hostPic.setImageResource(R.drawable.ic_launcher_background); // TO BE REPLACED
-        poster.setImageResource(R.drawable.ic_launcher_background); // TO BE REPLACED
+        poster.setImageBitmap(event.getPoster());
         location.setText(event.getLocation());
         start.setText(event.getStart());
         end.setText(event.getEnd());
