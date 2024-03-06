@@ -28,9 +28,9 @@ import java.util.Objects;
  * Attendee Event List Page functionality
  */
 public class AttendeeEventList extends AttendeeFragment {
-    RecyclerView eventRecyclerView;
-    ArrayList<Event> eventDataList;
-    EventItemArrayAdapter eventArrayAdapter;
+    private RecyclerView eventRecyclerView;
+    private ArrayList<Event> eventDataList;
+    private EventItemArrayAdapter eventArrayAdapter;
     private FirebaseFirestore db;
     private CollectionReference eventsRef;
     public static String EVENT_COLLECTION = "events";
