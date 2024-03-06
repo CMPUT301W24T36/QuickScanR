@@ -89,7 +89,7 @@ public class AttendeeHome extends AttendeeFragment {
                 String announcementBody = doc.getString(DatabaseConstants.anBody);
                 String announcementDate = doc.getString(DatabaseConstants.anDate);
                 String announcementUser= doc.getString(DatabaseConstants.anUserName);
-                String announcementTitle = doc.getString(DatabaseConstants.anBody);
+                String announcementTitle = doc.getString(DatabaseConstants.anTitle);
                 String announcementUserID = doc.getString(DatabaseConstants.anUserKey);
 
                 Log.d("DEBUG: AttendeeHome", String.format("Announcement( User: %s, Title: %s) fetched", announcementUser, announcementTitle));
