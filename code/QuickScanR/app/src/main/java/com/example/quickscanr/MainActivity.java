@@ -73,4 +73,8 @@ public class MainActivity extends AppCompatActivity {
                     .addToBackStack(null).commit();
         }
     }
+
+    public static void updateUser(User newUserInfo) {
+        user = newUserInfo;
+    }
 }

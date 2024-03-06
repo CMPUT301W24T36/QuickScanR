@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class Profile extends Fragment {
@@ -66,9 +68,23 @@ public class Profile extends Fragment {
             } catch (java.lang.InstantiationException e) {
                 throw new RuntimeException(e);
             }
+            LinearLayout geolocSection = view.findViewById(R.id.geoloc_section);
+            geolocSection.setVisibility(View.INVISIBLE);
         }
         populatePage(view);
+        setListeners(view);
         return view;
+    }
+
+    private void setListeners(View v) {
+        ImageButton editProfileBtn = v.findViewById(R.id.user_edit_profile);
+        editProfileBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getParentFragmentManager().beginTransaction().replace(R.id.content_main, EditProfile.newInstance(MainActivity.user))
+                        .addToBackStack(null).commit();
+            }
+        });
     }
 
     private void populatePage(View v) {

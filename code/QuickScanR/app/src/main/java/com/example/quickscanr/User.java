@@ -1,5 +1,7 @@
 package com.example.quickscanr;
 
+import com.google.android.material.textfield.TextInputEditText;
+
 import java.io.Serializable;
 
 public class User implements Serializable {
@@ -51,7 +53,25 @@ public class User implements Serializable {
         this.userType = userType;
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    /**
+     * for editing a profile. checks the fields for valid input
+     * @param nameField the input box for a user's name
+     * @return a boolean saying if there was errors or not
+     */
+    public boolean isErrors(TextInputEditText nameField) {
+        boolean wasErrors = false;
+        if (nameField.getText().toString() == "") {
+            nameField.setError("User must have a name!");
+            wasErrors = true;
+        }
+        return wasErrors;
     }
 }
