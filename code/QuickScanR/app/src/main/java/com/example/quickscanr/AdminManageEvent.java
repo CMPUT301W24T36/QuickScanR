@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 
 import com.google.android.material.textfield.TextInputEditText;
 
-public class AdminManageEvent extends AdminFragment{
+public class AdminManageEvent extends InnerPageFragment{
     private Event event;
 
     public AdminManageEvent(Event event) {
@@ -27,7 +27,8 @@ public class AdminManageEvent extends AdminFragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.admin_manage_event, container, false);
-        //fill in the info
+        //go back to events list when clicked
+        addButtonListeners(getActivity(), v);
         populateInfo(v);
         return v;
     }

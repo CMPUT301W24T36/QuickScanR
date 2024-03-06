@@ -76,7 +76,10 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/manage_name"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:inputType="none"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
@@ -104,7 +107,10 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/manage_desc"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:inputType="none"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
@@ -132,7 +138,10 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/manage_loc"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:inputType="none"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
@@ -160,7 +169,10 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/manage_start"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:inputType="none"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
@@ -188,7 +200,10 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/manage_end"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:inputType="none"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
@@ -216,7 +231,10 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/manage_restrictions"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:inputType="none"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
@@ -227,35 +245,21 @@
                 android:text="Poster"
                 android:layout_marginTop="3dp"/>
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/manage_upload"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:text="Attach File"
-                app:chipBackgroundColor="@color/white"
-                app:chipIcon="@android:drawable/ic_menu_gallery"
-                app:chipStrokeWidth="0dp"
-                app:rippleColor="#FFFFFF" />
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-
-                android:gravity="bottom"
                 android:orientation="horizontal">
 
-                <Button
-                    android:id="@+id/save_btn"
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/manage_upload"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:layout_weight="1"
-                    android:backgroundTint="#EF8C8C"
-                    android:text="Save"
-                    android:textColor="#000000"
-                    android:textSize="20sp"
-                    tools:ignore="ButtonStyle" />
+                    android:clickable="true"
+                    android:text="See Poster"
+                    app:chipBackgroundColor="@color/white"
+                    app:chipIcon="@android:drawable/ic_menu_gallery"
+                    app:chipStrokeWidth="0dp"
+                    app:rippleColor="#FFFFFF" />
 
                 <Button
                     android:id="@+id/delete_btn"
@@ -268,7 +272,6 @@
                     android:textColor="#000000"
                     android:textSize="20sp"
                     tools:ignore="ButtonStyle" />
-
             </LinearLayout>
 
         </LinearLayout>
