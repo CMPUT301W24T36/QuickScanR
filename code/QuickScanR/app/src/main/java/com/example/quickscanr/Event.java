@@ -1,6 +1,6 @@
 package com.example.quickscanr;
 
-import android.media.Image;
+import android.graphics.Bitmap;
 
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -19,7 +19,7 @@ public class Event implements Serializable {
     private String start;
     private String end;
     private String restrictions;
-    private Image poster;
+    private Bitmap poster;
     private User organizer;
     private ArrayList<User> attendees;
     private HashMap<User, Integer> checkedInCounts;
@@ -36,7 +36,7 @@ public class Event implements Serializable {
         this.checkedInCounts = new HashMap<>();
     }
 
-    public Event(String name, String description, String location, String start, String end, String restrictions, Image poster, User organizer) {
+    public Event(String name, String description, String location, String start, String end, String restrictions, Bitmap poster, User organizer) {
         this.name = name;
         this.description = description;
         this.location = location;
@@ -49,7 +49,7 @@ public class Event implements Serializable {
         this.checkedInCounts = new HashMap<>();
     }
 
-    public Event(String name, String description, String location, String start, String end, String restrictions, Image poster, User organizer, ArrayList<User> attendees, HashMap<User, Integer> checkedInCounts) {
+    public Event(String name, String description, String location, String start, String end, String restrictions, Bitmap poster, User organizer, ArrayList<User> attendees, HashMap<User, Integer> checkedInCounts) {
         this.name = name;
         this.description = description;
         this.location = location;
@@ -122,11 +122,11 @@ public class Event implements Serializable {
         this.restrictions = restrictions;
     }
 
-    public Image getPoster() {
+    public Bitmap getPoster() {
         return poster;
     }
 
-    public void setPoster(Image poster) {
+    public void setPoster(Bitmap poster) {
         this.poster = poster;
     }
 
