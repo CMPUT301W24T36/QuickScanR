@@ -8,6 +8,9 @@ public class User implements Serializable {
     private String phoneNumber;
     private String email;
     private int userType;
+    private String userId;
+
+    public User() {}
 
     public User(String name, String phoneNumber, String email, int userType) {
         this.name = name;
@@ -46,5 +49,9 @@ public class User implements Serializable {
 
     public void setUserType(int userType) {
         this.userType = userType;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }
