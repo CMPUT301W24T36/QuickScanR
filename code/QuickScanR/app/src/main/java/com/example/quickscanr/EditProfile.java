@@ -35,6 +35,7 @@ public class EditProfile extends Fragment {
     private User user;
 
     TextInputEditText nameField;
+    TextInputEditText homepageField;
     TextInputEditText numberField;
     TextInputEditText emailField;
     TextInputEditText accountType;
@@ -74,6 +75,7 @@ public class EditProfile extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.edit_profile_page, container, false);
         nameField = v.findViewById(R.id.edit_profile_name);
+        homepageField = v.findViewById(R.id.edit_profile_homepage);
         numberField = v.findViewById(R.id.edit_profile_phone);
         emailField = v.findViewById(R.id.edit_profile_email);
         accountType = v.findViewById(R.id.edit_profile_account_type);
@@ -95,17 +97,20 @@ public class EditProfile extends Fragment {
             @Override
             public void onClick(View v) {
                 String name = nameField.getText().toString();
+                String homepage = homepageField.getText().toString();
                 String phone = numberField.getText().toString();
                 String email = emailField.getText().toString();
                 Integer type = UserType.valueOf(accountType.getText().toString());
                 if (!user.isErrors(nameField)) {
                     user.setName(name);
+                    user.setHomepage(homepage);
                     user.setPhoneNumber(phone);
                     user.setEmail(email);
 //                    user.setUserType(type);   TODO: allow users to change their user type
                     MainActivity.updateUser(user);
                     Map<String, Object> data = new HashMap<>();
                     data.put(DatabaseConstants.userFullNameKey, name);
+                    data.put(DatabaseConstants.userHomePageKey, homepage);
                     data.put(DatabaseConstants.userPhoneKey, phone);
                     data.put(DatabaseConstants.userEmailKey, email);
                     data.put(DatabaseConstants.userTypeKey, MainActivity.user.getUserType());     // TODO: allow users to change their user type
@@ -137,6 +142,7 @@ public class EditProfile extends Fragment {
      */
     private void populatePage(View v) {
         nameField.setText(user.getName());
+        homepageField.setText(user.getHomepage());
         numberField.setText(user.getPhoneNumber());
         emailField.setText(user.getEmail());
         accountType.setText(UserType.getString(user.getUserType()));

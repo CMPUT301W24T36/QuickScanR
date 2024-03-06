@@ -89,9 +89,11 @@ public class Profile extends Fragment {
 
     private void populatePage(View v) {
         TextView nameField = v.findViewById(R.id.name);
+        TextView homepageField = v.findViewById(R.id.profile_homepage);
         TextView numberField = v.findViewById(R.id.number);
         TextView emailField = v.findViewById(R.id.email);
         nameField.setText(user.getName());
+        homepageField.setText(user.getHomepage());
         numberField.setText(user.getPhoneNumber());
         emailField.setText(user.getEmail());
     }
