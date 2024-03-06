@@ -13,14 +13,16 @@ import java.util.*; // for Date
 public class Announcement {
     private String title;
     private String body;
-    private Date date;
-    private int userID; // no implementation yet!
+    private String date;
+    private String userID; // no implementation yet!
+    private String userName;
 
-    public Announcement(String title, String body, Date date, int userID) {
+    public Announcement(String title, String body, String date, String userID, String userName) {
         this.title = title;
         this.body = body;
         this.date = date;
         this.userID = userID;
+        this.userName = userName;
     }
 
     public String getTitle() {
@@ -39,19 +41,27 @@ public class Announcement {
         this.body = body;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
-    public int getUserID() {
+    public String getUserID() {
         return userID;
     }
 
-    public void setUserID(int userID) {
+    public void setUserID(String userID) {
         this.userID = userID;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }
