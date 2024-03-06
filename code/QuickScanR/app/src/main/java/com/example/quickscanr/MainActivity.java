@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
                         String blank = "";
                         Map<String, Object> data = new HashMap<>();
                         data.put(DatabaseConstants.userFullNameKey, name);
+                        data.put(DatabaseConstants.userHomePageKey, blank);
                         data.put(DatabaseConstants.userPhoneKey, blank);
                         data.put(DatabaseConstants.userEmailKey, blank);
                         data.put(DatabaseConstants.userTypeKey, UserType.ATTENDEE);
@@ -72,5 +73,9 @@ public class MainActivity extends AppCompatActivity {
             this.getSupportFragmentManager().beginTransaction().replace(R.id.content_main, Profile.newInstance(user))
                     .addToBackStack(null).commit();
         }
+    }
+
+    public static void updateUser(User newUserInfo) {
+        user = newUserInfo;
     }
 }
