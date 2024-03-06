@@ -79,6 +79,7 @@ public class AddEvent extends InnerPageFragment {
                 data.put(DatabaseConstants.evStartKey, startDateString);
                 data.put(DatabaseConstants.evEndKey, endDateString);
                 data.put(DatabaseConstants.evRestricKey, eventRestric);
+                data.put(DatabaseConstants.evPosterKey, "");  // TO BE REPLACED
 
                 Event newEvent = new Event(eventName, eventDescription, eventLoc, startDateString, endDateString, eventRestric, MainActivity.user);
 

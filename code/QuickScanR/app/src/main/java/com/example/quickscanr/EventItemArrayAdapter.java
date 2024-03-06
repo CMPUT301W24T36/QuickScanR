@@ -37,7 +37,7 @@ public class EventItemArrayAdapter extends RecyclerView.Adapter<EventItemViewHol
         Event event = events.get(position);
         holder.eventTitle.setText(event.getName());
         holder.eventDesc.setText(event.getDescription());
-        holder.eventImage.setImageResource(R.drawable.ic_launcher_background);
+        holder.eventImage.setImageBitmap(event.getPoster());
     }
 
     @Override
