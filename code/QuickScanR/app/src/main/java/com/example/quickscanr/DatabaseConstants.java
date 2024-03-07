@@ -10,4 +10,5 @@ public class DatabaseConstants {
     public static final String evStartKey = "startDate";
     public static final String evEndKey = "endDate";
     public static final String evRestricKey = "restrictions";
+    public static final String evTimestampKey = "timestamp";
 }

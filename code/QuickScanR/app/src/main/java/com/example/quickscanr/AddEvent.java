@@ -13,11 +13,14 @@ import android.widget.EditText;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
 
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+// Fragment class for adding events
 public class AddEvent extends InnerPageFragment {
 
     private FirebaseFirestore db;
@@ -38,12 +41,14 @@ public class AddEvent extends InnerPageFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.add_event, container, false);
-        addButtonListeners(getActivity(), v);
+        View v = inflater.inflate(R.layout.add_event, container, false); // Inflate layout for this fragment
+        addButtonListeners(getActivity(), v); // Set up button listeners (method not shown here)
 
+        // Initialize UI components
         TextInputEditText start = v.findViewById(R.id.evadd_txt_start);
         TextInputEditText end = v.findViewById(R.id.evadd_txt_end);
 
+        // Set click listeners for date input fields
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -57,14 +62,19 @@ public class AddEvent extends InnerPageFragment {
             }
         });
 
+        // Set up the Add Event button and input fields
         Button addEventBtn = v.findViewById(R.id.evadd_btn_add);
         TextInputEditText name = v.findViewById(R.id.evadd_txt_name);
         TextInputEditText description = v.findViewById(R.id.evadd_txt_desc);
         TextInputEditText location = v.findViewById(R.id.evadd_txt_loc);
         TextInputEditText restrictions = v.findViewById(R.id.evadd_txt_restrictions);
+
+        // Handle Add Event button click
         addEventBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Collect input from the user
+                long timestamp = System.currentTimeMillis(); // Get current time for timestamp
                 String eventName = name.getText().toString();
                 String eventDescription = description.getText().toString();
                 String eventLoc = location.getText().toString();
@@ -72,6 +82,7 @@ public class AddEvent extends InnerPageFragment {
                 String endDateString = end.getText().toString();
                 String eventRestric = restrictions.getText().toString();
 
+                // Prepare data for Firestore
                 Map<String, Object> data = new HashMap<>();
                 data.put(DatabaseConstants.evNameKey, eventName);
                 data.put(DatabaseConstants.evDescKey, eventDescription);
@@ -79,39 +90,53 @@ public class AddEvent extends InnerPageFragment {
                 data.put(DatabaseConstants.evStartKey, startDateString);
                 data.put(DatabaseConstants.evEndKey, endDateString);
                 data.put(DatabaseConstants.evRestricKey, eventRestric);
+                data.put(DatabaseConstants.evTimestampKey, timestamp);
 
+                // Create Event object and validate inputs
                 Event newEvent = new Event(eventName, eventDescription, eventLoc, startDateString, endDateString, eventRestric, MainActivity.user);
-
                 if (!newEvent.isErrors(name, location, start, end)) {
-                    db.collection(DatabaseConstants.eventColName).add(data);
-                    getParentFragmentManager().beginTransaction().replace(R.id.content_main, EventDashboard.newInstance(newEvent))
-                            .addToBackStack(null).commit();
+                    // Add event to Firestore and handle success
+                    db.collection(DatabaseConstants.eventColName).add(data).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+                            // On successful database entry, update event with ID and navigate to EventDashboard
+                            String eventId = documentReference.getId();
+                            newEvent.setId(eventId);
+                            newEvent.setTimestamp(timestamp); // Update event timestamp
+                            // Navigate to the EventDashboard fragment showing the new event
+                            getParentFragmentManager().beginTransaction().replace(R.id.content_main, EventDashboard.newInstance(newEvent))
+                                    .addToBackStack(null).commit();
+                        }
+                    });
                 }
             }
         });
         return v;
     }
 
+    // Handles clicks for date input fields by displaying a DatePicker dialog
     private void onClickFuncForDates(EditText dateField) {
         final Calendar c = Calendar.getInstance();
 
+        // Get current date
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
 
+        // Create and show date picker dialog
         DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
             @Override
-            public void onDateSet(DatePicker view, int year,
-                                  int monthOfYear, int dayOfMonth) {
-
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                // Format the date and set it in the EditText
                 String strMonth = String.valueOf(monthOfYear + 1);
                 String strDay = String.valueOf(dayOfMonth);
                 String formattedMonth = strMonth.length() == 2? strMonth : "0" + strMonth;
                 String formattedDay = strDay.length() == 2? strDay : "0" + strDay;
-                dateField.setText(formattedDay + "-" + formattedMonth + "-" + year);
+                dateField.setText(formattedDay + "-" + formattedMonth + "-" + year); // Set formatted date
             }
         }, year, month, day);
-        datePickerDialog.show();
+        datePickerDialog.show(); // Show the dialog to pick a date
+        // Set button text colors
         datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
         datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(Color.BLACK);
     }
