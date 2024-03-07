@@ -55,8 +55,15 @@ public class EventDashboard extends InnerPageFragment {
         // Note: Button for map feature is not implemented yet as map page does not exist yet
         v.findViewById(R.id.evdash_btn_qrcode).setOnClickListener(view -> switchToFragment(new PromotionQR()));
         v.findViewById(R.id.evdash_btn_checkin).setOnClickListener(view -> switchToFragment(CheckInQR.newInstance(event)));
-        v.findViewById(R.id.evdash_img_stat4).setOnClickListener(view -> switchToFragment(new CheckedInAttendeeList()));
-        v.findViewById(R.id.evdash_txt_stat4).setOnClickListener(view -> switchToFragment(new CheckedInAttendeeList()));
+        v.findViewById(R.id.evdash_img_stat4).setOnClickListener(view -> {
+            String eventId = event.getId(); // Assuming 'event' is your Event object and it has an 'getId()' method.
+            switchToFragment(CheckedInAttendeeList.newInstance(eventId));
+        });
+
+        v.findViewById(R.id.evdash_txt_stat4).setOnClickListener(view -> {
+            String eventId = event.getId();
+            switchToFragment(CheckedInAttendeeList.newInstance(eventId));
+        });
     }
 
     /** Switches to a new fragment
