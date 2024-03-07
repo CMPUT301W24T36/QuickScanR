@@ -13,8 +13,10 @@ import java.util.Map;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.DocumentReference;
 
-// This class manages displaying and generating QR codes for event check-ins.
-// A new QR code is generated using the current time in ms to make sure it's unique.
+/**
+ * This class manages displaying and generating QR codes for event check-ins.
+ * A new QR code is generated using the current time in ms to make sure it's unique.
+ */
 public class CheckInQR extends InnerPageFragment {
 
     private String eventId;

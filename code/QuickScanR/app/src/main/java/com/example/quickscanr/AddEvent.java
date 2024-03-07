@@ -20,7 +20,9 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-// Fragment class for adding events
+/**
+ * Fragment class for adding events
+ */
 public class AddEvent extends InnerPageFragment {
 
     private FirebaseFirestore db;

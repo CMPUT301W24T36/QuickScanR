@@ -1,4 +1,4 @@
-package com.example.quickscanr; // Use your own package name
+package com.example.quickscanr;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-// NOT YET FUNCTIONAL
 public class PromotionQR extends InnerPageFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

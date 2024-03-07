@@ -10,7 +10,9 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
-// This class manages the display of event details in the dashboard.
+/**
+ * This class manages the display of event details in the dashboard.
+ */
 public class EventDashboard extends InnerPageFragment {
 
     private static final String EVENT = "event";
