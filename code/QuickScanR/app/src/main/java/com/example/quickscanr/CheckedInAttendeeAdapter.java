@@ -6,13 +6,16 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.firebase.Timestamp;
+
 import java.util.List;
+import java.util.Map;
 
 public class CheckedInAttendeeAdapter extends RecyclerView.Adapter<CheckedInAttendeeAdapter.ViewHolder> {
-    private List<Attendee> attendeeList;
+    private List<Map<String, Object>> attendeeDataList;
 
-    public CheckedInAttendeeAdapter(List<Attendee> attendeeList) {
-        this.attendeeList = attendeeList;
+    public CheckedInAttendeeAdapter(List<Map<String, Object>> attendeeDataList) {
+        this.attendeeDataList = attendeeDataList;
     }
 
     @NonNull
@@ -24,14 +27,16 @@ public class CheckedInAttendeeAdapter extends RecyclerView.Adapter<CheckedInAtte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Attendee attendee = attendeeList.get(position);
-        holder.nameTextView.setText(attendee.getName());
-        holder.checkInCountTextView.setText(String.valueOf(attendee.getCheckInCount()));
+        Map<String, Object> attendeeData = attendeeDataList.get(position);
+        String name = (String) attendeeData.get("name");
+        List<Timestamp> checkIns = (List<Timestamp>) attendeeData.get("checkIns");
+        holder.nameTextView.setText(name);
+        holder.checkInCountTextView.setText(String.valueOf(checkIns != null ? checkIns.size() : 0));
     }
 
     @Override
     public int getItemCount() {
-        return attendeeList.size();
+        return attendeeDataList.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -43,10 +48,5 @@ public class CheckedInAttendeeAdapter extends RecyclerView.Adapter<CheckedInAtte
             nameTextView = view.findViewById(R.id.chkd_usr_text);
             checkInCountTextView = view.findViewById(R.id.chkd_usr_count);
         }
-    }
-
-    public void updateAttendees(List<Attendee> newAttendees) {
-        this.attendeeList = newAttendees;
-        notifyDataSetChanged();
     }
 }

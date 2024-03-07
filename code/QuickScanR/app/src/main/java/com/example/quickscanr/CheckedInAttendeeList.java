@@ -13,11 +13,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class CheckedInAttendeeListActivity extends AppCompatActivity {
+public class CheckedInAttendeeList extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private List<Attendee> attendeesList = new ArrayList<>();
+    private List<Map<String, Object>> attendeesData = new ArrayList<>();
     private CheckedInAttendeeAdapter adapter;
     private RecyclerView recyclerView;
 
@@ -29,7 +31,7 @@ public class CheckedInAttendeeListActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.chkd_usrs_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        adapter = new CheckedInAttendeeAdapter(attendeesList);
+        adapter = new CheckedInAttendeeAdapter(attendeesData);
         recyclerView.setAdapter(adapter);
 
         setupFirestoreRealtimeUpdate();
@@ -46,16 +48,19 @@ public class CheckedInAttendeeListActivity extends AppCompatActivity {
                     return;
                 }
 
-                List<Attendee> updatedAttendees = new ArrayList<>();
+                List<Map<String, Object>> updatedAttendeesData = new ArrayList<>();
                 for (DocumentSnapshot doc : snapshots.getDocuments()) {
-                    String userId = doc.getId();
-                    String name = doc.getString("name");
-                    List<Timestamp> checkIns = (List<Timestamp>) doc.get("checkIns"); // Assuming "checkIns" is the field name
+                    Map<String, Object> attendeeData = new HashMap<>();
+                    attendeeData.put("userId", doc.getId());
+                    attendeeData.put("name", doc.getString("name"));
+                    attendeeData.put("checkIns", doc.get("checkIns")); // Assuming "checkIns" is the field name
 
-                    updatedAttendees.add(new Attendee(userId, name, checkIns));
+                    updatedAttendeesData.add(attendeeData);
                 }
 
-                adapter.updateAttendees(updatedAttendees);
+                attendeesData.clear();
+                attendeesData.addAll(updatedAttendeesData);
+                adapter.notifyDataSetChanged();
             }
         });
     }
