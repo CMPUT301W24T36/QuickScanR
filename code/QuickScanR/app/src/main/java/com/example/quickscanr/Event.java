@@ -12,7 +12,8 @@ import java.util.Date;
 import java.util.HashMap;
 
 public class Event implements Serializable {
-
+    private String id = "default";
+    private long timestamp;
     private String name;
     private String description;
     private String location;
@@ -23,6 +24,21 @@ public class Event implements Serializable {
     private User organizer;
     private ArrayList<User> attendees;
     private HashMap<User, Integer> checkedInCounts;
+
+    // this constructor includes eventID and timestamp
+    public Event(String name, String description, String location, String start, String end, String restrictions, User organizer, String id, long timestamp) {
+        this.name = name;
+        this.description = description;
+        this.location = location;
+        this.start = start;
+        this.end = end;
+        this.restrictions = restrictions;
+        this.organizer = organizer;
+        this.attendees = new ArrayList<>();
+        this.checkedInCounts = new HashMap<>();
+        this.id = id;
+        this.timestamp = timestamp;
+    }
 
     public Event(String name, String description, String location, String start, String end, String restrictions, User organizer) {
         this.name = name;
@@ -73,6 +89,14 @@ public class Event implements Serializable {
         this.attendees = attendees;
         this.checkedInCounts = checkedInCounts;
     }
+
+    public String getId() { return id; }
+
+    public void setId(String id) { this.id = id; }
+
+    public long getTimestamp() { return timestamp; }
+
+    public void setTimestamp(long timestamp) { this.timestamp = timestamp; }
 
     public String getName() {
         return name;

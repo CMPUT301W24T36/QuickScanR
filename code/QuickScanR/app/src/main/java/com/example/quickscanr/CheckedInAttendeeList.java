@@ -63,5 +63,6 @@ public class CheckedInAttendeeList extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
             }
         });
+
     }
 }
