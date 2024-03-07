@@ -45,7 +45,10 @@ public class EventDashboard extends InnerPageFragment {
         return v;
     }
 
-    // Sets up additional listeners for buttons
+    /** This sets up listeners for UI buttons
+     *
+     * @param v The view to set up the buttons for
+     */
     private void setupAdditionalListeners(View v) {
         // Note: Button for map feature is not implemented yet as map page does not exist yet
         v.findViewById(R.id.evdash_btn_qrcode).setOnClickListener(view -> switchToFragment(new PromotionQR()));
@@ -54,7 +57,10 @@ public class EventDashboard extends InnerPageFragment {
         v.findViewById(R.id.evdash_txt_stat4).setOnClickListener(view -> switchToFragment(new CheckedInAttendeeList()));
     }
 
-    // Helper method to switch the current fragment with a new one
+    /** Switches to a new fragment
+     *
+     * @param fragment The fragment to switch to
+     */
     private void switchToFragment(Fragment fragment) {
         if (getParentFragmentManager() != null) {
             getParentFragmentManager().beginTransaction()
@@ -64,7 +70,10 @@ public class EventDashboard extends InnerPageFragment {
         }
     }
 
-    // Fills in the event details into the respective views
+    /** Fills in the event details into the respective views
+     *
+     * @param v The view which is being populated
+     */
     private void populatePage(View v) {
         // Bind event data to UI elements
         ((TextView) v.findViewById(R.id.evdash_text_name)).setText(event.getName());
