@@ -83,9 +83,17 @@ public class OrganizerEventList extends OrganizerFragment {
                 String eventStart = doc.getString(DatabaseConstants.evStartKey);
                 String eventEnd = doc.getString(DatabaseConstants.evEndKey);
                 User orgTemp = new User("Test","Test","test",0);  // TO BE REMOVED
+                String eventId = doc.getId();
+                Long eventTimestamp; // Declare the timestamp variable
+                // Check if the document contains the timestamp field; TO BE REMOVED WHEN TIMESTAMPS ALWAYS EXIST
+                if (doc.contains(DatabaseConstants.evTimestampKey)) {
+                    eventTimestamp = doc.getLong(DatabaseConstants.evTimestampKey);
+                } else {
+                    eventTimestamp = 0L;    // Assign a default value if the timestamp doesn't exist
+                }
 
                 Log.d("DEBUG", String.format("Event (%s) fetched", eventName));
-                eventDataList.add(new Event(eventName, eventDesc, eventLoc, eventStart, eventEnd, eventRest, orgTemp));
+                eventDataList.add(new Event(eventName, eventDesc, eventLoc, eventStart, eventEnd, eventRest, orgTemp, eventId, eventTimestamp));
             }
             eventArrayAdapter.notifyDataSetChanged();
         });

@@ -2,11 +2,12 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white"
+    android:paddingLeft="40dp"
+    android:paddingTop="50dp"
+    android:paddingRight="40dp"
+    android:paddingBottom="50dp"
     android:layout_width="match_parent"
-    android:layout_marginLeft="40dp"
-    android:layout_marginTop="50dp"
-    android:layout_marginRight="40dp"
-    android:layout_marginBottom="50dp"
     android:layout_height="match_parent">
 
     <LinearLayout
@@ -23,9 +24,9 @@
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/chkd_usrs_btn_back"
-                android:layout_width="42dp"
-                android:layout_height="42dp"
+                android:id="@+id/back_btn"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 app:backgroundTint="#FFFFFF"

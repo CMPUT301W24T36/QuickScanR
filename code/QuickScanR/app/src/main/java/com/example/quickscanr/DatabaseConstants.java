@@ -18,6 +18,7 @@ public class DatabaseConstants {
     public static final String evStartKey = "startDate";
     public static final String evEndKey = "endDate";
     public static final String evRestricKey = "restrictions";
+    public static final String evTimestampKey = "timestamp";
     public static final String evPosterKey = "posterID";
 
     // Announcements
@@ -31,6 +32,5 @@ public class DatabaseConstants {
 
     // Images
     public static final String imgDataKey = "image";
-
 
 }
