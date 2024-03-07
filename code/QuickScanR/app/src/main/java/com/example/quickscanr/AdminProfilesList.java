@@ -31,16 +31,47 @@ public class AdminProfilesList extends AdminFragment {
 
     public AdminProfilesList() {}
 
+    /**
+     * AdminProfilesList
+     *  - creates a new instance of the AdminProfilesList fragment
+     * @param param1
+     *      -
+     * @param param2
+     * @return
+     *  - returns fragment: which is of the new instance AdminProfilesList
+     */
     public static AdminProfilesList newInstance(String param1, String param2) {
         AdminProfilesList fragment = new AdminProfilesList();
         return fragment;
     }
 
+    /**
+     * OnCreate
+     * @param savedInstanceState If the fragment is being re-created from
+     * a previous saved state, this is the state.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * onCreateView
+     *  - creates the view and inflates layout so that the
+     *      browse profile list can be displayed
+     *
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     *
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return
+     *      - returns v, which is the view with the inflated layout
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -65,7 +96,11 @@ public class AdminProfilesList extends AdminFragment {
         return v;
     }
 
-    //snapshot is for real time updates
+    /**
+     * addSnapshotListenerForEvent()
+     *  - snapshot listener for the firestore database to listen to the user collection
+     *  - anytime there are any changes within the database it updates
+     */
     private void addSnapshotListenerForEvent() {
 
         usersReference.addSnapshotListener((value, error) -> {
@@ -101,15 +136,25 @@ public class AdminProfilesList extends AdminFragment {
         });
     }
 
-    //listen for the clickable items
+
+
+    /**
+     * addListeners:
+     *  - create profileArrayAdapter and set it as the adapter for the recycler view
+     *  - keeps track of position when profile is clicked
+     */
     public void addListeners() {
         profileArrayAdapter = new AdminProfileArrayAdapter(getContext(), profileList, position -> buttonClickAction(profileList.get(position)));
         profileView.setAdapter(profileArrayAdapter);
     }
 
 
-    //When you click on the buttonClickAction, it will link the position and take you
-    //to the manage profile that fills in info
+    /**
+     * buttonClickAction:
+     *  - when profile button is clicked, it will send specific data to AdminManageProfile page
+     *  - includes ability to move forward and backwards to different pages
+     * @param user : pass the specific user data
+     */
     private void buttonClickAction(User user) {
         getActivity().getSupportFragmentManager().beginTransaction()
                 .replace(R.id.content_main, AdminManageProfile.newInstance(user))

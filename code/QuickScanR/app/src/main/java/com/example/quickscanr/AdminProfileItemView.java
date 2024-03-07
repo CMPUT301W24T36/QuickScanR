@@ -21,13 +21,20 @@ public class AdminProfileItemView extends RecyclerView.ViewHolder {
     ImageButton editEvent;
 
 
+    /**
+     * AdminProfileItemView:
+     *  - represents an item in the recycler view and defines what elements need
+     *      to be displayed in the view
+     *
+     * @param itemView : the view for what is displayed on the layout (name, images, etc)
+     * @param listener : listens to when button is clicked and gets position
+     */
     public AdminProfileItemView(View itemView, AdminProfileArrayAdapter.buttonListener listener) {
         super(itemView);
         //this is whats being displayed on the screen
         profileName = itemView.findViewById(R.id.adm_prf_name);
         profileImage = itemView.findViewById(R.id.adm_prf_pic);
 
-        //when you click on the profile it will listen for the position so that I can view the detail
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

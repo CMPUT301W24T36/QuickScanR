@@ -36,7 +36,11 @@ public class AdminManageProfile extends InnerPageFragment{
         this.user = user;
     }
 
-    //On create we need to inflate the xml and create the fragment that can be connected to the event page
+    /**
+     * onCreate:
+     * @param savedInstanceState If the fragment is being re-created from
+     * a previous saved state, this is the state.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,14 +49,31 @@ public class AdminManageProfile extends InnerPageFragment{
         }
     }
 
+    /**
+     * onCreateView:
+     *
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return
+     *       - returns v, which is the view with the inflated layout
+     *       - also returns the updated version of any change made with deleting
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.admin_manage_profile, container, false);
-        //go back to events list when clicked
+
+        //go back and forth to profile list when clicked
         addButtonListeners(getActivity(), v);
         populateInfo(v);
 
+        //set up the database
         db = FirebaseFirestore.getInstance();
         profiles = db.collection(USER_COLLECTION);
 
@@ -61,6 +82,7 @@ public class AdminManageProfile extends InnerPageFragment{
         deleteProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // using both name and phone to get document id and then delete from database
                 String username = user.getName();
                 String userphone = user.getPhoneNumber();
 
@@ -82,10 +104,18 @@ public class AdminManageProfile extends InnerPageFragment{
                         });
             }
         });
+
         return v;
     }
 
 
+    /**
+     *AdminManageProfile:
+     *  - new instance of a fragment with specific user data
+     * @param user : specific data regarding a user
+     * @return
+     *  - fragment: a new instance that is initialized with new user data
+     */
     public static AdminManageProfile newInstance(User user) {
         AdminManageProfile fragment = new AdminManageProfile(user);
         Bundle args = new Bundle();
@@ -96,6 +126,11 @@ public class AdminManageProfile extends InnerPageFragment{
         return fragment;
     }
 
+    /**
+     *populateInfo:
+     *  - populate fields with extra user information for admin to see
+     * @param v: view that has the fields with the same data that we will populate the fields with
+     */
     public void populateInfo(View v){
 
         //pull the data and then display information about the user
