@@ -21,11 +21,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * fragment class for displaying a list of attendees who have checked into an event.
+ * uses Firebase Firestore to fetch and display the attendees' data in a RecyclerView.
+ */
+
 public class CheckedInAttendeeList extends Fragment {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private List<Map<String, Object>> attendeesData = new ArrayList<>();
     private CheckedInAttendeeAdapter adapter;
     private RecyclerView recyclerView;
+
+    /**
+     * creates a new instance of CheckedInAttendeeList fragment with an event ID
+     * @param eventId : ID of the event to display checked-in attendees for
+     * @return : new instance of CheckedInAttendeeList with event ID passed as an argument
+     */
 
     public static CheckedInAttendeeList newInstance(String eventId) {
         CheckedInAttendeeList fragment = new CheckedInAttendeeList();
@@ -34,6 +45,14 @@ public class CheckedInAttendeeList extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+
+    /**
+     * inflates the fragment's view and initializes RecyclerView + Firestore data fetching
+     * @param inflater : LayoutInflater object, can be used to inflate any views in the fragment
+     * @param container : (if non-null) the parent view that the fragment's UI should be attached to
+     * @param savedInstanceState : (f non-null) fragment re-constructed from a previous saved state
+     * @return : View for the fragment's UI, or null
+     */
 
     @Nullable
     @Override
@@ -64,6 +83,12 @@ public class CheckedInAttendeeList extends Fragment {
 
         return view;
     }
+
+    /**
+     * sets up Firestore real-time update listener for event's attendees collection
+     * updates the attendees data list and the RecyclerView adapter when changes are detected
+     * @param eventId : ID of the event for which to listen for attendee check-ins
+     */
 
     private void setupFirestoreRealtimeUpdate(String eventId) {
         final CollectionReference attendeesRef = db.collection("events").document(eventId).collection("attendees");
