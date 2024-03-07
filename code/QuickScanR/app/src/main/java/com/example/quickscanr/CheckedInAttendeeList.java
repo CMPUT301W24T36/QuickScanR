@@ -24,7 +24,7 @@ public class CheckedInAttendeeListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.checked_users_list); // Make sure this layout exists
+        setContentView(R.layout.checked_users_list);
 
         recyclerView = findViewById(R.id.chkd_usrs_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
