@@ -15,6 +15,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +24,7 @@ import java.util.Map;
 public class CheckedInAttendeeList extends Fragment {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private List<Map<String, Object>> attendeesData = new ArrayList<>();
-    private CheckedInAttendeeAdapter adapter;
+    private CheckedInAttendeeAdapter adapter; // Make sure your adapter is capable of handling Map<String, Object>
     private RecyclerView recyclerView;
 
     // New instance method to pass event ID
@@ -43,13 +44,25 @@ public class CheckedInAttendeeList extends Fragment {
         recyclerView = view.findViewById(R.id.chkd_usrs_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
-        adapter = new CheckedInAttendeeAdapter(attendeesData);
+        adapter = new CheckedInAttendeeAdapter(attendeesData); // Your adapter needs to handle the data structure
         recyclerView.setAdapter(adapter);
 
         if (getArguments() != null) {
             String eventId = getArguments().getString("EVENT_ID");
             setupFirestoreRealtimeUpdate(eventId);
         }
+
+        View backButton = view.findViewById(R.id.back_btn);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Pop the current fragment from the stack
+                if (getFragmentManager() != null) {
+                    getFragmentManager().popBackStack();
+                }
+            }
+        });
+
 
         return view;
     }

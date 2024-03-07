@@ -13,9 +13,18 @@ import java.util.Map;
 
 public class CheckedInAttendeeAdapter extends RecyclerView.Adapter<CheckedInAttendeeAdapter.ViewHolder> {
     private List<Map<String, Object>> attendeeDataList;
+    private OnItemClickListener onItemClickListener; // Listener for handling item clicks
+
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+    }
 
     public CheckedInAttendeeAdapter(List<Map<String, Object>> attendeeDataList) {
         this.attendeeDataList = attendeeDataList;
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.onItemClickListener = listener;
     }
 
     @NonNull
@@ -32,6 +41,16 @@ public class CheckedInAttendeeAdapter extends RecyclerView.Adapter<CheckedInAtte
         List<Timestamp> checkIns = (List<Timestamp>) attendeeData.get("checkIns");
         holder.nameTextView.setText(name);
         holder.checkInCountTextView.setText(String.valueOf(checkIns != null ? checkIns.size() : 0));
+
+        // Invoke the click listener if it is set
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onItemClickListener != null && position != RecyclerView.NO_POSITION) {
+                    onItemClickListener.onItemClick(position);
+                }
+            }
+        });
     }
 
     @Override
