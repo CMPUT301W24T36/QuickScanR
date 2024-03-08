@@ -6,12 +6,22 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class for the Event Details page. Handles population of
@@ -23,7 +33,9 @@ public class EventDetails extends InnerPageFragment {
 
     private static final String EVENT = "event";
     private static final String SHOWCONFDIALOG = "showConfDialog";
-
+    public static final String ATTENDEE_COLLECTION = "attendees";
+    public static final String EVENT_COLLECTION = "events";
+    private FirebaseFirestore db;
     private Event event;
     private boolean showConfDialog;
 
@@ -55,6 +67,7 @@ public class EventDetails extends InnerPageFragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.event_details, container, false);
         addButtonListeners(getActivity(), v);
+        db = FirebaseFirestore.getInstance();
         populatePage(v);
         if (showConfDialog) {
             showConfDialog();
@@ -93,7 +106,36 @@ public class EventDetails extends InnerPageFragment {
                 .setTitle("Check In")
                 .setMessage("Do you want to check in to this event?")
                 .setPositiveButton(android.R.string.yes, (dialog, x) -> {
-                    Toast.makeText(getContext(),"Success",Toast.LENGTH_SHORT).show();
+                    MainActivity mainActivity = (MainActivity) getActivity();
+                    User user = mainActivity.user;
+                    String eventID = event.getId();
+                    String userID = user.getUserId();
+                    Long timestamp = System.currentTimeMillis();
+                    DocumentReference attRef = db.collection(EVENT_COLLECTION).document(eventID).collection(ATTENDEE_COLLECTION).document(userID);
+
+                    // db request
+                    attRef.get().addOnCompleteListener(doc -> {
+                        if (doc.isSuccessful()) {
+                            DocumentSnapshot attendees = doc.getResult();
+                            if (attendees.exists()) {
+                                // user already checked in prior
+                                attRef.update("timestamps", FieldValue.arrayUnion(timestamp))
+                                        .addOnSuccessListener(aVoid -> Log.d("DEBUG", "Event notified of check-in"))
+                                        .addOnFailureListener(e -> Log.w("DEBUG", "Event notified of check-in", e));
+                            } else {
+                                // first time user check in
+                                Map<String, Object> newAttendee = new HashMap<>();
+                                newAttendee.put("timestamps", Arrays.asList(timestamp));
+                                newAttendee.put("name", user.getName());
+
+                                attRef.set(newAttendee)
+                                        .addOnSuccessListener(e -> Log.d("DEBUG", "Event notified of 1st check-in"))
+                                        .addOnFailureListener(e -> Log.d("DEBUG", "Error notifying 1st check-in"));
+                            }
+                        } else {
+                            Log.d("DEBUG", "Failed to add event to DB");
+                        }
+                    });
                 })
                 .setNegativeButton(android.R.string.no, null)
                 .show();
