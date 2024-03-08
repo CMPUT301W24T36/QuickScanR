@@ -18,6 +18,8 @@ public class EventDashboard extends InnerPageFragment {
     private static final String EVENT = "event";
     private Event event;
 
+    private RealtimeData attendeeCounter;
+
     // Required empty constructor
     public EventDashboard() {}
 
@@ -34,6 +36,17 @@ public class EventDashboard extends InnerPageFragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             event = (Event) getArguments().getSerializable(EVENT);
+            attendeeCounter = new RealtimeData();
+            attendeeCounter.setEventListener(new RealtimeData.EventAttendeeCountListener() {
+                @Override
+                public void onCountUpdated(int newCount) {
+                    // Update the UI with the new count
+                    if (getView() != null) {
+                        TextView attendeeCountView = getView().findViewById(R.id.evdash_txt_stat4);
+                        attendeeCountView.setText(String.valueOf(newCount));
+                    }
+                }
+            });
         }
     }
 
@@ -44,8 +57,12 @@ public class EventDashboard extends InnerPageFragment {
         populatePage(v);    // Populate the dashboard with event details
         setupAdditionalListeners(v);    // Set up listeners for interactive elements
         addButtonListeners(getActivity(), v);
+        if (event != null) {
+            attendeeCounter.startListening(event.getId());
+        }
         return v;
     }
+
 
     /** This sets up listeners for UI buttons
      *
@@ -56,7 +73,7 @@ public class EventDashboard extends InnerPageFragment {
         v.findViewById(R.id.evdash_btn_qrcode).setOnClickListener(view -> switchToFragment(new PromotionQR()));
         v.findViewById(R.id.evdash_btn_checkin).setOnClickListener(view -> switchToFragment(CheckInQR.newInstance(event)));
         v.findViewById(R.id.evdash_img_stat4).setOnClickListener(view -> {
-            String eventId = event.getId(); // Assuming 'event' is your Event object and it has an 'getId()' method.
+            String eventId = event.getId();
             switchToFragment(CheckedInAttendeeList.newInstance(eventId));
         });
 
@@ -89,7 +106,6 @@ public class EventDashboard extends InnerPageFragment {
         ((ImageView) v.findViewById(R.id.evdash_img_poster)).setImageResource(R.drawable.ic_launcher_background); // Placeholder, needs replacement.
         ((TextView) v.findViewById(R.id.evdash_txt_stat1)).setText(event.getLocation());
         ((TextView) v.findViewById(R.id.evdash_txt_stat2)).setText(event.getStart());
-        ((TextView) v.findViewById(R.id.evdash_txt_stat3)).setText(String.valueOf(event.getRSVPCount()));
-        ((TextView) v.findViewById(R.id.evdash_txt_stat4)).setText(String.valueOf(event.getTotalCheckInCount()));
+
     }
 }
