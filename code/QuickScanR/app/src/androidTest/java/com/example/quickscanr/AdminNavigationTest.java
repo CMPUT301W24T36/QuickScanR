@@ -10,6 +10,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.CoreMatchers.allOf;
 
 import androidx.fragment.app.FragmentActivity;
+import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -69,6 +70,7 @@ public class AdminNavigationTest {
     /**
      * go to admin events list
      * click the browse profiles button and check that it's being showed
+     * TODO: I couldn't get these to pass
      */
     @Test
     public void testBrowseProfilesBtn() {
@@ -80,11 +82,37 @@ public class AdminNavigationTest {
     /**
      * go to organizer events list
      * click the browse images button and check that it's being showed
+     * TODO: I couldn't get these to pass
      */
     @Test
     public void testBrowseImagesBtn() {
         goToEvents();
         onView(withId(R.id.nav_ad_images_btn)).perform(click());    // TODO: this throws an error
         onView(withId(R.id.admin_browse_events)).check(matches(isDisplayed()));
+    }
+
+    /**
+     * go to browse events page
+     * click on the settings icon for an event
+     * check that the manage event page is being shown
+     */
+    @Test
+    public void testDeleteEvent() {
+        goToEvents();
+        onView(withId(R.id.edit_event)).perform(click());
+        onView(withId(R.id.admin_manage_event_page)).check(matches(isDisplayed()));
+    }
+
+    /**
+     * go to browse profiles page
+     * click on a profile in the list
+     * check that the manage profile page is being shown
+     */
+    @Test
+    public void testDeleteProfile() {
+        goToEvents();
+        onView(withId(R.id.nav_ad_users_btn)).perform(click());
+        onView(withId(R.id.adm_profile_list)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        onView(withId(R.id.admin_manage_profile_page)).check(matches(isDisplayed()));
     }
 }
