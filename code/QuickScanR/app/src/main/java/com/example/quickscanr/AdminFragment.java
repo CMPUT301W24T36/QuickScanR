@@ -24,6 +24,7 @@ public class AdminFragment extends Fragment {
                 activity.getSupportFragmentManager()
                         .beginTransaction().replace(R.id.content_main, new AdminProfilesList())
                         .addToBackStack(null).commit();
+
             }
         });
         ImageButton profileBtn = v.findViewById(R.id.nav_ad_profile_btn);
