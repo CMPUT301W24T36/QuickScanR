@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 
+import androidx.fragment.app.FragmentManager;
+
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -85,9 +87,11 @@ public class AdminManageProfile extends InnerPageFragment{
                 // using both name and phone to get document id and then delete from database
                 String username = user.getName();
                 String userphone = user.getPhoneNumber();
-
+                String useremail = user.getEmail();
                 //match the phone and the name to the document id and then delete it
+
                 profiles.whereEqualTo("name", username).whereEqualTo("phoneNumber", userphone)
+                        .whereEqualTo("email", useremail)
                         .get()
                         .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                             @Override
@@ -98,7 +102,10 @@ public class AdminManageProfile extends InnerPageFragment{
 
                                     Log.d("DEBUG", docId);
                                     //go back to the previous page
-                                    getActivity().getSupportFragmentManager().popBackStack();
+                                    AdminProfilesList adminProfilesList = new AdminProfilesList();
+                                    getActivity().getSupportFragmentManager().beginTransaction()
+                                            .replace(R.id.content_main, adminProfilesList)
+                                            .addToBackStack(null).commit();
                                 }
                             }
                         });
