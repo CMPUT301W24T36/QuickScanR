@@ -9,6 +9,7 @@
     android:paddingBottom="50dp"
     android:paddingLeft="40dp"
     android:paddingRight="40dp"
+    android:id="@+id/admin_profile_page"
     tools:context=".Profile">
 
 

@@ -8,6 +8,7 @@
     android:paddingRight="40dp"
     android:paddingBottom="50dp"
     android:layout_width="match_parent"
+    android:id="@+id/checked_in_attendees_list"
     android:layout_height="match_parent">
 
     <LinearLayout
@@ -67,6 +68,7 @@
             android:layout_height="wrap_content"
             android:clipToPadding="false"
             android:padding="8dp"
+            android:visibility="visible"
             tools:listitem="@layout/checked_user_item" />
 
     </androidx.core.widget.NestedScrollView>

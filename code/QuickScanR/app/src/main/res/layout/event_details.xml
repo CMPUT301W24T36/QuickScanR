@@ -9,6 +9,7 @@
     android:paddingRight="40dp"
     android:paddingBottom="50dp"
     android:layout_height="match_parent"
+    android:id="@+id/event_details_page"
     tools:context=".EventDetails">
 
     <LinearLayout

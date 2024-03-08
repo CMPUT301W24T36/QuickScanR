@@ -1,3 +1,7 @@
+/**
+ * This file acts as the main hub when a user opens the app.
+ */
+
 package com.example.quickscanr;
 
 import androidx.annotation.NonNull;
@@ -22,6 +26,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This is the main hub when a user opens the app. Depending on
+ * the type of user you are, it will show a different home page.
+ */
 public class MainActivity extends AppCompatActivity {
 
     static User user;
@@ -34,12 +42,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Check if camera permission has been granted
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 100);
-        } else {
+//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 100);
+//        } else {
             // If permission already been granted
             initializeApp();
-        }
+//        }
     }
 
     /**
@@ -93,6 +101,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * shows a different home page depending on the type of user you are
+     * Reference: https://stackoverflow.com/questions/7793576/switching-between-fragment-view
+     * @param userType type of the user
+     */
     public void showHome(Integer userType) {
         // Show the appropriate UI based on the user type
         if (userType == UserType.ATTENDEE) {
@@ -107,6 +120,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * used when editing your profile. updates your user information
+     * in MainActivity.
+     * @param newUserInfo the User object containing the new user information
+     */
     public static void updateUser(User newUserInfo) {
         user = newUserInfo;
     }

@@ -10,6 +10,7 @@
     android:paddingRight="40dp"
     android:paddingBottom="50dp"
     tools:context=".Profile"
+    android:id="@+id/attendee_profile_page"
     >
 
 

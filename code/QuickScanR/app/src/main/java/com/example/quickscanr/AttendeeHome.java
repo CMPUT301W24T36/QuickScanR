@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -95,6 +96,9 @@ public class AttendeeHome extends AttendeeFragment {
         announcementsRecyclerView.setAdapter(announcementAdapter);
         announcementsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         addSnapshotListenerForAnnouncement();
+
+        TextView nameField = view.findViewById(R.id.user_name);
+        nameField.setText(MainActivity.user.getName());
 
         return view;
     }
