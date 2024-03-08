@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -231,6 +232,9 @@ public class OrganizerHome extends OrganizerFragment {
         layoutManager.setReverseLayout(true);
         layoutManager.setStackFromEnd(true);
         milestonesRecyclerView.setLayoutManager(layoutManager);
+
+        TextView nameField = view.findViewById(R.id.organizer_name);
+        nameField.setText(MainActivity.user.getName());
 
         return view;
 
