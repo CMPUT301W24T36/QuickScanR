@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * adapter class for the RecyclerView displaying checked-in attendees
  * manages the data of attendees and binds it to views that are displayed within a RecyclerView
- * @see CheckedInAttendeeAdapter
+ *
  */
 
 public class CheckedInAttendeeAdapter extends RecyclerView.Adapter<CheckedInAttendeeAdapter.ViewHolder> {
