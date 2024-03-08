@@ -1,5 +1,7 @@
 package com.example.quickscanr;
 
+import android.util.Log;
+
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -25,7 +27,7 @@ public class RealtimeData {
             @Override
             public void onEvent(QuerySnapshot snapshots, FirebaseFirestoreException e) {
                 if (e != null) {
-                    // Handle error
+                    Log.w("RealtimeData", "Listen failed.", e);
                     return;
                 }
 
