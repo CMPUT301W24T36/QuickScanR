@@ -13,7 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -29,13 +33,13 @@ import java.util.List;
 public class OrganizerHome extends OrganizerFragment {
 
 
-    private ArrayList<Milestone> milestoneList;
+    private ArrayList<Milestone> milestoneList = new ArrayList<>();
+    private MilestoneAdapter milestoneAdapter;
     private EditText announcement;
 
+    private RealtimeData realtimeData;
+    private String userId;
 
-    // Database-fetched values
-    int checkInsCount;
-    int eventsCount;
 
     /**
      * Constructor
@@ -50,8 +54,7 @@ public class OrganizerHome extends OrganizerFragment {
      * @return OrganizerHome fragment
      */
     public static OrganizerHome newInstance(String param1, String param2) {
-        OrganizerHome fragment = new OrganizerHome();
-        return fragment;
+        return new OrganizerHome();
     }
 
     /**
@@ -62,6 +65,34 @@ public class OrganizerHome extends OrganizerFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MainActivity mainActivity = (MainActivity) getActivity();
+        if (mainActivity != null) {
+            this.userId = mainActivity.user.getUserId();
+        }
+        setupRealtimeData();
+    }
+
+
+    private void setupRealtimeData() {
+        realtimeData = new RealtimeData();
+
+        realtimeData.setEventCountListener(new RealtimeData.EventCountListener() {
+            @Override
+            public void onEventCountUpdated(int eventCount) {
+                Log.d("OrganizerHome", "Event count updated: " + eventCount);
+                getActivity().runOnUiThread(() -> addEventMilestones(eventCount));
+            }
+        });
+
+        realtimeData.setEventListener(new RealtimeData.EventAttendeeCountListener() {
+            @Override
+            public void onTotalCountUpdated(int totalAttendeeCount) {
+                Log.d("OrganizerHome", "Total attendee count updated: " + totalAttendeeCount);
+                getActivity().runOnUiThread(() -> addCheckInMilestones(totalAttendeeCount));
+            }
+        });
+
+        realtimeData.startListeningForEventCount(userId);
     }
 
     /**
@@ -88,14 +119,9 @@ public class OrganizerHome extends OrganizerFragment {
         milestoneList = new ArrayList<>();
         RecyclerView milestonesRecyclerView = view.findViewById(R.id.milestones_recycler_view);
 
-        // Get the relevant user information to show their milestones! TO BE IMPLEMENTED
-//        checkInsCount = 0;
-//        eventsCount = 0;
-//        fetchValuesFromDatabase(eventsCount, checkInsCount);
-
 
         // Create the MilestoneAdapter and set it to the RecyclerView
-        MilestoneAdapter milestoneAdapter = new MilestoneAdapter(milestoneList);
+        milestoneAdapter = new MilestoneAdapter(milestoneList);
         milestonesRecyclerView.setAdapter(milestoneAdapter);
 
         // Later added -> Earlier shown
@@ -104,77 +130,47 @@ public class OrganizerHome extends OrganizerFragment {
         layoutManager.setStackFromEnd(true);
         milestonesRecyclerView.setLayoutManager(layoutManager);
 
-        // SAMPLE: Since not connected to DB
-        checkInsCount = 1;
-        addCheckInMilestones(checkInsCount);
-        checkInsCount = 10;
-        addCheckInMilestones(checkInsCount);
-        checkInsCount = 1000;
-        addCheckInMilestones(checkInsCount);
-
-        eventsCount = 1;
-        addEventMilestones(eventsCount);
-        eventsCount = 1000;
-        addEventMilestones(eventsCount);
         return view;
 
     }
 
-    /**
-     * This is a temporary function, as actual implementation may result in
-     * these two parameters being in separate functions. This is to show future
-     * database implementation that will modify these values accordingly
-     *
-     * @param eventsCount
-     * @param checkInsCount
-     */
+    private void addCheckInMilestones(int totalAttendeeCount) {
 
-    private void fetchValuesFromDatabase(int eventsCount, int checkInsCount) {
-        // To be implemented.
-    }
-
-    /**
-     * Prompts Check In Milestones to check to add to the list!
-     * @param checkInsCount
-     */
-    private void addCheckInMilestones(int checkInsCount) {
-
-        if (checkInsCount == 1) {
+        if (totalAttendeeCount == 1) {
             milestoneList.add(new Milestone("Iron Check-in", "Congratulations! You got your first check in!"));
             Log.d("Debug Milestone", "Added to milestone.");
-        } else if (checkInsCount < 11) {
+        } else if (totalAttendeeCount < 11) {
             milestoneList.add(new Milestone("Bronze Check-in", "Congratulations! You've achieved 10 check-ins."));
-        } else if (checkInsCount < 51) {
+        } else if (totalAttendeeCount < 51) {
             milestoneList.add(new Milestone("Silver Check-in", "Wow! You've achieved 50 check-ins."));
-        } else if (checkInsCount < 101) {
+        } else if (totalAttendeeCount < 101) {
             milestoneList.add(new Milestone("Gold Check-in", "Nice! You've achieved 100 check-ins."));
-        } else if (checkInsCount < 501) {
+        } else if (totalAttendeeCount < 501) {
             milestoneList.add(new Milestone("Platinum Check-in", "Incredible! You've achieved 500 check-ins."));
-        } else if (checkInsCount < 1001) {
+        } else if (totalAttendeeCount < 1001) {
             milestoneList.add(new Milestone("Diamond Check-in", "Impressive! You've achieved 1000 check-ins."));
-        } else if (checkInsCount < 10001) {
+        } else if (totalAttendeeCount < 10001) {
             milestoneList.add(new Milestone("Emerald Check-in", "You've hit the epic milestone of 10,000 event check-ins! Your passion for events is truly extraordinary."));
         }
+        milestoneAdapter.notifyDataSetChanged();
     }
 
-    /**
-     * Prompts Event  Milestones to check to add to the list!
-     * @param eventsCount
-     */
-    private void addEventMilestones(int eventsCount) {
-        if (eventsCount == 1) {
+
+    private void addEventMilestones(int eventCount) {
+        if (eventCount == 1) {
             milestoneList.add(new Milestone("Event Rookie", "Way to go! You made your first event."));
-        } else if (eventsCount < 6) {
+        } else if (eventCount < 6) {
             milestoneList.add(new Milestone("Event Enthusiast", "You've hosted 5 events. Keep the momentum going!"));
-        } else if (eventsCount < 21) {
+        } else if (eventCount < 21) {
             milestoneList.add(new Milestone("Event Icon", "Impressive! 20 events hosted. You're a seasoned host."));
-        } else if (eventsCount < 51) {
+        } else if (eventCount < 51) {
             milestoneList.add(new Milestone("Event Superstar", "Congratulations! You've hosted 50 events. Your impact is remarkable."));
-        } else if (eventsCount < 101) {
+        } else if (eventCount < 101) {
             milestoneList.add(new Milestone("Event Legend", "Incredible achievement! You've hosted 100 events. You're a true legend."));
-        } else if (eventsCount < 1001) {
+        } else if (eventCount < 1001) {
             milestoneList.add(new Milestone("Event Gatsby", "Unbelievable! You have reached the Gatsby-worthy milestone of hosting 1000 events."));
         }
+        milestoneAdapter.notifyDataSetChanged();
 
     }
 }

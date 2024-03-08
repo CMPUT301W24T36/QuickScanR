@@ -1,6 +1,7 @@
 package com.example.quickscanr;
 
 import android.util.Log;
+import androidx.annotation.Nullable;
 
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -14,9 +15,18 @@ public class RealtimeData {
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final Map<String, Integer> eventToAttendeeCountMap = new HashMap<>();
     private EventAttendeeCountListener listener;
+    private EventCountListener eventCountListener;
 
     public interface EventAttendeeCountListener {
         void onTotalCountUpdated(int totalAttendeeCount);
+    }
+
+    public interface EventCountListener {
+        void onEventCountUpdated(int eventCount);
+    }
+
+    public void setEventCountListener(EventCountListener listener) {
+        this.eventCountListener = listener;
     }
 
     public void setEventListener(EventAttendeeCountListener listener) {
@@ -42,6 +52,27 @@ public class RealtimeData {
                         }
                     });
         }
+    }
+
+    public void startListeningForEventCount(String userId) {
+        db.collection("events")
+                .whereEqualTo("userId", userId)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.w("RealtimeData", "Listening for event count updates failed.", e);
+                            return;
+                        }
+
+                        if (snapshots != null) {
+                            int eventCount = snapshots.size();
+                            if (eventCountListener != null) {
+                                eventCountListener.onEventCountUpdated(eventCount);
+                            }
+                        }
+                    }
+                });
     }
 
     private void notifyTotalCountUpdated() {
