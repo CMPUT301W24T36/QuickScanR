@@ -16,7 +16,7 @@ import java.util.Map;
  * manages the data of attendees and binds it to views that are displayed within a RecyclerView
  *
  */
-a
+
 public class CheckedInAttendeeAdapter extends RecyclerView.Adapter<CheckedInAttendeeAdapter.ViewHolder> {
     private List<Map<String, Object>> attendeeDataList;
     private OnItemClickListener onItemClickListener;
