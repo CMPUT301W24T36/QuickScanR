@@ -11,14 +11,26 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+/**
+ * Represents the page for the profile of the user
+ * @see User
+ */
 public class Profile extends Fragment {
 
     private static final String USERKEY = "user";
 
     private User user;
 
+    /**
+     * Constructor
+     */
     public Profile() {}
 
+    /**
+     * Called when creating a new instance of Profile
+     * @param user
+     * @return Profile fragment
+     */
     public static Profile newInstance(User user) {
         Profile fragment = new Profile();
         Bundle args = new Bundle();
@@ -27,6 +39,11 @@ public class Profile extends Fragment {
         return fragment;
     }
 
+    /**
+     * Called when creating the Profile fragment
+     * @param savedInstanceState If the fragment is being re-created from
+     * a previous saved state, this is the state.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +51,19 @@ public class Profile extends Fragment {
             user = (User) getArguments().getSerializable(USERKEY);
         }
     }
+
+    /**
+     * Responsible for creating the view for Profile fragment
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return View for Profile fragment
+     */
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -76,6 +106,10 @@ public class Profile extends Fragment {
         return view;
     }
 
+    /**
+     * setting the listeners for the fragment
+     * @param v
+     */
     private void setListeners(View v) {
         ImageButton editProfileBtn = v.findViewById(R.id.user_edit_profile);
         editProfileBtn.setOnClickListener(new View.OnClickListener() {
@@ -87,6 +121,10 @@ public class Profile extends Fragment {
         });
     }
 
+    /**
+     * sets the relevant information for the Profile fragment
+     * @param v
+     */
     private void populatePage(View v) {
         TextView nameField = v.findViewById(R.id.name);
         TextView homepageField = v.findViewById(R.id.profile_homepage);

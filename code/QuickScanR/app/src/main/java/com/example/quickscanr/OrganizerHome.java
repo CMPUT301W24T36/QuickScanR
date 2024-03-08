@@ -16,6 +16,16 @@ import android.widget.EditText;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents the home page for the organizer, also deals with the
+ * functionality of displaying milestones relevant for the organizer/'s events
+ *
+ * ISSUE: MISSING IMPLEMENTATION OF THE ORGANIZER ANNOUNCING.
+ * ISSUE: let milestone implementation be its own function.
+ * @see Milestone
+ * @see Announcement
+ */
+
 public class OrganizerHome extends OrganizerFragment {
 
 
@@ -27,19 +37,47 @@ public class OrganizerHome extends OrganizerFragment {
     int checkInsCount;
     int eventsCount;
 
+    /**
+     * Constructor
+     */
     public OrganizerHome() {
     }
 
+    /**
+     * Called when creating a new instance of the OrganizerHome
+     * @param param1
+     * @param param2
+     * @return OrganizerHome fragment
+     */
     public static OrganizerHome newInstance(String param1, String param2) {
         OrganizerHome fragment = new OrganizerHome();
         return fragment;
     }
 
+    /**
+     * Called when the fragment is created
+     * @param savedInstanceState If the fragment is being re-created from
+     * a previous saved state, this is the state.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * Creates the view for OrganizerHome fragment, deals with the functionality
+     * for displaying the list of milestones.
+     *
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return the view
+     */
     @SuppressLint("NotifyDataSetChanged")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -97,6 +135,7 @@ public class OrganizerHome extends OrganizerFragment {
 
     /**
      * Prompts Check In Milestones to check to add to the list!
+     * @param checkInsCount
      */
     private void addCheckInMilestones(int checkInsCount) {
 
@@ -120,6 +159,7 @@ public class OrganizerHome extends OrganizerFragment {
 
     /**
      * Prompts Event  Milestones to check to add to the list!
+     * @param eventsCount
      */
     private void addEventMilestones(int eventsCount) {
         if (eventsCount == 1) {

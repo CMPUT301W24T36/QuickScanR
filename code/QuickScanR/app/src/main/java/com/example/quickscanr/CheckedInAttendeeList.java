@@ -24,6 +24,7 @@ import java.util.Map;
 /**
  * fragment class for displaying a list of attendees who have checked into an event.
  * uses Firebase Firestore to fetch and display the attendees' data in a RecyclerView.
+ * @see CheckedInAttendeeAdapter
  */
 
 public class CheckedInAttendeeList extends Fragment {
