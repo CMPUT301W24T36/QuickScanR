@@ -2,6 +2,16 @@ package com.example.quickscanr;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -40,6 +50,9 @@ public class OrganizerHome extends OrganizerFragment {
     private RealtimeData realtimeData;
     private String userId;
 
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private List<String> eventIds = new ArrayList<>();
+
 
     /**
      * Constructor
@@ -69,7 +82,70 @@ public class OrganizerHome extends OrganizerFragment {
         if (mainActivity != null) {
             this.userId = mainActivity.user.getUserId();
         }
-        setupRealtimeData();
+        getOrganizerEventIds();
+        startListeningForEventCount();
+
+    }
+
+    private void startListeningForEventCount() {
+        // Listen for real-time updates on the event count based on the organizer's userId
+        db.collection("events")
+                .whereEqualTo("ownerID", userId)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot snapshots,
+                                        @Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.w("OrganizerHome", "Listen for event count failed.", e);
+                            return;
+                        }
+                        if (snapshots != null) {
+                            int eventCount = snapshots.size();
+                            addEventMilestones(eventCount);
+                        }
+                    }
+                });
+    }
+
+    private void startListeningForAttendeeCount(List<String> eventIds) {
+        for (String eventId : eventIds) {
+            db.collection("events").document(eventId).collection("attendees")
+                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable QuerySnapshot snapshots,
+                                            @Nullable FirebaseFirestoreException e) {
+                            if (e != null) {
+                                Log.w("OrganizerHome", "Listen for attendees failed.", e);
+                                return;
+                            }
+                            if (snapshots != null) {
+                                int totalAttendeeCount = snapshots.size();
+                                addCheckInMilestones(totalAttendeeCount);
+                            }
+                        }
+                    });
+        }
+    }
+
+    private void getOrganizerEventIds() {
+        db.collection("events")
+                .whereEqualTo("ownerID", userId)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            eventIds.clear(); // Clear the list to avoid duplicates
+                            for (DocumentSnapshot document : task.getResult()) {
+                                eventIds.add(document.getId()); // Add the event ID to the list
+                            }
+                            // Now that you have the event IDs, you can start listening for attendees
+                            startListeningForAttendeeCount(eventIds);
+                        } else {
+                            Log.d("OrganizerHome", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
     }
 
 
