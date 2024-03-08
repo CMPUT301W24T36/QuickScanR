@@ -1,5 +1,12 @@
 package com.example.quickscanr;
 
+/**
+ * This class holds all the constants used to connect to the database.
+ * @see Event
+ * @see User
+ * @see Announcement
+ * @see ImgHandler
+ */
 public class DatabaseConstants {
 
     // Users

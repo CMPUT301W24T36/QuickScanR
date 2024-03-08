@@ -27,18 +27,47 @@ public class AddEvent extends InnerPageFragment {
 
     private FirebaseFirestore db;
 
+    /**
+     * Constructor of AddEvent fragment
+     */
     public AddEvent() {}
+
+    /**
+     * Creates a new instance of the AddEvent fragment
+     * @param param1
+     * @param param2
+     * @return the fragment that is AddEvent
+     */
 
     public static AddEvent newInstance(String param1, String param2) {
         AddEvent fragment = new AddEvent();
         return fragment;
     }
 
+
+    /**
+     * Initializes the db variable
+     * @param savedInstanceState If the fragment is being re-created from
+     * a previous saved state, this is the state.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = FirebaseFirestore.getInstance();
     }
+
+    /**
+     * Creates the view relevant for AddEvent
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return the View created
+     */
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -117,7 +146,12 @@ public class AddEvent extends InnerPageFragment {
         return v;
     }
 
-    // Handles clicks for date input fields by displaying a DatePicker dialog
+
+    /**
+     * Handles clicks for date input fields by displaying a DatePicker dialog
+     * @param dateField
+     */
+
     private void onClickFuncForDates(EditText dateField) {
         final Calendar c = Calendar.getInstance();
 

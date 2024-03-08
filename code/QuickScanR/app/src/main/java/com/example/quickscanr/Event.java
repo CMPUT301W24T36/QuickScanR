@@ -11,6 +11,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+/***
+ * Represents an event in the application.
+ */
+
 public class Event implements Serializable {
     private String id = "default";
     private long timestamp;
@@ -25,7 +29,19 @@ public class Event implements Serializable {
     private ArrayList<User> attendees;
     private HashMap<User, Integer> checkedInCounts;
 
-    // this constructor includes eventID and timestamp
+    /**
+     * Constructor #1
+     * This constructor includes eventID and timestamp
+     * @param name
+     * @param description
+     * @param location
+     * @param start
+     * @param end
+     * @param restrictions
+     * @param organizer
+     * @param id
+     * @param timestamp
+     */
     public Event(String name, String description, String location, String start, String end, String restrictions, User organizer, String id, long timestamp) {
         this.name = name;
         this.description = description;
@@ -40,6 +56,17 @@ public class Event implements Serializable {
         this.timestamp = timestamp;
     }
 
+    /**
+     * Constructor #2
+     * @param name
+     * @param description
+     * @param location
+     * @param start
+     * @param end
+     * @param restrictions
+     * @param organizer
+     */
+
     public Event(String name, String description, String location, String start, String end, String restrictions, User organizer) {
         this.name = name;
         this.description = description;
@@ -51,6 +78,18 @@ public class Event implements Serializable {
         this.attendees = new ArrayList<>();
         this.checkedInCounts = new HashMap<>();
     }
+
+    /**
+     * Constructor #3
+     * @param name
+     * @param description
+     * @param location
+     * @param start
+     * @param end
+     * @param restrictions
+     * @param poster
+     * @param organizer
+     */
 
     public Event(String name, String description, String location, String start, String end, String restrictions, Bitmap poster, User organizer) {
         this.name = name;
@@ -65,6 +104,19 @@ public class Event implements Serializable {
         this.checkedInCounts = new HashMap<>();
     }
 
+    /** Constructor #4
+     *
+     * @param name
+     * @param description
+     * @param location
+     * @param start
+     * @param end
+     * @param restrictions
+     * @param poster
+     * @param organizer
+     * @param attendees
+     * @param checkedInCounts
+     */
     public Event(String name, String description, String location, String start, String end, String restrictions, Bitmap poster, User organizer, ArrayList<User> attendees, HashMap<User, Integer> checkedInCounts) {
         this.name = name;
         this.description = description;
@@ -78,6 +130,19 @@ public class Event implements Serializable {
         this.checkedInCounts = checkedInCounts;
     }
 
+    /** Constructor #5
+     *
+     * @param name
+     * @param description
+     * @param location
+     * @param start
+     * @param end
+     * @param restrictions
+     * @param organizer
+     * @param attendees
+     * @param checkedInCounts
+     */
+
     public Event(String name, String description, String location, String start, String end, String restrictions, User organizer, ArrayList<User> attendees, HashMap<User, Integer> checkedInCounts) {
         this.name = name;
         this.description = description;
@@ -90,89 +155,190 @@ public class Event implements Serializable {
         this.checkedInCounts = checkedInCounts;
     }
 
+    /**
+     * Getter: ID
+     * @return id of the vent
+     */
+
     public String getId() { return id; }
+
+    /**
+     * setter: id
+     * @param id to be set as
+     */
 
     public void setId(String id) { this.id = id; }
 
+    /**
+     * getter: timestamp
+     * @return the timestamp
+     */
     public long getTimestamp() { return timestamp; }
 
+    /**
+     * setter: timestamp
+     * @param timestamp to be set as
+     */
     public void setTimestamp(long timestamp) { this.timestamp = timestamp; }
 
+    /**
+     * getter: name
+     * @return name of the event
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * setter
+     * @param name to be set as
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * getter: description
+     * @return the event description
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * setter: description
+     * @param description  the event description
+     */
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /**
+     * getter: location
+     * @return event location
+     */
     public String getLocation() {
         return location;
     }
 
+    /**
+     * setter: location
+     * @param location to set the event as
+     */
     public void setLocation(String location) {
         this.location = location;
     }
 
+    /**
+     * getter: start date
+     * @return the start date of event
+     */
     public String getStart() {
         return start;
     }
 
+    /**
+     * setter: start date
+     * @param start the start date of event
+     */
     public void setStart(String start) {
         this.start = start;
     }
-
+    /**
+     * getter: end date
+     * @return the end date of event
+     */
     public String getEnd() {
         return end;
     }
 
+    /**
+     * setter: end date
+     * @param end  the end date of event
+     */
     public void setEnd(String end) {
         this.end = end;
     }
 
+    /**
+     * getter: restrictions
+     * @return the restrictions of event
+     */
     public String getRestrictions() {
         return restrictions;
     }
+
+    /**
+     * setter: restrictions
+     * @param restrictions of event
+     */
 
     public void setRestrictions(String restrictions) {
         this.restrictions = restrictions;
     }
 
+    /**
+     * getter: poster
+     * @return poster of event
+     */
     public Bitmap getPoster() {
         return poster;
     }
 
+    /**
+     * setter: poster
+     * @param poster of event
+     */
     public void setPoster(Bitmap poster) {
         this.poster = poster;
     }
 
+    /**
+     * getter: organizer
+     * @return organizer of event
+     */
     public User getOrganizer() {
         return organizer;
     }
+
+    /**
+     * setter: organizer
+     * @param organizer of event
+     */
 
     public void setOrganizer(User organizer) {
         this.organizer = organizer;
     }
 
+    /**
+     * getter: attendees
+     * @return attendees list
+     */
     public ArrayList<User> getAttendees() {
         return attendees;
     }
 
+    /**
+     * adds an attendee in the list of attendees
+     * @param attendee
+     */
     public void addAttendee(User attendee) {
         attendees.add(attendee);
     }
 
+    /**
+     * Counts the number of check ins
+     * @return the amount of checkedIn users
+     */
+
     public HashMap<User, Integer> getCheckedInCounts() {
         return checkedInCounts;
     }
+
+    /**
+     * add a new checked in attendee
+     * @param checkedIn
+     */
 
     public void addCheckedInAttendee(User checkedIn) {
         if (checkedInCounts.getOrDefault(checkedIn, -1) == -1) {
@@ -183,10 +349,19 @@ public class Event implements Serializable {
         }
     }
 
+    /**
+     * gets the RSVP count of the event
+     * @return
+     */
+
     public int getRSVPCount() {
         return getAttendees().size();
     }
 
+    /**
+     * gets the total check in count in the event
+     * @return
+     */
     public int getTotalCheckInCount() {
         int checkInCount = 0;
         for (int count : checkedInCounts.values()) {
@@ -195,6 +370,14 @@ public class Event implements Serializable {
         return checkInCount;
     }
 
+    /**
+     * Handles errors for input
+     * @param nameInput
+     * @param locationInput
+     * @param startDateInput
+     * @param endDateInput
+     * @return
+     */
     public boolean isErrors (TextInputEditText nameInput, TextInputEditText locationInput, TextInputEditText startDateInput, TextInputEditText endDateInput) {
         boolean wasErrors = false;
 
