@@ -83,7 +83,7 @@ public class CheckInQR extends InnerPageFragment {
      */
     private void generateAndDisplayQRCode(ImageView qrImage, String eventId, long eventTimestamp) {
         // Combine event ID and timestamp to form the QR code content
-        String qrContent = eventId + "_" + eventTimestamp;
+        String qrContent = DatabaseConstants.qrTypeCheckIn + "_" + eventId + "_" + eventTimestamp;
         try {
             // Generate the QR code and set it in the ImageView
             Bitmap qrCodeBitmap = GenerateQR.generateQRCode(qrContent, 300, 300);
