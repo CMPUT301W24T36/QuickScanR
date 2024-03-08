@@ -18,7 +18,6 @@ import com.google.firebase.firestore.DocumentReference;
  * A new QR code is generated using the current time in ms to make sure it's unique.
  */
 public class CheckInQR extends InnerPageFragment {
-
     private String eventId;
     private long eventTimestamp;
     private static final String EVENT = "event";
