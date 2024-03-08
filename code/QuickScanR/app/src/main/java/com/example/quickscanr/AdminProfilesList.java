@@ -136,8 +136,6 @@ public class AdminProfilesList extends AdminFragment {
         });
     }
 
-
-
     /**
      * addListeners:
      *  - create profileArrayAdapter and set it as the adapter for the recycler view
