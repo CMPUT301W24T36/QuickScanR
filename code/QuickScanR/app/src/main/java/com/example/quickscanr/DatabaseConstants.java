@@ -27,6 +27,7 @@ public class DatabaseConstants {
     public static final String evRestricKey = "restrictions";
     public static final String evTimestampKey = "timestamp";
     public static final String evPosterKey = "posterID";
+    public static final String evOwnerKey = "ownerID";
 
     // Announcements
 

@@ -123,6 +123,9 @@ public class AddEvent extends InnerPageFragment {
                 data.put(DatabaseConstants.evRestricKey, eventRestric);
                 data.put(DatabaseConstants.evTimestampKey, timestamp);
                 data.put(DatabaseConstants.evPosterKey, "");  // TO BE REPLACED
+                MainActivity mainActivity = (MainActivity) getActivity();
+                String userId = mainActivity.user.getUserId();
+                data.put(DatabaseConstants.evOwnerKey, userId);
 
                 // Create Event object and validate inputs
                 Event newEvent = new Event(eventName, eventDescription, eventLoc, startDateString, endDateString, eventRestric, MainActivity.user);
