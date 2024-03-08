@@ -35,7 +35,7 @@ import java.util.List;
  * functionality of displaying milestones relevant for the organizer/'s events
  *
  * ISSUE: MISSING IMPLEMENTATION OF THE ORGANIZER ANNOUNCING.
- * ISSUE: let milestone implementation be its own function.
+ * ISSUE: Implement "Congrats, you got your first checked in for event X"
  * @see Milestone
  * @see Announcement
  */
@@ -52,6 +52,9 @@ public class OrganizerHome extends OrganizerFragment {
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private List<String> eventIds = new ArrayList<>();
+
+    private int lastEventCount; // to help with the ranges; may be temporary
+    private int lastAttendeeCount; // to help with the ranges; may be temporary
 
 
     /**
@@ -77,6 +80,7 @@ public class OrganizerHome extends OrganizerFragment {
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.d("DEBUG: OH.update", "Good");
         super.onCreate(savedInstanceState);
         MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
@@ -87,7 +91,10 @@ public class OrganizerHome extends OrganizerFragment {
 
     }
 
-    private void startListeningForEventCount() {
+    /**
+     * Counts the NUMBER OF EVENTS + has the functionality of letting the milestones know of the event count
+     */
+    private void startListeningForEventCount() { // Functional
         // Listen for real-time updates on the event count based on the organizer's userId
         db.collection("events")
                 .whereEqualTo("ownerID", userId)
@@ -101,14 +108,21 @@ public class OrganizerHome extends OrganizerFragment {
                         }
                         if (snapshots != null) {
                             int eventCount = snapshots.size();
+                            // Let the milestone know about the event number
+                            Log.d("DEBUG: OH.EventCount", "Counted Events: "+eventCount);
                             addEventMilestones(eventCount);
                         }
                     }
                 });
     }
 
+    /**
+     * Counts the NUMBER OF ATTENDEES + has the functionality of letting milestones know the amount of events.
+     * @param eventIds the relevant event
+     */
     private void startListeningForAttendeeCount(List<String> eventIds) {
         for (String eventId : eventIds) {
+            Log.d("DEBUG: OH.AttendeeCount", "EVENT ID:" + eventId);
             db.collection("events").document(eventId).collection("attendees")
                     .addSnapshotListener(new EventListener<QuerySnapshot>() {
                         @Override
@@ -120,6 +134,8 @@ public class OrganizerHome extends OrganizerFragment {
                             }
                             if (snapshots != null) {
                                 int totalAttendeeCount = snapshots.size();
+                                // Call Milestones to update the UI!
+                                Log.d("DEBUG: OH.AttendeeCount", "COUNTED ATTENDEES:" + totalAttendeeCount);
                                 addCheckInMilestones(totalAttendeeCount);
                             }
                         }
@@ -210,43 +226,75 @@ public class OrganizerHome extends OrganizerFragment {
 
     }
 
+    /**
+     * What the milestones will show based on the total attendee count
+     * ISSUE: the case for 0. Fix in the future!
+     * @param totalAttendeeCount the number of attendees
+     */
+    @SuppressLint("NotifyDataSetChanged")
     private void addCheckInMilestones(int totalAttendeeCount) {
 
-        if (totalAttendeeCount == 1) {
+        Log.d("DEBUG:OH.Milestones", "Count:"+totalAttendeeCount+"Count:" +lastAttendeeCount);
+        lastAttendeeCount = 0;
+        if(totalAttendeeCount==0) {
+            //do nothing
+        }
+        else if (totalAttendeeCount >=1 && totalAttendeeCount <5 && lastAttendeeCount < 1){
             milestoneList.add(new Milestone("Iron Check-in", "Congratulations! You got your first check in!"));
-            Log.d("Debug Milestone", "Added to milestone.");
-        } else if (totalAttendeeCount < 11) {
+            lastAttendeeCount = 1;
+        } else if ((totalAttendeeCount >=10 && totalAttendeeCount <50 && lastAttendeeCount < 10)) {
             milestoneList.add(new Milestone("Bronze Check-in", "Congratulations! You've achieved 10 check-ins."));
-        } else if (totalAttendeeCount < 51) {
+            lastAttendeeCount = 10;
+        } else if ((totalAttendeeCount >=50 && totalAttendeeCount <100 && lastAttendeeCount < 50)) {
             milestoneList.add(new Milestone("Silver Check-in", "Wow! You've achieved 50 check-ins."));
-        } else if (totalAttendeeCount < 101) {
+            lastAttendeeCount = 50;
+        } else if ((totalAttendeeCount >=100 && totalAttendeeCount <500 && lastAttendeeCount < 100)){
             milestoneList.add(new Milestone("Gold Check-in", "Nice! You've achieved 100 check-ins."));
-        } else if (totalAttendeeCount < 501) {
+            lastAttendeeCount = 100;
+        } else if (((totalAttendeeCount >=500 && totalAttendeeCount <1000 && lastAttendeeCount < 500))){
             milestoneList.add(new Milestone("Platinum Check-in", "Incredible! You've achieved 500 check-ins."));
-        } else if (totalAttendeeCount < 1001) {
+            lastAttendeeCount = 500;
+        } else if ((totalAttendeeCount >=1000 && totalAttendeeCount <10000 && lastAttendeeCount < 1000)) {
             milestoneList.add(new Milestone("Diamond Check-in", "Impressive! You've achieved 1000 check-ins."));
-        } else if (totalAttendeeCount < 10001) {
+            lastAttendeeCount = 1000;
+        } else if (totalAttendeeCount>=10000 && lastAttendeeCount < 10000) {
             milestoneList.add(new Milestone("Emerald Check-in", "You've hit the epic milestone of 10,000 event check-ins! Your passion for events is truly extraordinary."));
+            lastAttendeeCount = 10000;
         }
         milestoneAdapter.notifyDataSetChanged();
     }
 
 
+    /***
+     * What the milestones will be based on the event count
+     * ISSUE: the case of 0. Fix in the future
+     * ISSUE: there can be a better implementation for this, as it will keep checking these if statements for every update
+     * @param eventCount the number of events the organizer has
+     */
+    @SuppressLint("NotifyDataSetChanged")
     private void addEventMilestones(int eventCount) {
-        if (eventCount == 1) {
+        lastEventCount = 0;
+        if (eventCount == 0) {
+            // do nothing
+        } else if (eventCount >=1 && eventCount <5 && lastEventCount < 1) {
             milestoneList.add(new Milestone("Event Rookie", "Way to go! You made your first event."));
-        } else if (eventCount < 6) {
+            lastEventCount = 1;
+        } else if (eventCount >=5 && eventCount <20 && lastEventCount < 5) {
             milestoneList.add(new Milestone("Event Enthusiast", "You've hosted 5 events. Keep the momentum going!"));
-        } else if (eventCount < 21) {
+            lastEventCount = 5;
+        } else if (eventCount >=20 && eventCount <50  && lastEventCount < 20) {
             milestoneList.add(new Milestone("Event Icon", "Impressive! 20 events hosted. You're a seasoned host."));
-        } else if (eventCount < 51) {
+            lastEventCount = 20;
+        } else if (eventCount >=50 && eventCount <100 && lastEventCount < 50) {
             milestoneList.add(new Milestone("Event Superstar", "Congratulations! You've hosted 50 events. Your impact is remarkable."));
-        } else if (eventCount < 101) {
+            lastEventCount = 50;
+        } else if (eventCount >=100 && eventCount <1000  && lastEventCount < 100) {
             milestoneList.add(new Milestone("Event Legend", "Incredible achievement! You've hosted 100 events. You're a true legend."));
-        } else if (eventCount < 1001) {
+            lastEventCount = 100;
+        } else if (eventCount >=1000 && lastEventCount < 1000) {
             milestoneList.add(new Milestone("Event Gatsby", "Unbelievable! You have reached the Gatsby-worthy milestone of hosting 1000 events."));
+            lastEventCount = 1000;
         }
         milestoneAdapter.notifyDataSetChanged();
-
     }
 }
