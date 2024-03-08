@@ -35,7 +35,8 @@ import java.util.List;
  * functionality of displaying milestones relevant for the organizer/'s events
  *
  * ISSUE: MISSING IMPLEMENTATION OF THE ORGANIZER ANNOUNCING.
- * ISSUE: Implement "Congrats, you got your first checked in for event X"
+ * ISSUE: There will be duplicates for real time updates regarding milestones.
+ * FIX: Just add milestones to the database.
  * @see Milestone
  * @see Announcement
  */
@@ -53,8 +54,8 @@ public class OrganizerHome extends OrganizerFragment {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private List<String> eventIds = new ArrayList<>();
 
-    private int lastEventCount; // to help with the ranges; may be temporary
-    private int lastAttendeeCount; // to help with the ranges; may be temporary
+     int lastEventCount; // to help with the ranges; may be temporary
+     int lastAttendeeCount; // to help with the ranges; may be temporary
 
 
     /**
@@ -110,6 +111,7 @@ public class OrganizerHome extends OrganizerFragment {
                             int eventCount = snapshots.size();
                             // Let the milestone know about the event number
                             Log.d("DEBUG: OH.EventCount", "Counted Events: "+eventCount);
+                            lastEventCount = 0;
                             addEventMilestones(eventCount);
                         }
                     }
@@ -136,6 +138,7 @@ public class OrganizerHome extends OrganizerFragment {
                                 int totalAttendeeCount = snapshots.size();
                                 // Call Milestones to update the UI!
                                 Log.d("DEBUG: OH.AttendeeCount", "COUNTED ATTENDEES:" + totalAttendeeCount);
+                                lastAttendeeCount = 0;
                                 addCheckInMilestones(totalAttendeeCount);
                             }
                         }
@@ -143,6 +146,9 @@ public class OrganizerHome extends OrganizerFragment {
         }
     }
 
+    /**
+     * gets the organizer event ids
+     */
     private void getOrganizerEventIds() {
         db.collection("events")
                 .whereEqualTo("ownerID", userId)
@@ -165,6 +171,9 @@ public class OrganizerHome extends OrganizerFragment {
     }
 
 
+    /**
+     * sets up the real time data
+     */
     private void setupRealtimeData() {
         realtimeData = new RealtimeData();
 
@@ -175,6 +184,7 @@ public class OrganizerHome extends OrganizerFragment {
                 getActivity().runOnUiThread(() -> addEventMilestones(eventCount));
             }
         });
+
 
         realtimeData.setEventListener(new RealtimeData.EventAttendeeCountListener() {
             @Override
@@ -235,7 +245,6 @@ public class OrganizerHome extends OrganizerFragment {
     private void addCheckInMilestones(int totalAttendeeCount) {
 
         Log.d("DEBUG:OH.Milestones", "Count:"+totalAttendeeCount+"Count:" +lastAttendeeCount);
-        lastAttendeeCount = 0;
         if(totalAttendeeCount==0) {
             //do nothing
         }
@@ -273,7 +282,6 @@ public class OrganizerHome extends OrganizerFragment {
      */
     @SuppressLint("NotifyDataSetChanged")
     private void addEventMilestones(int eventCount) {
-        lastEventCount = 0;
         if (eventCount == 0) {
             // do nothing
         } else if (eventCount >=1 && eventCount <5 && lastEventCount < 1) {
