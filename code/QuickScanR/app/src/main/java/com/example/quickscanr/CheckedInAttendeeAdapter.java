@@ -93,9 +93,7 @@ public class CheckedInAttendeeAdapter extends RecyclerView.Adapter<CheckedInAtte
      */
 
     @Override
-    public int getItemCount() {
-        return attendeeDataList.size();
-    }
+    public int getItemCount() {return attendeeDataList.size();}
 
     /**
      * ViewHolder describes an item view and metadata about its place within the RecyclerView
