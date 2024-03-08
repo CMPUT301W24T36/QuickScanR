@@ -3,13 +3,10 @@ package com.example.quickscanr;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
-import static junit.framework.TestCase.assertEquals;
-
 import androidx.fragment.app.FragmentActivity;
-import androidx.test.espresso.NoMatchingViewException;
+import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -84,6 +81,19 @@ public class AttendeeNavigationTest {
         goHome();
         onView(withId(R.id.nav_camera_btn)).perform(click());
         onView(withId(R.id.qr_scanning_page)).check(matches(ViewMatchers.isDisplayed()));
+    }
+
+    /**
+     * click on attendee event list
+     * click on first item in attendee event list
+     * check that event details page is being shown
+     */
+    @Test
+    public void testOpenEventDetails() {
+        goHome();
+        onView(withId(R.id.nav_a_events_btn)).perform(click());
+        onView(withId(R.id.atnd_ev_list)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        onView(withId(R.id.event_details_page)).check(matches(ViewMatchers.isDisplayed()));
     }
 
 }
