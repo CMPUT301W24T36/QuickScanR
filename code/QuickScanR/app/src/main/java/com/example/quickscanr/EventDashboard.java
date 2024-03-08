@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
+import java.util.Collections;
+
 /**
  * This class manages the display of event details in the dashboard.
  * @see Event
@@ -44,6 +46,7 @@ public class EventDashboard extends InnerPageFragment {
      * @param savedInstanceState If the fragment is being re-created from
      * a previous saved state, this is the state.
      */
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,12 +55,11 @@ public class EventDashboard extends InnerPageFragment {
             attendeeCounter = new RealtimeData();
             attendeeCounter.setEventListener(new RealtimeData.EventAttendeeCountListener() {
                 @Override
-                public void onCountUpdated(int newCount) {
-                    // Update the UI with the new count
-                    if (getView() != null) {
+                public void onTotalCountUpdated(int newCount) {
+                    getActivity().runOnUiThread(() -> {
                         TextView attendeeCountView = getView().findViewById(R.id.evdash_txt_stat4);
                         attendeeCountView.setText(String.valueOf(newCount));
-                    }
+                    });
                 }
             });
         }
@@ -79,11 +81,12 @@ public class EventDashboard extends InnerPageFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.event_dashboard, container, false);
-        populatePage(v);    // Populate the dashboard with event details
-        setupAdditionalListeners(v);    // Set up listeners for interactive elements
+        populatePage(v); // Populate the dashboard with event details
+        setupAdditionalListeners(v); // Set up listeners for interactive elements
         addButtonListeners(getActivity(), v);
         if (event != null) {
-            attendeeCounter.startListening(event.getId());
+            // Assume this method is adapted to handle a single event ID
+            attendeeCounter.startListening(Collections.singletonList(event.getId()));
         }
         return v;
     }
