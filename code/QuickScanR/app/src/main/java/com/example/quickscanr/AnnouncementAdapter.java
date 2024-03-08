@@ -13,7 +13,9 @@ import java.util.ArrayList;
 
 /**
  * Announcement adapter: allows us to add values in our RecyclerView
- * Very similar to Milestone Adapter code
+ * Represents the adapter that for announcements to display in the UI
+ * @see Announcement
+ * @see AnnouncementViewHolder
  */
 public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementViewHolder> {
 
@@ -61,7 +63,7 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementViewHo
 
 
     /**
-     *
+     * Returns the amount of items in the dataset
      * @return integer, the size of the dataset.
      */
     @Override

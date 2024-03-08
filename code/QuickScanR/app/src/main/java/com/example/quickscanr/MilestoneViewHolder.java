@@ -8,14 +8,18 @@ import androidx.recyclerview.widget.RecyclerView;
 /**
  * ViewHolder represents our object (milestone) in the RecyclerView, per row.
  * "Holds" each milestone item!
+ * @see Milestone
  */
 public class MilestoneViewHolder extends RecyclerView.ViewHolder {
     public TextView titleTextView;
     public TextView descriptionTextView;
 
+    /**
+     * Initialize views in the ViewHolder
+     * @param itemView
+     */
     public MilestoneViewHolder(View itemView) {
         super(itemView);
-        // Initialize views in the ViewHolder
         titleTextView = itemView.findViewById(R.id.milestone_item_title);
         descriptionTextView = itemView.findViewById(R.id.milestone_description);
     }

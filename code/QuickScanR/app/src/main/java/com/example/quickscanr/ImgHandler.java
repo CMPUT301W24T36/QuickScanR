@@ -34,6 +34,10 @@ public class ImgHandler {
     public static final Integer uploadLimit = 1000000;  // 1mb max on firebase
     public static final Integer uploadQuality = 80;  // slight image compression to save space
 
+    /**
+     * Constructor
+     * @param context
+     */
     public ImgHandler(Context context) {
         this.context = context;
         db = FirebaseFirestore.getInstance();

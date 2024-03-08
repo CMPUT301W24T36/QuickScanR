@@ -12,15 +12,23 @@ import androidx.fragment.app.Fragment;
 
 /**
  * This class manages the display of event details in the dashboard.
+ * @see Event
  */
 public class EventDashboard extends InnerPageFragment {
 
     private static final String EVENT = "event";
     private Event event;
 
-    // Required empty constructor
+    /**
+     * Constructor
+     */
     public EventDashboard() {}
 
+    /**
+     * Creates a new instance of the fragment EventDashboard
+     * @param event
+     * @return the fragment, EventDashboard
+     */
     public static EventDashboard newInstance(Event event) {
         EventDashboard fragment = new EventDashboard();
         Bundle args = new Bundle();
@@ -29,6 +37,11 @@ public class EventDashboard extends InnerPageFragment {
         return fragment;
     }
 
+    /**
+     * Called when creating the fragment EventDashboard
+     * @param savedInstanceState If the fragment is being re-created from
+     * a previous saved state, this is the state.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +50,18 @@ public class EventDashboard extends InnerPageFragment {
         }
     }
 
+    /**
+     * To create the view relevant to EventDashboard
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return the view relevant to EventDashboard
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
