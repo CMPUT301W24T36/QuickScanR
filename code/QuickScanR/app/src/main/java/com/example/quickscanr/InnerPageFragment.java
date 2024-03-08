@@ -7,7 +7,15 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.material.button.MaterialButton;
 
+/**
+ * Deals with the functionality for the back button
+ */
 public class InnerPageFragment extends Fragment {
+    /**
+     * The functionality of the back button
+     * @param activity
+     * @param v
+     */
     public void addButtonListeners(FragmentActivity activity, View v) {
 
         MaterialButton backBtn = v.findViewById(R.id.back_btn);

@@ -2,6 +2,7 @@ package com.example.quickscanr;
 
 import android.os.Bundle;
 
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,27 +20,56 @@ import java.util.ArrayList;
 
 /**
  * Organizer Event List Page Functionality
+ * @see Event
+ * @see EventItemArrayAdapter
  */
 public class OrganizerEventList extends OrganizerFragment {
     RecyclerView eventRecyclerView;
     ArrayList<Event> eventDataList;
     EventItemArrayAdapter eventArrayAdapter;
+    private String userId;
     private FirebaseFirestore db;
     private CollectionReference eventsRef;
     public static String EVENT_COLLECTION = "events";
 
+    /**
+     * Constructor
+     */
     public OrganizerEventList() {}
 
+    /**
+     * Called when creating a new instance of the fragment
+     * @param param1
+     * @param param2
+     * @return OrganizerEventList fragment
+     */
     public static OrganizerEventList newInstance(String param1, String param2) {
         OrganizerEventList fragment = new OrganizerEventList();
         return fragment;
     }
 
+    /**
+     * Called at creation of the fragment OrganizerEventList
+     * @param savedInstanceState If the fragment is being re-created from
+     * a previous saved state, this is the state.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * Called when creating the view for OrganizerEventList
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return View of OrganizerEventList
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -53,6 +83,9 @@ public class OrganizerEventList extends OrganizerFragment {
         eventRecyclerView = v.findViewById(R.id.org_ev_list);
         eventDataList = new ArrayList<>();
 
+        MainActivity mainActivity = (MainActivity) getActivity();
+        userId = mainActivity.user.getUserId();
+
         addListeners();
         eventRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         addSnapshotListenerForEvent();
@@ -64,7 +97,7 @@ public class OrganizerEventList extends OrganizerFragment {
      * Snapshot Listener for real-time updates
      */
     private void addSnapshotListenerForEvent() {
-        eventsRef.addSnapshotListener((value, error) -> {
+        eventsRef.whereEqualTo(DatabaseConstants.evOwnerKey, userId).addSnapshotListener((value, error) -> {
             if (error != null) {
                 Log.e("DEBUG: OEL", error.getMessage());
                 return;

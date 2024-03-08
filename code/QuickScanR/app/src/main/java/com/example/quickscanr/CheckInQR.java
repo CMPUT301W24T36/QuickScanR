@@ -18,7 +18,6 @@ import com.google.firebase.firestore.DocumentReference;
  * A new QR code is generated using the current time in ms to make sure it's unique.
  */
 public class CheckInQR extends InnerPageFragment {
-
     private String eventId;
     private long eventTimestamp;
     private static final String EVENT = "event";
@@ -83,7 +82,7 @@ public class CheckInQR extends InnerPageFragment {
      */
     private void generateAndDisplayQRCode(ImageView qrImage, String eventId, long eventTimestamp) {
         // Combine event ID and timestamp to form the QR code content
-        String qrContent = eventId + "_" + eventTimestamp;
+        String qrContent = DatabaseConstants.qrTypeCheckIn + "_" + eventId + "_" + eventTimestamp;
         try {
             // Generate the QR code and set it in the ImageView
             Bitmap qrCodeBitmap = GenerateQR.generateQRCode(qrContent, 300, 300);

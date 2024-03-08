@@ -12,6 +12,8 @@ import java.util.List;
 
 /**
  * Milestone adapter: allows us to add values in our RecyclerView with our milestones.
+ * @see Milestone
+ * @see MilestoneViewHolder
  */
 public class MilestoneAdapter extends RecyclerView.Adapter<MilestoneViewHolder> {
 
@@ -59,7 +61,7 @@ public class MilestoneAdapter extends RecyclerView.Adapter<MilestoneViewHolder> 
 
 
     /**
-     *
+     * returns the item count
      * @return integer, the size of the dataset.
      */
     @Override

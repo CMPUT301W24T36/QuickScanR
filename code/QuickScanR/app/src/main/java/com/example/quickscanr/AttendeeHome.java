@@ -18,7 +18,10 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 
 /***
- * This handles the attendee home fragment that shows announcements
+ * This represents the fragment home page for the Attendee
+ * Additionally, it also deals with displaying announcements on the Attendee's home page.
+ * @see Announcement
+ * @see AnnouncementAdapter
  */
 
 public class AttendeeHome extends AttendeeFragment {
@@ -34,18 +37,44 @@ public class AttendeeHome extends AttendeeFragment {
     private CollectionReference announcementsRef;
     private AnnouncementAdapter announcementAdapter;
 
+    /**
+     * Constructor
+     */
     public AttendeeHome() {}
 
+    /**
+     * Returns a new instance of the AttendeeHome fragment
+     * @param param1
+     * @param param2
+     * @return the fragment, AttendeeHome
+     */
     public static AttendeeHome newInstance(String param1, String param2) {
         AttendeeHome fragment = new AttendeeHome();
         return fragment;
     }
 
+    /**
+     * Is called when the fragment is first created
+     * @param savedInstanceState If the fragment is being re-created from
+     * a previous saved state, this is the state.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * Responsible for creating and returning the view for AttendeeHome
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return the View that has been created and linked to the database
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
