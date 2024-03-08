@@ -8,6 +8,7 @@
     android:paddingTop="50dp"
     android:paddingRight="40dp"
     android:paddingBottom="50dp"
+    android:id="@+id/attendee_event_list"
     tools:context=".AttendeeEventList">
 
     <LinearLayout

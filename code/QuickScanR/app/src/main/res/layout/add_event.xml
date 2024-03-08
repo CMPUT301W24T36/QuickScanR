@@ -9,6 +9,7 @@
     android:paddingTop="50dp"
     android:paddingRight="40dp"
     android:paddingBottom="50dp"
+    android:id="@+id/add_event_page"
     tools:context=".AddEvent">
 
     <androidx.constraintlayout.widget.ConstraintLayout

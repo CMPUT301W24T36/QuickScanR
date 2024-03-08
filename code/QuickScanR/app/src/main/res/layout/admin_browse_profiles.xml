@@ -8,6 +8,7 @@
         android:paddingTop="50dp"
         android:paddingRight="40dp"
         android:paddingBottom="50dp"
+        android:id="@+id/admin_browse_profiles"
         tools:context=".AdminProfilesList">
 
     <LinearLayout

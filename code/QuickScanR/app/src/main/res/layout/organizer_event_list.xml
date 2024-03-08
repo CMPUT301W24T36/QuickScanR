@@ -9,6 +9,7 @@
     android:paddingTop="50dp"
     android:paddingRight="40dp"
     android:paddingBottom="50dp"
+    android:id="@+id/organizer_event_list"
     tools:context=".OrganizerEventList">
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
