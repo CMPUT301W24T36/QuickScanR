@@ -8,13 +8,14 @@
     android:paddingLeft="40dp"
     android:paddingTop="50dp"
     android:paddingRight="40dp"
+    android:visibility="visible"
     android:paddingBottom="50dp"
     android:id="@+id/organizer_event_list"
     tools:context=".OrganizerEventList">
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
+        android:visibility="visible"
         android:layout_height="match_parent">
 
         <LinearLayout
@@ -36,6 +37,7 @@
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:visibility="visible"
             android:layout_marginTop="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/layoutHeader"
@@ -47,6 +49,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clipToPadding="false"
+                android:visibility="visible"
                 tools:listitem="@layout/event_item" />
 
         </androidx.core.widget.NestedScrollView>
