@@ -56,7 +56,7 @@ public class RealtimeData {
 
     public void startListeningForEventCount(String userId) {
         db.collection("events")
-                .whereEqualTo("userId", userId)
+                .whereEqualTo("ownerID", userId)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
