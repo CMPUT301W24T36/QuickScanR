@@ -225,9 +225,12 @@ public class ScanQR extends AttendeeFragment {
         String eventRest = doc.getString(DatabaseConstants.evRestricKey);
         String eventStart = doc.getString(DatabaseConstants.evStartKey);
         String eventEnd = doc.getString(DatabaseConstants.evEndKey);
+        String eventID = doc.getId();
 
         User orgTemp = new User("Test","Test","test",0);  // TO BE REMOVED
+        Event newEvent = new Event(eventName, eventDesc, eventLoc, eventStart, eventEnd, eventRest, orgTemp);
+        newEvent.setId(eventID);
         Log.d("DEBUG", String.format("Event (%s) fetched", eventName));
-        return new Event(eventName, eventDesc, eventLoc, eventStart, eventEnd, eventRest, orgTemp);
+        return newEvent;
     }
 }

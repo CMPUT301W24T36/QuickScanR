@@ -2,6 +2,7 @@ package com.example.quickscanr;
 
 import android.os.Bundle;
 
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,6 +27,7 @@ public class OrganizerEventList extends OrganizerFragment {
     RecyclerView eventRecyclerView;
     ArrayList<Event> eventDataList;
     EventItemArrayAdapter eventArrayAdapter;
+    private String userId;
     private FirebaseFirestore db;
     private CollectionReference eventsRef;
     public static String EVENT_COLLECTION = "events";
@@ -81,6 +83,9 @@ public class OrganizerEventList extends OrganizerFragment {
         eventRecyclerView = v.findViewById(R.id.org_ev_list);
         eventDataList = new ArrayList<>();
 
+        MainActivity mainActivity = (MainActivity) getActivity();
+        userId = mainActivity.user.getUserId();
+
         addListeners();
         eventRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         addSnapshotListenerForEvent();
@@ -92,7 +97,7 @@ public class OrganizerEventList extends OrganizerFragment {
      * Snapshot Listener for real-time updates
      */
     private void addSnapshotListenerForEvent() {
-        eventsRef.addSnapshotListener((value, error) -> {
+        eventsRef.whereEqualTo(DatabaseConstants.evOwnerKey, userId).addSnapshotListener((value, error) -> {
             if (error != null) {
                 Log.e("DEBUG: OEL", error.getMessage());
                 return;
