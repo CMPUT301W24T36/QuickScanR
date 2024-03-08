@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
+import java.util.Collections;
+
 /**
  * This class manages the display of event details in the dashboard.
  * @see Event
@@ -19,9 +21,11 @@ public class EventDashboard extends InnerPageFragment {
     private static final String EVENT = "event";
     private Event event;
 
-    /**
-     * Constructor
-     */
+
+    private RealtimeData attendeeCounter;
+
+    // Required empty constructor
+
     public EventDashboard() {}
 
     /**
@@ -42,11 +46,22 @@ public class EventDashboard extends InnerPageFragment {
      * @param savedInstanceState If the fragment is being re-created from
      * a previous saved state, this is the state.
      */
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             event = (Event) getArguments().getSerializable(EVENT);
+            attendeeCounter = new RealtimeData();
+            attendeeCounter.setEventListener(new RealtimeData.EventAttendeeCountListener() {
+                @Override
+                public void onTotalCountUpdated(int newCount) {
+                    getActivity().runOnUiThread(() -> {
+                        TextView attendeeCountView = getView().findViewById(R.id.evdash_txt_stat4);
+                        attendeeCountView.setText(String.valueOf(newCount));
+                    });
+                }
+            });
         }
     }
 
@@ -66,11 +81,16 @@ public class EventDashboard extends InnerPageFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.event_dashboard, container, false);
-        populatePage(v);    // Populate the dashboard with event details
-        setupAdditionalListeners(v);    // Set up listeners for interactive elements
+        populatePage(v); // Populate the dashboard with event details
+        setupAdditionalListeners(v); // Set up listeners for interactive elements
         addButtonListeners(getActivity(), v);
+        if (event != null) {
+            // Assume this method is adapted to handle a single event ID
+            attendeeCounter.startListening(Collections.singletonList(event.getId()));
+        }
         return v;
     }
+
 
     /** This sets up listeners for UI buttons
      *
@@ -81,7 +101,7 @@ public class EventDashboard extends InnerPageFragment {
         v.findViewById(R.id.evdash_btn_qrcode).setOnClickListener(view -> switchToFragment(PromotionQR.newInstance(event)));
         v.findViewById(R.id.evdash_btn_checkin).setOnClickListener(view -> switchToFragment(CheckInQR.newInstance(event)));
         v.findViewById(R.id.evdash_img_stat4).setOnClickListener(view -> {
-            String eventId = event.getId(); // Assuming 'event' is your Event object and it has an 'getId()' method.
+            String eventId = event.getId();
             switchToFragment(CheckedInAttendeeList.newInstance(eventId));
         });
 
@@ -114,7 +134,6 @@ public class EventDashboard extends InnerPageFragment {
         ((ImageView) v.findViewById(R.id.evdash_img_poster)).setImageResource(R.drawable.ic_launcher_background); // Placeholder, needs replacement.
         ((TextView) v.findViewById(R.id.evdash_txt_stat1)).setText(event.getLocation());
         ((TextView) v.findViewById(R.id.evdash_txt_stat2)).setText(event.getStart());
-        ((TextView) v.findViewById(R.id.evdash_txt_stat3)).setText(String.valueOf(event.getRSVPCount()));
-        ((TextView) v.findViewById(R.id.evdash_txt_stat4)).setText(String.valueOf(event.getTotalCheckInCount()));
+
     }
 }
