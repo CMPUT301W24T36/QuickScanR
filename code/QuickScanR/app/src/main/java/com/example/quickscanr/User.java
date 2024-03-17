@@ -15,6 +15,7 @@ public class User implements Serializable {
     private String phoneNumber;
     private String email;
     private int userType;
+    private Boolean geoLoc;
     private String userId;
 
     /**
@@ -131,6 +132,22 @@ public class User implements Serializable {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    /**
+     * see if user has geolocation on
+     * @return a boolean representing whether or not geolocation tracking is on
+     */
+    public Boolean getGeoLoc() {
+        return geoLoc;
+    }
+
+    /**
+     * set geolocation on/off
+     * @param geoLoc a boolean representing if geolocation should be on/off
+     */
+    public void setGeoLoc(Boolean geoLoc) {
+        this.geoLoc = geoLoc;
     }
 
     /**

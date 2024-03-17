@@ -7,9 +7,18 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
+
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Represents the page for the profile of the user
@@ -119,6 +128,19 @@ public class Profile extends Fragment {
                         .addToBackStack(null).commit();
             }
         });
+        Switch geoLocSwitch = v.findViewById(R.id.geo_location);
+        geoLocSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                MainActivity.user.setGeoLoc(isChecked);
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                CollectionReference usersRef = db.collection(DatabaseConstants.usersColName);
+                DocumentReference userDocRef = usersRef.document(MainActivity.user.getUserId());
+                Map<String, Object> data = new HashMap<>();
+                data.put(DatabaseConstants.userGeoLocKey, isChecked);
+                userDocRef.update(data);
+            }
+        });
     }
 
     /**
@@ -130,9 +152,11 @@ public class Profile extends Fragment {
         TextView homepageField = v.findViewById(R.id.profile_homepage);
         TextView numberField = v.findViewById(R.id.number);
         TextView emailField = v.findViewById(R.id.email);
+        Switch geoLocSwitch = v.findViewById(R.id.geo_location);
         nameField.setText(user.getName());
         homepageField.setText(user.getHomepage());
         numberField.setText(user.getPhoneNumber());
         emailField.setText(user.getEmail());
+        geoLocSwitch.setChecked(MainActivity.user.getGeoLoc());
     }
 }

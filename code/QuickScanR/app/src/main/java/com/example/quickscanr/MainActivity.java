@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
                         data.put(DatabaseConstants.userPhoneKey, "");
                         data.put(DatabaseConstants.userEmailKey, "");
                         data.put(DatabaseConstants.userTypeKey, UserType.ATTENDEE);
+                        data.put(DatabaseConstants.userGeoLocKey, false);
                         db.collection(DatabaseConstants.usersColName).document(userId).set(data);
                         showHome(UserType.ATTENDEE);
                     }
