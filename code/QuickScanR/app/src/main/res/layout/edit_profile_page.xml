@@ -54,23 +54,22 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingBottom="5dp"
             android:text="User Type" />
 
-        <com.google.android.material.textfield.TextInputLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:boxBackgroundColor="@android:color/background_light"
-            app:boxCornerRadiusBottomEnd="20dp"
-            app:boxCornerRadiusBottomStart="20dp"
-            app:boxCornerRadiusTopEnd="20dp"
-            app:boxCornerRadiusTopStart="20dp">
+            android:layout_height="match_parent">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_profile_account_type"
+            <Spinner
+                android:id="@+id/edit_profile_usertype"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:editable="false" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:background="@drawable/drop_down_selection" />
+
+        </FrameLayout>
+
+
 
     </LinearLayout>
 
@@ -218,6 +217,7 @@
         android:id="@+id/save_profile_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:backgroundTint="@color/color_primary"
         android:text="Save"
         android:textColor="@color/black"
@@ -229,6 +229,7 @@
         android:id="@+id/cancel_save_profile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:backgroundTint="@color/slightly_darker_gray"
         android:text="Cancel"
         android:textColor="@color/black"
