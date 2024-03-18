@@ -3,6 +3,7 @@ package com.example.quickscanr;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -27,29 +28,40 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 
-
+/**
+ * This class is how the organizer is able to make an announcement.
+ * This is where the input goes.
+ * @see Announcement to see what is getting created.
+ * @see OrganizerHome to see when it gets called
+ */
 public class AddAnnouncementFragment extends DialogFragment {
 
+    /**
+     * The interface below allows us to talk to OrganizerHome for
+     * 1) Adding announcement to database
+     * 2) Dismissing the focus on the editText (what triggers this DialogFragment)
+     */
     interface AddAnnounceDialogListener {
         void addAnnouncement(Announcement announcement);
+        void inDismiss();
     }
 
+    // Class variables
     private AddAnnounceDialogListener listener;
-    private Announcement announcement;
     private String userName; // Add userName variable
 
-    // Constructor with userID
+    /**
+     * Constructor
+     * @param userName is the one that is announcing!
+     */
     public AddAnnouncementFragment(String userName) {
         this.userName = userName;
     }
 
-    // Static method to create an instance of the fragment with userID
-    public static AddAnnouncementFragment newInstance(String userID) {
-        return new AddAnnouncementFragment(userID);
-    }
-
-    // -- Methods
-
+    /**
+     * This one checks if the parent fragment (Organizer Home) has the listener that we need!
+     * @param context
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -67,6 +79,7 @@ public class AddAnnouncementFragment extends DialogFragment {
 
 
     /**
+     * We are creating the Dialog here.
      * @param savedInstanceState The last saved instance state of the Fragment,
      *                           or null if this is a freshly created Fragment.
      * @return the dialog
@@ -95,6 +108,7 @@ public class AddAnnouncementFragment extends DialogFragment {
             public void onClick(View v) {
                 // Dismiss the dialog when negative button is clicked
                 dismiss();
+                listener.inDismiss();// Tell the parent fragment to stop the focus!
             }
         });
 
@@ -104,7 +118,7 @@ public class AddAnnouncementFragment extends DialogFragment {
             public void onClick(View v) {
                 if (listener != null) {
                     // Handle the click behavior of the positive button
-                    // Get the text from EditText fields
+                        // Get the text from EditText fields
                     String title = editTitle.getText().toString();
                     String body = editBody.getText().toString();
                     // Get the current date
@@ -114,6 +128,7 @@ public class AddAnnouncementFragment extends DialogFragment {
                 }
                 // Dismiss the dialog
                 dismiss();
+                listener.inDismiss(); // Tell the parent fragment to stop the focus!
             }
         });
 
@@ -146,7 +161,6 @@ public class AddAnnouncementFragment extends DialogFragment {
             getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         }
 
-        Log.d("AnncFragment", "Crash here?");
         return view;
     }
 }

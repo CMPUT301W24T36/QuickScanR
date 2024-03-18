@@ -94,7 +94,13 @@ public class AttendeeHome extends AttendeeFragment {
         // Create the announcementAdapter and set it to the RecyclerView
         announcementAdapter = new AnnouncementAdapter(announcementsDataList);
         announcementsRecyclerView.setAdapter(announcementAdapter);
-        announcementsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        // Later added -> Earlier shown
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager.setReverseLayout(true);
+        layoutManager.setStackFromEnd(true);
+        announcementsRecyclerView.setLayoutManager(layoutManager);
+
         addSnapshotListenerForAnnouncement();
 
         TextView nameField = view.findViewById(R.id.user_name);
@@ -123,7 +129,6 @@ public class AttendeeHome extends AttendeeFragment {
                 String announcementDate = doc.getString(DatabaseConstants.anDate);
                 String announcementUser= doc.getString(DatabaseConstants.anUserName);
                 String announcementTitle = doc.getString(DatabaseConstants.anTitle);
-                String announcementUserID = doc.getString(DatabaseConstants.anUserKey);
 
                 Log.d("DEBUG: AttendeeHome", String.format("Announcement( User: %s, Title: %s) fetched", announcementUser, announcementTitle));
                 announcementsDataList.add(new Announcement(announcementTitle, announcementBody,announcementDate, announcementUser));

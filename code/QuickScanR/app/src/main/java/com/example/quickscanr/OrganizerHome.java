@@ -1,6 +1,7 @@
 package com.example.quickscanr;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
@@ -42,8 +43,8 @@ import java.util.Objects;
  * Represents the home page for the organizer, also deals with the
  * functionality of displaying milestones relevant for the organizer/'s events
  *
- * ISSUE: MISSING IMPLEMENTATION OF THE ORGANIZER ANNOUNCING.
  * ISSUE: There will be duplicates for real time updates regarding milestones.
+ * ISSUE: This class is too crowded- will need to apply more modularity.
  * FIX: Just add milestones to the database.
  * @see Milestone
  * @see Announcement
@@ -74,8 +75,12 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
     public OrganizerHome() {
     }
 
+    // Interface methods
+
     /**
-     * Implementing the interface
+     * adds the announcement to the database
+     *
+     * @param announcement to announce by the organizer.
      */
     @Override
     public void addAnnouncement(Announcement announcement) {
@@ -91,7 +96,7 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
         data.put("date", announcement.getDate());
         data.put("userName", announcement.getUserName());
 
-        anncRef.document(userName) // can be changed
+        anncRef.document() // can be changed
                 .set(data)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -99,6 +104,17 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
                         Log.d("DEBUG", "Announcement added successfully");
                     }
                 });
+    }
+
+    /**
+     * This allows dialog fragment and organizer home to talk to each other.
+     * Conversation is essentially -> DialogFragment: I have dismissed (closed)
+     * OrganizerHome: OK, will stop focus on the EditText.
+     */
+    @Override
+    public void inDismiss() {
+        announcement = getView().findViewById(R.id.announcement_body);
+        announcement.clearFocus();
     }
 
     /**
@@ -118,7 +134,6 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d("DEBUG: OH.update", "Good");
         super.onCreate(savedInstanceState);
         MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
@@ -148,7 +163,6 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
                         if (snapshots != null) {
                             int eventCount = snapshots.size();
                             // Let the milestone know about the event number
-                            Log.d("DEBUG: OH.EventCount", "Counted Events: "+eventCount);
                             lastEventCount = 0;
                             addEventMilestones(eventCount);
                         }
@@ -174,7 +188,6 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
                             if (snapshots != null) {
                                 int totalAttendeeCount = snapshots.size();
                                 // Call Milestones to update the UI!
-                                Log.d("DEBUG: OH.AttendeeCount", "COUNTED ATTENDEES:" + totalAttendeeCount);
                                 lastAttendeeCount = 0;
                                 addCheckInMilestones(totalAttendeeCount);
                             }
@@ -236,7 +249,7 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
 
     /**
      * Creates the view for OrganizerHome fragment, deals with the functionality
-     * for displaying the list of milestones.
+     * for displaying the list of milestones AND AddAnnouncementFragment call
      *
      * @param inflater The LayoutInflater object that can be used to inflate
      * any views in the fragment,
@@ -282,14 +295,10 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
                     // Call the fragment
                     AddAnnouncementFragment fragment = new AddAnnouncementFragment(userName);
                     fragment.show(getChildFragmentManager(), "AddAnnouncementFragment");
-                    // clear has focus once we exit the dialog frag with either CANCEL or ok
+
                 }
             }
         });
-
-
-
-
 
         return view;
 
