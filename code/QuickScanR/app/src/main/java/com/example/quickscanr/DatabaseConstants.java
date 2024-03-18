@@ -16,6 +16,7 @@ public class DatabaseConstants {
     public static final String userPhoneKey = "phoneNumber";
     public static final String userEmailKey = "email";
     public static final String userTypeKey = "userType";
+    public static final String userGeoLocKey = "geoLoc";
 
     // Events
     public static final String eventColName = "events";

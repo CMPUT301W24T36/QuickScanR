@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.button.MaterialButton;
+
 import java.util.Collections;
 
 /**
@@ -87,6 +89,10 @@ public class EventDashboard extends InnerPageFragment {
         if (event != null) {
             // Assume this method is adapted to handle a single event ID
             attendeeCounter.startListening(Collections.singletonList(event.getId()));
+        }
+        if (!MainActivity.user.getGeoLoc()) {
+            MaterialButton mapBtn = v.findViewById(R.id.evdash_btn_map);
+            mapBtn.setVisibility(View.INVISIBLE);
         }
         return v;
     }
