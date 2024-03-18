@@ -126,7 +126,7 @@ public class AttendeeHome extends AttendeeFragment {
                 String announcementUserID = doc.getString(DatabaseConstants.anUserKey);
 
                 Log.d("DEBUG: AttendeeHome", String.format("Announcement( User: %s, Title: %s) fetched", announcementUser, announcementTitle));
-                announcementsDataList.add(new Announcement(announcementTitle, announcementBody,announcementDate, announcementUserID, announcementUser));
+                announcementsDataList.add(new Announcement(announcementTitle, announcementBody,announcementDate, announcementUser));
 
             }
 

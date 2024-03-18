@@ -6,7 +6,10 @@ import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -18,18 +21,22 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents the home page for the organizer, also deals with the
@@ -42,7 +49,7 @@ import java.util.List;
  * @see Announcement
  */
 
-public class OrganizerHome extends OrganizerFragment {
+public class OrganizerHome extends OrganizerFragment implements AddAnnouncementFragment.AddAnnounceDialogListener{
 
 
     private ArrayList<Milestone> milestoneList = new ArrayList<>();
@@ -51,8 +58,10 @@ public class OrganizerHome extends OrganizerFragment {
 
     private RealtimeData realtimeData;
     private String userId;
+    private String userName;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private CollectionReference anncRef;
     private List<String> eventIds = new ArrayList<>();
 
      int lastEventCount; // to help with the ranges; may be temporary
@@ -63,6 +72,33 @@ public class OrganizerHome extends OrganizerFragment {
      * Constructor
      */
     public OrganizerHome() {
+    }
+
+    /**
+     * Implementing the interface
+     */
+    @Override
+    public void addAnnouncement(Announcement announcement) {
+        // Add to the database
+        anncRef = db.collection("announcements"); // Get relevant database path
+
+
+        // Set up the data
+
+        HashMap<String, String> data = new HashMap<>();
+        data.put("title", announcement.getTitle());
+        data.put("body", announcement.getBody());
+        data.put("date", announcement.getDate());
+        data.put("userName", announcement.getUserName());
+
+        anncRef.document(userName) // can be changed
+                .set(data)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d("DEBUG", "Announcement added successfully");
+                    }
+                });
     }
 
     /**
@@ -87,6 +123,7 @@ public class OrganizerHome extends OrganizerFragment {
         MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
             this.userId = mainActivity.user.getUserId();
+            this.userName = mainActivity.user.getName();
         }
         getOrganizerEventIds();
         startListeningForEventCount();
@@ -125,7 +162,6 @@ public class OrganizerHome extends OrganizerFragment {
      */
     private void startListeningForAttendeeCount(List<String> eventIds) {
         for (String eventId : eventIds) {
-            Log.d("DEBUG: OH.AttendeeCount", "EVENT ID:" + eventId);
             db.collection("events").document(eventId).collection("attendees")
                     .addSnapshotListener(new EventListener<QuerySnapshot>() {
                         @Override
@@ -236,9 +272,30 @@ public class OrganizerHome extends OrganizerFragment {
         TextView nameField = view.findViewById(R.id.organizer_name);
         nameField.setText(MainActivity.user.getName());
 
+        // Announcement
+
+        final EditText announcement = view.findViewById(R.id.announcement_body);
+        announcement.setOnFocusChangeListener(new View.OnFocusChangeListener() { // Focus = When the announcement body is clicked.
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    // Call the fragment
+                    AddAnnouncementFragment fragment = new AddAnnouncementFragment(userName);
+                    fragment.show(getChildFragmentManager(), "AddAnnouncementFragment");
+                    // clear has focus once we exit the dialog frag with either CANCEL or ok
+                }
+            }
+        });
+
+
+
+
+
         return view;
 
     }
+
+
 
     /**
      * What the milestones will show based on the total attendee count
@@ -308,5 +365,4 @@ public class OrganizerHome extends OrganizerFragment {
             lastEventCount = 1000;
         }
         milestoneAdapter.notifyDataSetChanged();
-    }
-}
+    }}
