@@ -6,22 +6,23 @@ package com.example.quickscanr;
 
 import android.os.Bundle;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.Spinner;
 
-import com.example.quickscanr.Profile;
-import com.example.quickscanr.UserType;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,7 +40,7 @@ public class EditProfile extends Fragment {
     TextInputEditText homepageField;
     TextInputEditText numberField;
     TextInputEditText emailField;
-    TextInputEditText accountType;
+    Spinner accountTypeField;
 
     FirebaseFirestore db;
     CollectionReference usersRef;
@@ -96,7 +97,7 @@ public class EditProfile extends Fragment {
         homepageField = v.findViewById(R.id.edit_profile_homepage);
         numberField = v.findViewById(R.id.edit_profile_phone);
         emailField = v.findViewById(R.id.edit_profile_email);
-        accountType = v.findViewById(R.id.edit_profile_account_type);
+        accountTypeField = v.findViewById(R.id.edit_profile_usertype);
         populatePage(v);
         setListeners(v);
         return v;
@@ -118,20 +119,20 @@ public class EditProfile extends Fragment {
                 String homepage = homepageField.getText().toString();
                 String phone = numberField.getText().toString();
                 String email = emailField.getText().toString();
-                Integer type = UserType.valueOf(accountType.getText().toString());
+                Integer type = UserType.valueOf((String) accountTypeField.getSelectedItem());
                 if (!user.isErrors(nameField)) {
                     user.setName(name);
                     user.setHomepage(homepage);
                     user.setPhoneNumber(phone);
                     user.setEmail(email);
-//                    user.setUserType(type);   TODO: allow users to change their user type
+                    user.setUserType(type);
                     MainActivity.updateUser(user);
                     Map<String, Object> data = new HashMap<>();
                     data.put(DatabaseConstants.userFullNameKey, name);
                     data.put(DatabaseConstants.userHomePageKey, homepage);
                     data.put(DatabaseConstants.userPhoneKey, phone);
                     data.put(DatabaseConstants.userEmailKey, email);
-                    data.put(DatabaseConstants.userTypeKey, MainActivity.user.getUserType());     // TODO: allow users to change their user type
+                    data.put(DatabaseConstants.userTypeKey, type);
                     userDocRef.set(data).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
@@ -163,6 +164,30 @@ public class EditProfile extends Fragment {
         homepageField.setText(user.getHomepage());
         numberField.setText(user.getPhoneNumber());
         emailField.setText(user.getEmail());
-        accountType.setText(UserType.getString(user.getUserType()));
+
+        ArrayList<String> userTypes = new ArrayList<>();
+        userTypes.add(UserType.getString(UserType.ATTENDEE));
+        userTypes.add(UserType.getString(UserType.ORGANIZER));
+        userTypes.add(UserType.getString(UserType.ADMIN));
+
+        ArrayAdapter<String> userTypesAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, userTypes){
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                view.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
+                return view;
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                view.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
+                return view;
+            }
+        };;
+
+        userTypesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        accountTypeField.setAdapter(userTypesAdapter);
+        accountTypeField.setSelection(MainActivity.user.getUserType());
     }
 }
