@@ -1,4 +1,5 @@
 package com.example.quickscanr;
+import java.io.Serializable;
 import java.util.*; // for Date
 
 /**
@@ -7,7 +8,6 @@ import java.util.*; // for Date
  * title: user input
  * body: user input
  * date: date of post, date and time
- * userID: unique ID, may delete
  * userName: the user's name for display
  *
  */
@@ -15,7 +15,6 @@ public class Announcement {
     private String title;
     private String body;
     private String date;
-    private String userID; // may delete
     private String userName;
 
     /**
@@ -23,14 +22,14 @@ public class Announcement {
      * @param title
      * @param body
      * @param date
-     * @param userID
      * @param userName
      */
-    public Announcement(String title, String body, String date, String userID, String userName) {
+
+
+    public Announcement(String title, String body, String date, String userName) {
         this.title = title;
         this.body = body;
         this.date = date;
-        this.userID = userID;
         this.userName = userName;
     }
 
@@ -85,21 +84,6 @@ public class Announcement {
         this.date = date;
     }
 
-    /**
-     * Getter: userID
-     * @return the unique ID of the user who posted the announcement
-     */
-    public String getUserID() {
-        return userID;
-    }
-
-    /**
-     * Setter: sets the unique user ID of who posted the announcement
-     * @param userID
-     */
-    public void setUserID(String userID) {
-        this.userID = userID;
-    }
 
     /**
      * Getter: user's name

@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,7 +7,6 @@
     android:orientation="vertical"
     android:padding="20dp"
     android:layout_marginBottom="10dp">
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,43 +20,36 @@
             app:srcCompat="@drawable/round_button" />
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:orientation="vertical"
             android:paddingLeft="10dp">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/linearLayout2"
+            <TextView
+                android:id="@+id/announcement_item_title"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/announcement_item_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Announcement Title"
-                    android:textSize="20dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageButton
-                    android:id="@+id/announcement_item_close_btn"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:src="@drawable/close_btn_x"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/announcement_item_title" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_semibold"
+                android:text="Announcement Title"
+                android:textSize="20dp" />
 
             <TextView
                 android:id="@+id/announcement_item_organizer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Organizer Name" />
+                android:fontFamily="@font/inter"
+                android:text="Organizer Name"
+                android:layout_marginTop="4dp" />
         </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/announcement_item_close_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:src="@drawable/close_btn_x" />
+
     </LinearLayout>
 
     <TextView
@@ -66,6 +57,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="10dp"
-        android:text="Announcement Text" />
+        android:text="Announcement Text"
+        android:fontFamily="@font/inter"/>
 
 </LinearLayout>
