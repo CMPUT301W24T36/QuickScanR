@@ -1,6 +1,7 @@
 package com.example.quickscanr;
 
 import android.graphics.Bitmap;
+import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -378,7 +379,7 @@ public class Event implements Serializable {
      * @param endDateInput
      * @return
      */
-    public boolean isErrors (TextInputEditText nameInput, TextInputEditText locationInput, TextInputEditText startDateInput, TextInputEditText endDateInput) {
+    public boolean isErrors(TextView nameInput, TextView locationInput, TextView startDateInput, TextView endDateInput) {
         boolean wasErrors = false;
 
         if (name.equals("")) {

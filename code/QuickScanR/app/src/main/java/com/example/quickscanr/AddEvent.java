@@ -2,11 +2,14 @@ package com.example.quickscanr;
 
 import android.app.DatePickerDialog;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -26,6 +29,8 @@ import java.util.Map;
 public class AddEvent extends InnerPageFragment {
 
     private FirebaseFirestore db;
+    private PlaceAPI placeAPI;
+    private Place selectedPlace;
 
     /**
      * Constructor of AddEvent fragment
@@ -54,6 +59,7 @@ public class AddEvent extends InnerPageFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = FirebaseFirestore.getInstance();
+        placeAPI = new PlaceAPI();
     }
 
     /**
@@ -68,7 +74,6 @@ public class AddEvent extends InnerPageFragment {
      *
      * @return the View created
      */
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -97,8 +102,19 @@ public class AddEvent extends InnerPageFragment {
         Button addEventBtn = v.findViewById(R.id.evadd_btn_add);
         TextInputEditText name = v.findViewById(R.id.evadd_txt_name);
         TextInputEditText description = v.findViewById(R.id.evadd_txt_desc);
-        TextInputEditText location = v.findViewById(R.id.evadd_txt_loc);
         TextInputEditText restrictions = v.findViewById(R.id.evadd_txt_restrictions);
+
+        // NEW LOCATION CODE
+        AutoCompleteTextView location = v.findViewById(R.id.evadd_txt_loc);
+        location.setAdapter(new PlaceAutoSuggestAdapter(getContext(), android.R.layout.simple_list_item_1));
+        location.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // this happens when an item is picked from the autocomplete list
+                selectedPlace = (Place) parent.getItemAtPosition(position);
+            }
+        });
+
 
         // Handle Add Event button click
         addEventBtn.setOnClickListener(new View.OnClickListener() {
@@ -108,16 +124,16 @@ public class AddEvent extends InnerPageFragment {
                 long timestamp = System.currentTimeMillis(); // Get current time for timestamp
                 String eventName = name.getText().toString();
                 String eventDescription = description.getText().toString();
-                String eventLoc = location.getText().toString();
                 String startDateString = start.getText().toString();
                 String endDateString = end.getText().toString();
                 String eventRestric = restrictions.getText().toString();
+
+                // MISSING LOCATION/COORDINATES PUTTING
 
                 // Prepare data for Firestore
                 Map<String, Object> data = new HashMap<>();
                 data.put(DatabaseConstants.evNameKey, eventName);
                 data.put(DatabaseConstants.evDescKey, eventDescription);
-                data.put(DatabaseConstants.evLocKey, eventLoc);
                 data.put(DatabaseConstants.evStartKey, startDateString);
                 data.put(DatabaseConstants.evEndKey, endDateString);
                 data.put(DatabaseConstants.evRestricKey, eventRestric);
@@ -128,7 +144,7 @@ public class AddEvent extends InnerPageFragment {
                 data.put(DatabaseConstants.evOwnerKey, userId);
 
                 // Create Event object and validate inputs
-                Event newEvent = new Event(eventName, eventDescription, eventLoc, startDateString, endDateString, eventRestric, MainActivity.user);
+                Event newEvent = new Event(eventName, eventDescription, location.getText().toString(), startDateString, endDateString, eventRestric, MainActivity.user);
                 if (!newEvent.isErrors(name, location, start, end)) {
                     // Add event to Firestore and handle success
                     db.collection(DatabaseConstants.eventColName).add(data).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -154,7 +170,6 @@ public class AddEvent extends InnerPageFragment {
      * Handles clicks for date input fields by displaying a DatePicker dialog
      * @param dateField
      */
-
     private void onClickFuncForDates(EditText dateField) {
         final Calendar c = Calendar.getInstance();
 
