@@ -1,5 +1,6 @@
 package com.example.quickscanr;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import android.view.LayoutInflater;
@@ -114,6 +115,12 @@ public class EventDashboard extends InnerPageFragment {
         v.findViewById(R.id.evdash_txt_stat4).setOnClickListener(view -> {
             String eventId = event.getId();
             switchToFragment(CheckedInAttendeeList.newInstance(eventId));
+        });
+
+        v.findViewById(R.id.evdash_btn_map).setOnClickListener(view -> {
+            Intent myIntent = new Intent(EventDashboard.this.getContext(), CheckInMap.class);
+            myIntent.putExtra("event", event);
+            EventDashboard.this.startActivity(myIntent);
         });
     }
 
