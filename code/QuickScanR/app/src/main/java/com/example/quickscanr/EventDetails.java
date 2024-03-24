@@ -66,7 +66,7 @@ public class EventDetails extends InnerPageFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.event_details, container, false);
-        addButtonListeners(getActivity(), v);
+        addButtonListeners(getActivity(), v, new AttendeeEventList());
         db = FirebaseFirestore.getInstance();
         populatePage(v);
         if (showConfDialog) {

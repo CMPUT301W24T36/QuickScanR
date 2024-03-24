@@ -86,7 +86,7 @@ public class EventDashboard extends InnerPageFragment {
         View v = inflater.inflate(R.layout.event_dashboard, container, false);
         populatePage(v); // Populate the dashboard with event details
         setupAdditionalListeners(v); // Set up listeners for interactive elements
-        addButtonListeners(getActivity(), v);
+        addButtonListeners(getActivity(), v, new OrganizerEventList());
         if (event != null) {
             // Assume this method is adapted to handle a single event ID
             attendeeCounter.startListening(Collections.singletonList(event.getId()));

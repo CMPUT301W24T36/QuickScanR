@@ -65,7 +65,7 @@ public class AdminManageEvent extends InnerPageFragment{
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.admin_manage_event, container, false);
         //go back to events list when clicked
-        addButtonListeners(getActivity(), v);
+        addButtonListeners(getActivity(), v, new AdminEventsList());
         populateInfo(v);
 
         deleteEvents = v.findViewById(R.id.delete_btn);

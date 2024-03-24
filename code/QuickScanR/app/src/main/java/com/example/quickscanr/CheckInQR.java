@@ -50,7 +50,7 @@ public class CheckInQR extends InnerPageFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.qr_check_in, container, false);
         ImageView qrImage = v.findViewById(R.id.qr_code);
-        addButtonListeners(getActivity(), v);
+        addButtonListeners(getActivity(), v, EventDashboard.newInstance(event));
         // Generate and display the initial QR code
         generateAndDisplayQRCode(qrImage, eventId, eventTimestamp);
 
