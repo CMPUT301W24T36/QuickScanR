@@ -6,10 +6,8 @@ package com.example.quickscanr;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
-import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -40,6 +38,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Intent intent = getIntent();
+        boolean backFromCheckInMap = intent.getBooleanExtra("backFromCheckInMap", false);
+
+        if (backFromCheckInMap) {
+            Event event = (Event) intent.getSerializableExtra("event");
+            this.getSupportFragmentManager().beginTransaction().replace(R.id.content_main, EventDashboard.newInstance(event))
+                    .addToBackStack(null).commit();
+            return;
+        }
 
         // Check if camera permission has been granted
 //        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {

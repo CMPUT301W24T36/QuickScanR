@@ -1,5 +1,6 @@
 package com.example.quickscanr;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import android.view.LayoutInflater;
@@ -85,7 +86,7 @@ public class EventDashboard extends InnerPageFragment {
         View v = inflater.inflate(R.layout.event_dashboard, container, false);
         populatePage(v); // Populate the dashboard with event details
         setupAdditionalListeners(v); // Set up listeners for interactive elements
-        addButtonListeners(getActivity(), v);
+        addButtonListeners(getActivity(), v, new OrganizerEventList());
         if (event != null) {
             // Assume this method is adapted to handle a single event ID
             attendeeCounter.startListening(Collections.singletonList(event.getId()));
@@ -114,6 +115,12 @@ public class EventDashboard extends InnerPageFragment {
         v.findViewById(R.id.evdash_txt_stat4).setOnClickListener(view -> {
             String eventId = event.getId();
             switchToFragment(CheckedInAttendeeList.newInstance(eventId));
+        });
+
+        v.findViewById(R.id.evdash_btn_map).setOnClickListener(view -> {
+            Intent myIntent = new Intent(EventDashboard.this.getContext(), CheckInMap.class);
+            myIntent.putExtra("event", event);
+            EventDashboard.this.startActivity(myIntent);
         });
     }
 

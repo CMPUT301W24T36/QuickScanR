@@ -72,7 +72,7 @@ public class AdminManageProfile extends InnerPageFragment{
         View v = inflater.inflate(R.layout.admin_manage_profile, container, false);
 
         //go back and forth to profile list when clicked
-        addButtonListeners(getActivity(), v);
+        addButtonListeners(getActivity(), v, new AdminProfilesList());
         populateInfo(v);
 
         //set up the database

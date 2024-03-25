@@ -16,14 +16,15 @@ public class InnerPageFragment extends Fragment {
      * @param activity
      * @param v
      */
-    public void addButtonListeners(FragmentActivity activity, View v) {
+    public void addButtonListeners(FragmentActivity activity, View v, Fragment backPage) {
 
         MaterialButton backBtn = v.findViewById(R.id.back_btn);
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Pop the current fragment off the stack
-                activity.getSupportFragmentManager().popBackStack();
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.content_main, backPage)
+                        .addToBackStack(null).commit();
             }
         });
     }
