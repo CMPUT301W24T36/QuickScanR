@@ -157,6 +157,8 @@ public class Profile extends Fragment {
         homepageField.setText(user.getHomepage());
         numberField.setText(user.getPhoneNumber());
         emailField.setText(user.getEmail());
-        geoLocSwitch.setChecked(MainActivity.user.getGeoLoc());
+        if (MainActivity.user.getGeoLoc()) {
+            geoLocSwitch.setChecked(MainActivity.user.getGeoLoc());
+        }
     }
 }
