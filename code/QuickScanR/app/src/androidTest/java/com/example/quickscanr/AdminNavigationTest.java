@@ -46,35 +46,36 @@ public class AdminNavigationTest {
     @Before
     public void setUp() {
         // only setup once
-        if (userSet) {
-            return;
-        }
-        try {
-            Thread.sleep(5000L);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        try {
-            onView(withId(R.id.nav_ad_profile_btn)).perform(click());
-        } catch (Exception e) {
+        if (!userSet) {
             try {
-                onView(withId(R.id.nav_o_profile_btn)).perform(click());
-            } catch (Exception e1) {
-                try {
-                    onView(withId(R.id.nav_a_profile_btn)).perform(click());
-                } catch (Exception e2) {}
+                Thread.sleep(5000L);    // let database setup
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
+            // go to profile
+            try {
+                onView(withId(R.id.nav_ad_profile_btn)).perform(click());
+            } catch (Exception e) {
+                try {
+                    onView(withId(R.id.nav_o_profile_btn)).perform(click());
+                } catch (Exception e1) {
+                    try {
+                        onView(withId(R.id.nav_a_profile_btn)).perform(click());
+                    } catch (Exception e2) {}
+                }
+            }
+            // edit current user type to be admin
+            onView(withId(R.id.user_edit_profile)).perform(click());
+            onView(withId(R.id.edit_profile_usertype)).perform(click());
+            onView(withText(UserType.getString(UserType.ADMIN))).perform(click());
+            onView(withId(R.id.save_profile_btn)).perform(click());
+            userSet = true;
         }
-        onView(withId(R.id.user_edit_profile)).perform(click());
-        onView(withId(R.id.edit_profile_usertype)).perform(click());
-        onView(withText(UserType.getString(UserType.ADMIN))).perform(click());
-        onView(withId(R.id.save_profile_btn)).perform(click());
         try {
-            Thread.sleep(1000L);
+            Thread.sleep(1000L);    // give 1 second between tests to be safe
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        userSet = true;
     }
 
     /**
