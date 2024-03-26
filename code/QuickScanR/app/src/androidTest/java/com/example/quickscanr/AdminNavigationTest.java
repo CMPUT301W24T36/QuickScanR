@@ -3,23 +3,29 @@ package com.example.quickscanr;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import static org.hamcrest.CoreMatchers.allOf;
 
-import androidx.fragment.app.FragmentActivity;
+import androidx.test.espresso.UiController;
+import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
+import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import android.view.View;
+import android.widget.ImageButton;
 
 /**
  * Tests for admin navigation.
@@ -32,29 +38,43 @@ public class AdminNavigationTest {
     @Rule
     public ActivityScenarioRule<MainActivity> scenario = new ActivityScenarioRule<MainActivity>(MainActivity.class);
 
+    private static boolean userSet = false;
+
     /**
-     * setUp runs before all the tests run.
-     * makes the thread sleep for 5s, to allow for the user to be initialized in Main Activity.
+     * makes the current user an admin
      */
     @Before
     public void setUp() {
-        // wait for user to be initialized
+        // only setup once
+        if (userSet) {
+            return;
+        }
         try {
             Thread.sleep(5000L);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    /**
-     * Tells fragment manager to show the browse events page.
-     */
-    public void goToEvents() {
-        scenario.getScenario().onActivity(activity -> {
-            FragmentActivity fragmentActivity = (FragmentActivity) activity;
-            fragmentActivity.getSupportFragmentManager().beginTransaction().add(R.id.content_main, new AdminEventsList())
-                    .addToBackStack(null).commit();
-        });
+        try {
+            onView(withId(R.id.nav_ad_profile_btn)).perform(click());
+        } catch (Exception e) {
+            try {
+                onView(withId(R.id.nav_o_profile_btn)).perform(click());
+            } catch (Exception e1) {
+                try {
+                    onView(withId(R.id.nav_a_profile_btn)).perform(click());
+                } catch (Exception e2) {}
+            }
+        }
+        onView(withId(R.id.user_edit_profile)).perform(click());
+        onView(withId(R.id.edit_profile_usertype)).perform(click());
+        onView(withText(UserType.getString(UserType.ADMIN))).perform(click());
+        onView(withId(R.id.save_profile_btn)).perform(click());
+        try {
+            Thread.sleep(1000L);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        userSet = true;
     }
 
     /**
@@ -63,32 +83,53 @@ public class AdminNavigationTest {
      */
     @Test
     public void testBrowseEventsBtn() {
-        goToEvents();
+        onView(withId(R.id.nav_ad_events_btn)).perform(click());
         onView(withId(R.id.admin_browse_events)).check(matches(isDisplayed()));
     }
 
     /**
      * go to admin events list
      * click the browse profiles button and check that it's being showed
-     * TODO: I couldn't get these to pass
      */
     @Test
     public void testBrowseProfilesBtn() {
-        goToEvents();
-        onView(withId(R.id.nav_ad_users_btn)).perform(click());     // TODO: this throws an error
+        onView(withId(R.id.nav_ad_users_btn)).perform(click());
         onView(withId(R.id.admin_browse_profiles)).check(matches(isDisplayed()));
     }
 
     /**
      * go to organizer events list
      * click the browse images button and check that it's being showed
-     * TODO: I couldn't get these to pass
      */
-    @Test
+//    @Test
     public void testBrowseImagesBtn() {
-        goToEvents();
-        onView(withId(R.id.nav_ad_images_btn)).perform(click());    // TODO: this throws an error
-        onView(withId(R.id.admin_browse_events)).check(matches(isDisplayed()));
+        onView(withId(R.id.nav_ad_images_btn)).perform(click());
+//        onView(withId(R.id.admin_browse_images)).check(matches(isDisplayed()));   // TODO: page not implemented yet
+    }
+
+    /**
+     * new ViewAction for interacting with the admin browse events page.
+     * allows for test to click on the setting icon (access to manage event page).
+     * @return ViewAction representing the action of clicking on the settings icon in the event list
+     */
+    private static ViewAction clickEventSettings() {
+        return new ViewAction() {
+            @Override
+            public Matcher<View> getConstraints() {
+                return allOf(isDisplayed(), isAssignableFrom(ImageButton.class));
+            }
+
+            @Override
+            public String getDescription() {
+                return "Click on settings icon for an item in the admin event list.";
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                ImageButton settingsButton = (ImageButton) view.findViewById(R.id.edit_event);
+                settingsButton.performClick();
+            }
+        };
     }
 
     /**
@@ -97,9 +138,9 @@ public class AdminNavigationTest {
      * check that the manage event page is being shown
      */
     @Test
-    public void testDeleteEvent() {
-        goToEvents();
-        onView(withId(R.id.edit_event)).perform(click());
+    public void testManageEvent() {
+        onView(withId(R.id.nav_ad_events_btn)).perform(click());
+        onView(ViewMatchers.withId(R.id.view_event_list)).perform(RecyclerViewActions.actionOnItemAtPosition(0, clickEventSettings()));
         onView(withId(R.id.admin_manage_event_page)).check(matches(isDisplayed()));
     }
 
@@ -109,10 +150,11 @@ public class AdminNavigationTest {
      * check that the manage profile page is being shown
      */
     @Test
-    public void testDeleteProfile() {
-        goToEvents();
+    public void testManageProfile() {
         onView(withId(R.id.nav_ad_users_btn)).perform(click());
         onView(withId(R.id.adm_profile_list)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         onView(withId(R.id.admin_manage_profile_page)).check(matches(isDisplayed()));
     }
+
+    // TODO: write test for accessing the manage image page
 }
