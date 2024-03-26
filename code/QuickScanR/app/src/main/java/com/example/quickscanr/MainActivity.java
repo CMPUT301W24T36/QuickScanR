@@ -77,16 +77,19 @@ public class MainActivity extends AppCompatActivity {
                         user.setUserId(userId);
                         showHome(user.getUserType());
                     } else {
-                        // if new user, then add them to the database and return it
+                        // if new user, then add them to the database
+                        user = new User("New User", "", "", UserType.ATTENDEE);
+                        user.setHomepage("");
+                        user.setGeoLoc(false);
                         Map<String, Object> data = new HashMap<>();
-                        data.put(DatabaseConstants.userFullNameKey, "New User");
-                        data.put(DatabaseConstants.userHomePageKey, "");
-                        data.put(DatabaseConstants.userPhoneKey, "");
-                        data.put(DatabaseConstants.userEmailKey, "");
-                        data.put(DatabaseConstants.userTypeKey, UserType.ATTENDEE);
-                        data.put(DatabaseConstants.userGeoLocKey, false);
+                        data.put(DatabaseConstants.userFullNameKey, user.getName());
+                        data.put(DatabaseConstants.userHomePageKey, user.getHomepage());
+                        data.put(DatabaseConstants.userPhoneKey, user.getPhoneNumber());
+                        data.put(DatabaseConstants.userEmailKey, user.getEmail());
+                        data.put(DatabaseConstants.userTypeKey, user.getUserType());
+                        data.put(DatabaseConstants.userGeoLocKey, user.getGeoLoc());
                         db.collection(DatabaseConstants.usersColName).document(userId).set(data);
-                        showHome(UserType.ATTENDEE);
+                        showHome(user.getUserType());
                     }
                 } else {
                     Log.d("DEBUG", "Failed with: ", task.getException());
