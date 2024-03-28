@@ -17,6 +17,9 @@ public class DatabaseConstants {
     public static final String userEmailKey = "email";
     public static final String userTypeKey = "userType";
     public static final String userGeoLocKey = "geoLoc";
+    public static final String userCheckedEventsKey = "checkedEvents";
+    public static final String userImageKey = "image";
+    public static final String userDefaultImageID = "default_user";
 
     // Events
     public static final String eventColName = "events";

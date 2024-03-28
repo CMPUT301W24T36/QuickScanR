@@ -18,6 +18,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,6 +39,8 @@ public class EventDetails extends InnerPageFragment {
     private FirebaseFirestore db;
     private Event event;
     private boolean showConfDialog;
+    MainActivity mainActivity = (MainActivity) getActivity();
+    User user = mainActivity.user;
 
     public EventDetails() {}
 
@@ -90,7 +93,8 @@ public class EventDetails extends InnerPageFragment {
         ImageView poster = v.findViewById(R.id.evdetail_img_poster);
 
         host.setText(event.getOrganizer().getName());
-        hostPic.setImageResource(R.drawable.ic_launcher_background); // TO BE REPLACED
+        ImgHandler imgHandler = new ImgHandler(getContext());
+        imgHandler.getImage(event.getOrganizer().getImageID(), hostPic::setImageBitmap);
         poster.setImageBitmap(event.getPoster());
         location.setText(event.getLocation());
         start.setText(event.getStart());
@@ -106,8 +110,6 @@ public class EventDetails extends InnerPageFragment {
                 .setTitle("Check In")
                 .setMessage("Do you want to check in to this event?")
                 .setPositiveButton(android.R.string.yes, (dialog, x) -> {
-                    MainActivity mainActivity = (MainActivity) getActivity();
-                    User user = mainActivity.user;
                     String eventID = event.getId();
                     String userID = user.getUserId();
                     Long timestamp = System.currentTimeMillis();
@@ -119,11 +121,13 @@ public class EventDetails extends InnerPageFragment {
                             DocumentSnapshot attendees = doc.getResult();
                             if (attendees.exists()) {
                                 // user already checked in prior
+                                addEventToUser(event);
                                 attRef.update("timestamps", FieldValue.arrayUnion(timestamp))
                                         .addOnSuccessListener(aVoid -> Log.d("DEBUG", "Event notified of check-in"))
                                         .addOnFailureListener(e -> Log.w("DEBUG", "Event notified of check-in", e));
                             } else {
                                 // first time user check in
+                                addEventToUser(event);
                                 Map<String, Object> newAttendee = new HashMap<>();
                                 newAttendee.put("timestamps", Arrays.asList(timestamp));
                                 newAttendee.put("name", user.getName());
@@ -141,5 +145,17 @@ public class EventDetails extends InnerPageFragment {
                 .show();
         alertDialog.getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(Color.RED);
         alertDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(Color.BLACK);
+    }
+
+    /**
+     * Adds an event to a user's checkedEvents database field
+     * @param e event object to be added
+     */
+    private void addEventToUser(Event e) {
+        DocumentReference ref = db.collection("users").document(user.getUserId());
+        Map<String, Object> map = new HashMap<>();
+        map.put(DatabaseConstants.userCheckedEventsKey, FieldValue.arrayUnion(e.getId()));
+        ref.update(map);
+        Log.d("DEBUG","Added event to user checkedEvents");
     }
 }
