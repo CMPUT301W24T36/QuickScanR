@@ -40,28 +40,38 @@
         app:layout_constraintStart_toEndOf="@+id/back_btn"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/generate_new_qr"
-        android:layout_width="164dp"
-        android:layout_height="52dp"
-        android:layout_marginTop="20dp"
-        android:backgroundTint="@color/slightly_darker_gray"
-        android:text="Generate New"
-        android:textColor="@color/black"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/qr_code" />
-
     <ImageView
         android:id="@+id/qr_code"
-        android:layout_width="302dp"
-        android:layout_height="274dp"
+        android:layout_width="260dp"
+        android:layout_height="260dp"
         android:layout_marginTop="60dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/promotion_text"
         app:srcCompat="@drawable/qrcode" />
+
+    <Button
+        android:id="@+id/generate_new_qr"
+        android:layout_width="164dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/slightly_darker_gray"
+        android:text="Generate New"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/qr_code" />
+
+    <ImageButton
+        android:id="@+id/share_button"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/round_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/generate_new_qr"
+        app:srcCompat="@drawable/export_variant" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
