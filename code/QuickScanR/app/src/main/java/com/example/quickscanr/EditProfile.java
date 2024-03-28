@@ -133,7 +133,7 @@ public class EditProfile extends Fragment {
                     data.put(DatabaseConstants.userPhoneKey, phone);
                     data.put(DatabaseConstants.userEmailKey, email);
                     data.put(DatabaseConstants.userTypeKey, type);
-                    userDocRef.set(data).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    userDocRef.update(data).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
                             getParentFragmentManager().beginTransaction().replace(R.id.content_main, Profile.newInstance(MainActivity.user))
