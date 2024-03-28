@@ -1,8 +1,15 @@
 package com.example.quickscanr;
 
+import android.graphics.Bitmap;
+import android.util.Log;
+
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Represents the users of the app; Attendees, Organizers, and Admins
@@ -17,14 +24,17 @@ public class User implements Serializable {
     private int userType;
     private Boolean geoLoc;
     private String userId;
+    private String imageID;
 
     /**
      * Constructor
      */
-    public User() {}
+    public User() {
+    }
 
     /**
      * Constructor
+     *
      * @param name
      * @param phoneNumber
      * @param email
@@ -39,6 +49,7 @@ public class User implements Serializable {
 
     /**
      * getter: name
+     *
      * @return name of the user
      */
     public String getName() {
@@ -47,6 +58,7 @@ public class User implements Serializable {
 
     /**
      * setter: name
+     *
      * @param name of user
      */
     public void setName(String name) {
@@ -55,6 +67,7 @@ public class User implements Serializable {
 
     /**
      * getter: homepage
+     *
      * @return homepage of user
      */
     public String getHomepage() {
@@ -63,6 +76,7 @@ public class User implements Serializable {
 
     /**
      * setter : home page
+     *
      * @param homepage of user
      */
     public void setHomepage(String homepage) {
@@ -71,6 +85,7 @@ public class User implements Serializable {
 
     /**
      * getter: number of user
+     *
      * @return phone number of user
      */
     public String getPhoneNumber() {
@@ -79,6 +94,7 @@ public class User implements Serializable {
 
     /**
      * setter: number of user
+     *
      * @param phoneNumber of user
      */
     public void setPhoneNumber(String phoneNumber) {
@@ -87,6 +103,7 @@ public class User implements Serializable {
 
     /**
      * getter: email
+     *
      * @return email of user
      */
     public String getEmail() {
@@ -95,6 +112,7 @@ public class User implements Serializable {
 
     /**
      * setter: email
+     *
      * @param email of user
      */
     public void setEmail(String email) {
@@ -103,13 +121,16 @@ public class User implements Serializable {
 
     /**
      * getter: usertype
+     *
      * @return type of user
      */
     public int getUserType() {
         return userType;
     }
+
     /**
      * setter: usertype
+     *
      * @param userType of user
      */
 
@@ -119,6 +140,7 @@ public class User implements Serializable {
 
     /**
      * getter: userID
+     *
      * @return id of user
      */
     public String getUserId() {
@@ -127,6 +149,7 @@ public class User implements Serializable {
 
     /**
      * setter: userID
+     *
      * @param userId of user
      */
 
@@ -136,6 +159,7 @@ public class User implements Serializable {
 
     /**
      * see if user has geolocation on
+     *
      * @return a boolean representing whether or not geolocation tracking is on
      */
     public Boolean getGeoLoc() {
@@ -144,6 +168,7 @@ public class User implements Serializable {
 
     /**
      * set geolocation on/off
+     *
      * @param geoLoc a boolean representing if geolocation should be on/off
      */
     public void setGeoLoc(Boolean geoLoc) {
@@ -152,6 +177,7 @@ public class User implements Serializable {
 
     /**
      * for editing a profile. checks the fields for valid input
+     *
      * @param nameField the input box for a user's name
      * @return a boolean saying if there was errors or not
      */
@@ -162,5 +188,21 @@ public class User implements Serializable {
             wasErrors = true;
         }
         return wasErrors;
+    }
+
+    /**
+     * Getter for image ID string
+     * @return String of image ID
+     */
+    public String getImageID() {
+        return imageID;
+    }
+
+    /**
+     * Setter for image ID string
+     * @param str String of image ID
+     */
+    public void setImageID(String str) {
+        imageID = str;
     }
 }
