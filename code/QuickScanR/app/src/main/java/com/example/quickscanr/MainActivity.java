@@ -21,6 +21,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -88,6 +89,8 @@ public class MainActivity extends AppCompatActivity {
                         data.put(DatabaseConstants.userEmailKey, user.getEmail());
                         data.put(DatabaseConstants.userTypeKey, user.getUserType());
                         data.put(DatabaseConstants.userGeoLocKey, user.getGeoLoc());
+                        data.put(DatabaseConstants.userCheckedEventsKey, new ArrayList<String>());
+                        data.put(DatabaseConstants.userImageKey, DatabaseConstants.userDefaultImageID);
                         db.collection(DatabaseConstants.usersColName).document(userId).set(data);
                         showHome(user.getUserType());
                     }
