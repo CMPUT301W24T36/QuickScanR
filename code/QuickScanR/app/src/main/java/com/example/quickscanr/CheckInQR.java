@@ -1,13 +1,22 @@
 package com.example.quickscanr;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+
+import androidx.core.content.FileProvider;
+
 import com.google.zxing.WriterException;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -24,6 +33,8 @@ public class CheckInQR extends InnerPageFragment {
     private Event event;
 
     private FirebaseFirestore db;
+
+    private Bitmap qrCodeBitmap;
 
     public static CheckInQR newInstance(Event event) {
         CheckInQR fragment = new CheckInQR();
@@ -70,6 +81,14 @@ public class CheckInQR extends InnerPageFragment {
             }
         });
 
+        ImageButton shareButton = v.findViewById(R.id.share_button);
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                shareQRCode(); // Call the share method
+            }
+        });
+
         return v;
     }
 
@@ -85,10 +104,41 @@ public class CheckInQR extends InnerPageFragment {
         String qrContent = DatabaseConstants.qrTypeCheckIn + "_" + eventId + "_" + eventTimestamp;
         try {
             // Generate the QR code and set it in the ImageView
-            Bitmap qrCodeBitmap = GenerateQR.generateQRCode(qrContent, 300, 300);
+            qrCodeBitmap = GenerateQR.generateQRCode(qrContent, 300, 300);
             qrImage.setImageBitmap(qrCodeBitmap);
         } catch (WriterException e) {
             e.printStackTrace();    // Print the stack trace if there's an error generating the QR code
+        }
+    }
+
+    /**
+     * Creates an image of the generated QR code and prompts Android to share it.
+     */
+    private void shareQRCode() {
+        // Save the bitmap to a file in the cache
+        String fileName = "qr_code.png";
+        File cachePath = new File(getActivity().getCacheDir(), "images");
+        cachePath.mkdirs(); // Make the directory
+        try {
+            FileOutputStream stream = new FileOutputStream(cachePath + "/" + fileName); // This overwrites any existing image
+            qrCodeBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            stream.close();
+        } catch (IOException e) {
+            e.printStackTrace();    // If an error occurs
+        }
+
+        // Get the URI of the file
+        File imagePath = new File(getActivity().getCacheDir(), "images");
+        File newFile = new File(imagePath, fileName);
+        Uri contentUri = FileProvider.getUriForFile(getActivity(), "com.example.quickscanr.fileprovider", newFile);
+
+        if (contentUri != null) {
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);    // Temporary permission for receiver to read this file
+            shareIntent.setDataAndType(contentUri, getActivity().getContentResolver().getType(contentUri));
+            shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+            startActivity(Intent.createChooser(shareIntent, "Share QR code"));
         }
     }
 }
