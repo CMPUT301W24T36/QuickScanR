@@ -1,5 +1,10 @@
 package com.example.quickscanr;
 
+
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -79,6 +84,18 @@ public class CheckInQR extends InnerPageFragment {
                 updates.put("timestamp", event.getTimestamp());
                 eventRef.update(updates);
             }
+
+            // show confirmation dialog box
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setMessage("New Check-in QR code generated!")
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                        }
+                    });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
         });
 
         ImageButton shareButton = v.findViewById(R.id.share_button);
