@@ -111,7 +111,8 @@ public class OrganizerEventList extends OrganizerFragment {
             for (QueryDocumentSnapshot doc: value) {
                 String eventName = doc.getString(DatabaseConstants.evNameKey);
                 String eventDesc = doc.getString(DatabaseConstants.evDescKey);
-                String eventLoc = doc.getString(DatabaseConstants.evLocKey);
+                String eventLocName = doc.getString(DatabaseConstants.evLocNameKey);
+                String eventLocId = doc.getString(DatabaseConstants.evLocIdKey);
                 String eventRest = doc.getString(DatabaseConstants.evRestricKey);
                 String eventStart = doc.getString(DatabaseConstants.evStartKey);
                 String eventEnd = doc.getString(DatabaseConstants.evEndKey);
@@ -126,7 +127,7 @@ public class OrganizerEventList extends OrganizerFragment {
                 }
 
                 Log.d("DEBUG", String.format("Event (%s) fetched", eventName));
-                eventDataList.add(new Event(eventName, eventDesc, eventLoc, eventStart, eventEnd, eventRest, orgTemp, eventId, eventTimestamp));
+                eventDataList.add(new Event(eventName, eventDesc, eventLocName, eventLocId, eventStart, eventEnd, eventRest, orgTemp, eventId, eventTimestamp));
             }
             eventArrayAdapter.notifyDataSetChanged();
         });

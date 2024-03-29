@@ -219,7 +219,8 @@ public class AttendeeEventList extends AttendeeFragment {
             eventsRef.document(ID).get().addOnSuccessListener(doc -> {
                 String eventName = doc.getString(DatabaseConstants.evNameKey);
                 String eventDesc = doc.getString(DatabaseConstants.evDescKey);
-                String eventLoc = doc.getString(DatabaseConstants.evLocKey);
+                String eventLocName = doc.getString(DatabaseConstants.evLocNameKey);
+                String eventLocId = doc.getString(DatabaseConstants.evLocIdKey);
                 String eventRest = doc.getString(DatabaseConstants.evRestricKey);
                 String eventStart = doc.getString(DatabaseConstants.evStartKey);
                 String eventEnd = doc.getString(DatabaseConstants.evEndKey);
@@ -239,7 +240,7 @@ public class AttendeeEventList extends AttendeeFragment {
 
                     // continue fetching
                     Log.d("AEL", String.format("Fetched (%s)", eventName));
-                    Event newEvent = new Event(eventName, eventDesc, eventLoc, eventStart, eventEnd, eventRest, organizer);
+                    Event newEvent = new Event(eventName, eventDesc, eventLocName, eventLocId, eventStart, eventEnd, eventRest, organizer);
                     newEvent.setId(eventID);
                     if (!Objects.equals(eventPosterID, "")) {
                         ImgHandler imgHandler = new ImgHandler(getContext());
