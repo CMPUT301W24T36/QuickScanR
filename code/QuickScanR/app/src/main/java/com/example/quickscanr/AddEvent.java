@@ -124,7 +124,7 @@ public class AddEvent extends InnerPageFragment {
                 data.put(DatabaseConstants.evRestricKey, eventRestric);
                 data.put(DatabaseConstants.evTimestampKey, timestamp);
                 data.put(DatabaseConstants.evPosterKey, "");  // TO BE REPLACED
-                data.put("signedUpUsers", new ArrayList<String>());
+                data.put(DatabaseConstants.evSignedUpUsersKey, new ArrayList<String>());
                 MainActivity mainActivity = (MainActivity) getActivity();
                 String userId = mainActivity.user.getUserId();
                 data.put(DatabaseConstants.evOwnerKey, userId);

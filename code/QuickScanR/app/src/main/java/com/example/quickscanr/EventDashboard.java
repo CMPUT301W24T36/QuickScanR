@@ -99,12 +99,11 @@ public class EventDashboard extends InnerPageFragment {
     }
 
 
-    /** This sets up listeners for UI buttons
-     *
+    /**
+     * This sets up listeners for UI buttons
      * @param v The view to set up the buttons for
      */
     private void setupAdditionalListeners(View v) {
-        // Note: Button for map feature is not implemented yet as map page does not exist yet
         v.findViewById(R.id.evdash_btn_qrcode).setOnClickListener(view -> switchToFragment(PromotionQR.newInstance(event)));
         v.findViewById(R.id.evdash_btn_checkin).setOnClickListener(view -> switchToFragment(CheckInQR.newInstance(event)));
         v.findViewById(R.id.evdash_img_stat4).setOnClickListener(view -> {
@@ -122,10 +121,14 @@ public class EventDashboard extends InnerPageFragment {
             myIntent.putExtra("event", event);
             EventDashboard.this.startActivity(myIntent);
         });
+
+        v.findViewById(R.id.evdash_img_stat3).setOnClickListener(view -> {
+            switchToFragment(SignedUpList.newInstance(event));
+        });
     }
 
-    /** Switches to a new fragment
-     *
+    /**
+     * Switches to a new fragment
      * @param fragment The fragment to switch to
      */
     private void switchToFragment(Fragment fragment) {
@@ -137,8 +140,8 @@ public class EventDashboard extends InnerPageFragment {
         }
     }
 
-    /** Fills in the event details into the respective views
-     *
+    /**
+     * Fills in the event details into the respective views
      * @param v The view which is being populated
      */
     private void populatePage(View v) {
@@ -147,6 +150,7 @@ public class EventDashboard extends InnerPageFragment {
         ((ImageView) v.findViewById(R.id.evdash_img_poster)).setImageResource(R.drawable.ic_launcher_background); // Placeholder, needs replacement.
         ((TextView) v.findViewById(R.id.evdash_txt_stat1)).setText(event.getLocation());
         ((TextView) v.findViewById(R.id.evdash_txt_stat2)).setText(event.getStart());
+        ((TextView) v.findViewById(R.id.evdash_txt_stat3)).setText(String.valueOf(event.getSignUpCount()));
 
     }
 }
