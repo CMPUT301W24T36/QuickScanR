@@ -10,15 +10,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -33,12 +32,14 @@ import java.util.Map;
 public class EventDetails extends InnerPageFragment {
 
     private static final String EVENT = "event";
-    private static final String SHOWCONFDIALOG = "showConfDialog";
+    private static final String SHOWCHECKINDIALOG = "showCheckInDialog";
+    private static final String SHOWSIGNUPDIALOG = "showSignUpDialog";
     public static final String ATTENDEE_COLLECTION = "attendees";
     public static final String EVENT_COLLECTION = "events";
     private FirebaseFirestore db;
     private Event event;
-    private boolean showConfDialog;
+    private boolean showCheckInDialog;
+    private boolean showSignUpDialog;
     MainActivity mainActivity = (MainActivity) getActivity();
     User user = mainActivity.user;
 
@@ -60,7 +61,14 @@ public class EventDetails extends InnerPageFragment {
                 event = (Event) getArguments().getSerializable(EVENT);
             } else if (getArguments().size() == 2) {
                 event = (Event) getArguments().getSerializable(EVENT);
-                showConfDialog = (boolean) getArguments().getSerializable(SHOWCONFDIALOG);
+                try {
+                    showCheckInDialog = (boolean) getArguments().getSerializable(SHOWCHECKINDIALOG);
+                    showSignUpDialog = false;
+                }
+                catch (Exception e) {
+                    showSignUpDialog = (boolean) getArguments().getBoolean(SHOWSIGNUPDIALOG);
+                    showCheckInDialog = false;
+                }
             }
         }
     }
@@ -72,9 +80,14 @@ public class EventDetails extends InnerPageFragment {
         addButtonListeners(getActivity(), v, new AttendeeEventList());
         db = FirebaseFirestore.getInstance();
         populatePage(v);
-        if (showConfDialog) {
-            showConfDialog();
-            showConfDialog = false;
+        Button signUpBtn = v.findViewById(R.id.ev_det_signup_btn);
+        signUpBtn.setVisibility(View.INVISIBLE);
+        if (showCheckInDialog) {
+            showCheckInDialog();
+            showCheckInDialog = false;
+        }
+        if (showSignUpDialog) {
+            showSignUp(v);
         }
         return v;
     }
@@ -105,7 +118,7 @@ public class EventDetails extends InnerPageFragment {
     /**
      * Shows check in confirmation dialog to the user.
      */
-    public void showConfDialog() {
+    public void showCheckInDialog() {
         AlertDialog alertDialog = new AlertDialog.Builder(getContext())
                 .setTitle("Check In")
                 .setMessage("Do you want to check in to this event?")
@@ -143,8 +156,37 @@ public class EventDetails extends InnerPageFragment {
                 })
                 .setNegativeButton(android.R.string.no, null)
                 .show();
-        alertDialog.getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(Color.RED);
-        alertDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(Color.BLACK);
+        alertDialog.getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
+        alertDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(Color.GRAY);
+    }
+
+    /**
+     * allows user to sign up for event (makes sign up button visible)
+     */
+    private void showSignUp(View v) {
+        Button signUpBtn = v.findViewById(R.id.ev_det_signup_btn);
+        signUpBtn.setVisibility(View.VISIBLE);
+        signUpBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+                        .setTitle("Sign Up")
+                        .setMessage("Do you want to sign up for this event?")
+                        .setPositiveButton(android.R.string.yes, (dialog, x) -> {
+                            String eventID = event.getId();
+                            String userID = user.getUserId();
+                            DocumentReference eventRef = db.collection(EVENT_COLLECTION).document(eventID);
+                            eventRef.update(DatabaseConstants.evSignedUpUsersKey, FieldValue.arrayUnion(userID));
+                            addSignedUpEvToUser(event);
+                            getParentFragmentManager().beginTransaction().replace(R.id.content_main, new AttendeeEventList())
+                                    .addToBackStack(null).commit();
+                        })
+                        .setNegativeButton(android.R.string.no, null)
+                        .show();
+                alertDialog.getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
+                alertDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(Color.GRAY);
+            }
+        });
     }
 
     /**
@@ -157,5 +199,17 @@ public class EventDetails extends InnerPageFragment {
         map.put(DatabaseConstants.userCheckedEventsKey, FieldValue.arrayUnion(e.getId()));
         ref.update(map);
         Log.d("DEBUG","Added event to user checkedEvents");
+    }
+
+    /**
+     * Adds an event to a user's signedUp database field
+     * @param e event object to be added
+     */
+    private void addSignedUpEvToUser(Event e) {
+        DocumentReference ref = db.collection(DatabaseConstants.usersColName).document(user.getUserId());
+        Map<String, Object> map = new HashMap<>();
+        map.put(DatabaseConstants.userSignedUpEventsKey, FieldValue.arrayUnion(e.getId()));
+        ref.update(map);
+        Log.d("DEBUG","Added event to user signedUp");
     }
 }

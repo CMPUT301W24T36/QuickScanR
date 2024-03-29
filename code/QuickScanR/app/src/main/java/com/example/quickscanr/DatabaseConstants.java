@@ -20,6 +20,7 @@ public class DatabaseConstants {
     public static final String userCheckedEventsKey = "checkedEvents";
     public static final String userImageKey = "image";
     public static final String userDefaultImageID = "default_user";
+    public static final String userSignedUpEventsKey = "signedUp";
 
     // Events
     public static final String eventColName = "events";
@@ -32,6 +33,7 @@ public class DatabaseConstants {
     public static final String evTimestampKey = "timestamp";
     public static final String evPosterKey = "posterID";
     public static final String evOwnerKey = "ownerID";
+    public static final String evSignedUpUsersKey = "signedUpUsers";
 
     // Announcements
 
