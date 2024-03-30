@@ -6,6 +6,8 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 
 import android.content.Context;
+import android.util.Log;
+
 import androidx.core.content.ContextCompat;
 
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -23,6 +25,13 @@ public class ProfileImage {
     }
 
     public static void getProfileImage(Context context, String userId, ProfileImageCallback callback) {
+        if (userId == null || userId.trim().isEmpty()) {
+            Log.e("ProfileImage", "Provided userId is null or empty");
+            Bitmap defaultImage = createProfileImage(context, "??", 200, 200);
+            callback.onImageReady(defaultImage);
+            return;
+        }
+
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("users").document(userId).get().addOnSuccessListener(documentSnapshot -> {
             String imageStatus = documentSnapshot.getString("image");

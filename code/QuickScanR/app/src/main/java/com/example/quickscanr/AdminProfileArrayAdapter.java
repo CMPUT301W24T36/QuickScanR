@@ -1,6 +1,7 @@
 package com.example.quickscanr;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,7 +65,15 @@ public class AdminProfileArrayAdapter extends RecyclerView.Adapter<AdminProfileI
     public void onBindViewHolder(@NonNull AdminProfileItemView holder, int position) {
         User user = users.get(position);
         holder.profileName.setText(user.getName());
-        holder.profileImage.setImageResource(R.drawable.ic_launcher_background);
+        String userId = user.getUserId(); // Ensure User class has getUserId() method or similar
+
+        // Load profile image
+        new ProfileImage(context).getProfileImage(context, userId, new ProfileImage.ProfileImageCallback() {
+            @Override
+            public void onImageReady(Bitmap image) {
+                holder.profileImage.setImageBitmap(image);
+            }
+        });
     }
 
     /**
