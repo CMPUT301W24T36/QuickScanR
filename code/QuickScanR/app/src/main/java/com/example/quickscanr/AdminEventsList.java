@@ -89,6 +89,7 @@ public class AdminEventsList extends AdminFragment {
         addListeners();
         eventView.setLayoutManager(new LinearLayoutManager(getContext()));
         addSnapshotListenerForEvent();
+        AdminFragment.setNavActive(v, 0);
 
         return v;
     }

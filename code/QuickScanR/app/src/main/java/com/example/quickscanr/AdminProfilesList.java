@@ -92,6 +92,7 @@ public class AdminProfilesList extends AdminFragment {
         addSnapshotListenerForEvent();
 
         profileArrayAdapter.notifyDataSetChanged();
+        AdminFragment.setNavActive(v, 1);
 
         return v;
     }
