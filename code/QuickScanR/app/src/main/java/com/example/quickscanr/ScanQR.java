@@ -48,6 +48,7 @@ public class ScanQR extends AttendeeFragment {
         addNavBarListeners(getActivity(), v);
         db = FirebaseFirestore.getInstance();
         initScanner(v);
+        AttendeeFragment.setNavActive(v, 2);
         return v;
     }
 
@@ -147,7 +148,7 @@ public class ScanQR extends AttendeeFragment {
                         Bundle args = new Bundle();
                         Event newEvent = buildEvent(doc);
                         EventDetails evDetFragment = EventDetails.newInstance(newEvent);
-                        args.putBoolean("showConfDialog", true);
+                        args.putBoolean("showCheckInDialog", true);
                         args.putSerializable("event", newEvent);
                         evDetFragment.setArguments(args);
 

@@ -16,6 +16,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -73,7 +74,7 @@ public class AddEvent extends InnerPageFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.add_event, container, false); // Inflate layout for this fragment
-        addButtonListeners(getActivity(), v); // Set up button listeners (method not shown here)
+        addButtonListeners(getActivity(), v, new OrganizerEventList()); // Set up button listeners (method not shown here)
 
         // Initialize UI components
         TextInputEditText start = v.findViewById(R.id.evadd_txt_start);
@@ -122,7 +123,8 @@ public class AddEvent extends InnerPageFragment {
                 data.put(DatabaseConstants.evEndKey, endDateString);
                 data.put(DatabaseConstants.evRestricKey, eventRestric);
                 data.put(DatabaseConstants.evTimestampKey, timestamp);
-                data.put(DatabaseConstants.evPosterKey, "");  // TO BE REPLACED
+                data.put(DatabaseConstants.evPosterKey, "default");
+                data.put(DatabaseConstants.evSignedUpUsersKey, new ArrayList<String>());
                 MainActivity mainActivity = (MainActivity) getActivity();
                 String userId = mainActivity.user.getUserId();
                 data.put(DatabaseConstants.evOwnerKey, userId);
@@ -138,6 +140,7 @@ public class AddEvent extends InnerPageFragment {
                             String eventId = documentReference.getId();
                             newEvent.setId(eventId);
                             newEvent.setTimestamp(timestamp); // Update event timestamp
+                            newEvent.setSignedUp(new ArrayList<>());
                             // Navigate to the EventDashboard fragment showing the new event
                             getParentFragmentManager().beginTransaction().replace(R.id.content_main, EventDashboard.newInstance(newEvent))
                                     .addToBackStack(null).commit();

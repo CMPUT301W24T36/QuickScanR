@@ -93,6 +93,7 @@ public class Profile extends Fragment {
             view = inflater.inflate(R.layout.attendee_profile, container, false);
             try {
                 AttendeeFragment.class.newInstance().addNavBarListeners(getActivity(), view);
+                AttendeeFragment.setNavActive(view, 3);
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             } catch (java.lang.InstantiationException e) {
@@ -103,6 +104,7 @@ public class Profile extends Fragment {
             view = inflater.inflate(R.layout.organizer_profile, container, false);
             try {
                 OrganizerFragment.class.newInstance().addNavBarListeners(getActivity(), view);
+                OrganizerFragment.setNavActive(view, 3);
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             } catch (java.lang.InstantiationException e) {
@@ -113,6 +115,7 @@ public class Profile extends Fragment {
             view = inflater.inflate(R.layout.admin_profile, container, false);
             try {
                 AdminFragment.class.newInstance().addNavBarListeners(getActivity(), view);
+                AdminFragment.setNavActive(view, 3);
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             } catch (java.lang.InstantiationException e) {
@@ -168,10 +171,15 @@ public class Profile extends Fragment {
         homepageField.setText(user.getHomepage());
         numberField.setText(user.getPhoneNumber());
         emailField.setText(user.getEmail());
+
         geoLocSwitch.setChecked(MainActivity.user.getGeoLoc());
         ImageView profileImageView = v.findViewById(R.id.profile_pic);
         Bitmap defaultProfileImage = createProfileImage(user.getName(), 200, 200); // Adjust size as necessary
         profileImageView.setImageBitmap(defaultProfileImage);
+
+        if (MainActivity.user.getGeoLoc()) {
+            geoLocSwitch.setChecked(MainActivity.user.getGeoLoc());
+        }
     }
 
     private Bitmap createProfileImage(String name, int width, int height) {

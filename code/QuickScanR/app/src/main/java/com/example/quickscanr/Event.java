@@ -28,6 +28,7 @@ public class Event implements Serializable {
     private User organizer;
     private ArrayList<User> attendees;
     private HashMap<User, Integer> checkedInCounts;
+    private ArrayList<String> signedUpUsers;
 
     /**
      * Constructor #1
@@ -413,6 +414,14 @@ public class Event implements Serializable {
         }
 
         return wasErrors;
+    }
+
+    public void setSignedUp(ArrayList<String> signedUpUsers) {
+        this.signedUpUsers = signedUpUsers;
+    }
+
+    public int getSignUpCount() {
+        return signedUpUsers.size();
     }
 
 }

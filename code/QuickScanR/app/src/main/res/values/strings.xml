@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">QuickScanR</string>
+    <string name="title_activity_checked_in_map">CheckedInMap</string>
 </resources>

@@ -6,10 +6,8 @@ package com.example.quickscanr;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
-import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -23,6 +21,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,9 +40,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Intent intent = getIntent();
+        boolean backFromCheckInMap = intent.getBooleanExtra("backFromCheckInMap", false);
+
+        if (backFromCheckInMap) {
+            Event event = (Event) intent.getSerializableExtra("event");
+            this.getSupportFragmentManager().beginTransaction().replace(R.id.content_main, EventDashboard.newInstance(event))
+                    .addToBackStack(null).commit();
+            return;
+        }
+
         // Check if camera permission has been granted
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 100);
+//        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA}, 100);
 //        } else {
             // If permission already been granted
             initializeApp();
@@ -69,16 +78,22 @@ public class MainActivity extends AppCompatActivity {
                         user.setUserId(userId);
                         showHome(user.getUserType());
                     } else {
-                        // if new user, then add them to the database and return it
+                        // if new user, then add them to the database
+                        user = new User("New User", "", "", UserType.ATTENDEE);
+                        user.setHomepage("");
+                        user.setGeoLoc(false);
                         Map<String, Object> data = new HashMap<>();
-                        data.put(DatabaseConstants.userFullNameKey, "New User");
-                        data.put(DatabaseConstants.userHomePageKey, "");
-                        data.put(DatabaseConstants.userPhoneKey, "");
-                        data.put(DatabaseConstants.userEmailKey, "");
-                        data.put(DatabaseConstants.userTypeKey, UserType.ATTENDEE);
-                        data.put(DatabaseConstants.userGeoLocKey, false);
+                        data.put(DatabaseConstants.userFullNameKey, user.getName());
+                        data.put(DatabaseConstants.userHomePageKey, user.getHomepage());
+                        data.put(DatabaseConstants.userPhoneKey, user.getPhoneNumber());
+                        data.put(DatabaseConstants.userEmailKey, user.getEmail());
+                        data.put(DatabaseConstants.userTypeKey, user.getUserType());
+                        data.put(DatabaseConstants.userGeoLocKey, user.getGeoLoc());
+                        data.put(DatabaseConstants.userCheckedEventsKey, new ArrayList<String>());
+                        data.put(DatabaseConstants.userSignedUpEventsKey, new ArrayList<String>());
+                        data.put(DatabaseConstants.userImageKey, DatabaseConstants.userDefaultImageID);
                         db.collection(DatabaseConstants.usersColName).document(userId).set(data);
-                        showHome(UserType.ATTENDEE);
+                        showHome(user.getUserType());
                     }
                 } else {
                     Log.d("DEBUG", "Failed with: ", task.getException());
