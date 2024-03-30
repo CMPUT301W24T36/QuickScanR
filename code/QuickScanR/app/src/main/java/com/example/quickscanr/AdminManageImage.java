@@ -14,6 +14,8 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -91,23 +93,17 @@ public class AdminManageImage extends InnerPageFragment{
         deleteImages.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                imgRef.whereEqualTo("imageId", img_id)
-                        .get()
-                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                            @Override
-                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                                    String docId = doc.getId();
-                                    imgRef.document(docId).delete();
 
-                                    //go back to the previous page
+                imgRef.document(img_id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        //go back to the previous page
                                     AdminImageList adminImageList = new AdminImageList();
                                     getActivity().getSupportFragmentManager().beginTransaction()
                                             .replace(R.id.content_main, adminImageList)
                                             .addToBackStack(null).commit();
-                                }
-                            }
-                        });
+                    }
+                });
 
 
             }

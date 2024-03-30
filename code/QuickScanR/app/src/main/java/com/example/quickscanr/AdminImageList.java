@@ -137,11 +137,12 @@ public class AdminImageList extends AdminFragment{
             for (QueryDocumentSnapshot doc: value) {
                 String eventName = doc.getString(DatabaseConstants.imgDataKey);
                 Bitmap bitmap = ImgHandler.base64ToBitmap(eventName);
-                String imgid = doc.getString(DatabaseConstants.imgId);
+
+
 
                 imgList.add(bitmap);
-                imgIdList.add(imgid);
-                Log.d("DEBUG", "IMAGE Id HERE" + imgid);
+                imgIdList.add(doc.getId());
+                Log.d("DEBUG", "IMAGE Id HERE" + doc.getId());
 
 
                 Log.d("DEBUG", String.format("Img (%s) fetched: ", bitmap));

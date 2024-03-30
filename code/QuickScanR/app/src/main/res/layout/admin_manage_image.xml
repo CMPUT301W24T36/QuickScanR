@@ -80,14 +80,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="25dp"
-            android:text="Profile Name"
+            android:text="Upload Profile Name"
             android:textSize="24sp" />
 
         <TextView
             android:id="@+id/img_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Event Date"
+            android:text="Upload Date"
             android:textSize="24sp" />
 
         <LinearLayout
