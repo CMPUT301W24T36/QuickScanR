@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
                         data.put(DatabaseConstants.userTypeKey, user.getUserType());
                         data.put(DatabaseConstants.userGeoLocKey, user.getGeoLoc());
                         data.put(DatabaseConstants.userCheckedEventsKey, new ArrayList<String>());
+                        data.put(DatabaseConstants.userSignedUpEventsKey, new ArrayList<String>());
                         data.put(DatabaseConstants.userImageKey, DatabaseConstants.userDefaultImageID);
                         db.collection(DatabaseConstants.usersColName).document(userId).set(data);
                         showHome(user.getUserType());

@@ -95,6 +95,7 @@ public class AttendeeEventList extends AttendeeFragment {
 
         addListeners(v);
         eventRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        AttendeeFragment.setNavActive(v, 1);
 
         return v;
     }

@@ -48,6 +48,7 @@ public class ScanQR extends AttendeeFragment {
         addNavBarListeners(getActivity(), v);
         db = FirebaseFirestore.getInstance();
         initScanner(v);
+        AttendeeFragment.setNavActive(v, 2);
         return v;
     }
 

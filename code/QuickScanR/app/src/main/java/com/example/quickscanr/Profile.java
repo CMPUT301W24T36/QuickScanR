@@ -82,6 +82,7 @@ public class Profile extends Fragment {
             view = inflater.inflate(R.layout.attendee_profile, container, false);
             try {
                 AttendeeFragment.class.newInstance().addNavBarListeners(getActivity(), view);
+                AttendeeFragment.setNavActive(view, 3);
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             } catch (java.lang.InstantiationException e) {
@@ -92,6 +93,7 @@ public class Profile extends Fragment {
             view = inflater.inflate(R.layout.organizer_profile, container, false);
             try {
                 OrganizerFragment.class.newInstance().addNavBarListeners(getActivity(), view);
+                OrganizerFragment.setNavActive(view, 3);
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             } catch (java.lang.InstantiationException e) {
@@ -102,6 +104,7 @@ public class Profile extends Fragment {
             view = inflater.inflate(R.layout.admin_profile, container, false);
             try {
                 AdminFragment.class.newInstance().addNavBarListeners(getActivity(), view);
+                AdminFragment.setNavActive(view, 3);
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             } catch (java.lang.InstantiationException e) {

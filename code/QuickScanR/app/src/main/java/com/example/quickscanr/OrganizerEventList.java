@@ -87,6 +87,7 @@ public class OrganizerEventList extends OrganizerFragment {
         addListeners();
         eventRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         addSnapshotListenerForEvent();
+        OrganizerFragment.setNavActive(v, 1);
 
         return v;
     }
