@@ -17,6 +17,10 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.widget.ImageView;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -156,12 +160,28 @@ public class Profile extends Fragment {
         TextView numberField = v.findViewById(R.id.number);
         TextView emailField = v.findViewById(R.id.email);
         Switch geoLocSwitch = v.findViewById(R.id.geo_location);
+
         nameField.setText(user.getName());
         homepageField.setText(user.getHomepage());
         numberField.setText(user.getPhoneNumber());
         emailField.setText(user.getEmail());
+        geoLocSwitch.setChecked(MainActivity.user.getGeoLoc());
+
+        ImageView profileImageView = v.findViewById(R.id.profile_pic);
+        Context context = v.getContext();
+
+        ProfileImage profileImage = new ProfileImage(context);
+        profileImage.getProfileImage(context, user.getUserId(), new ProfileImage.ProfileImageCallback() {
+            @Override
+            public void onImageReady(Bitmap image) {
+                profileImageView.setImageBitmap(image);
+            }
+        });
+
         if (MainActivity.user.getGeoLoc()) {
             geoLocSwitch.setChecked(MainActivity.user.getGeoLoc());
         }
     }
+
 }
+

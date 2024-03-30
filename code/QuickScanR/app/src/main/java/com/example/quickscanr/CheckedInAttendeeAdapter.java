@@ -1,8 +1,12 @@
 package com.example.quickscanr;
 
+import android.content.Context;
+
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,6 +24,7 @@ import java.util.Map;
 public class CheckedInAttendeeAdapter extends RecyclerView.Adapter<CheckedInAttendeeAdapter.ViewHolder> {
     private List<Map<String, Object>> attendeeDataList;
     private OnItemClickListener onItemClickListener;
+    private Context context;
 
     /**
      * interface definition for a callback - invoked when an item in this adapter is clicked
@@ -34,7 +39,8 @@ public class CheckedInAttendeeAdapter extends RecyclerView.Adapter<CheckedInAtte
      * @param attendeeDataList : data of checked-in attendees to be displayed in the RecyclerView
      */
 
-    public CheckedInAttendeeAdapter(List<Map<String, Object>> attendeeDataList) {
+    public CheckedInAttendeeAdapter(Context context, List<Map<String, Object>> attendeeDataList) {
+        this.context = context;
         this.attendeeDataList = attendeeDataList;
     }
 
@@ -72,9 +78,18 @@ public class CheckedInAttendeeAdapter extends RecyclerView.Adapter<CheckedInAtte
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Map<String, Object> attendeeData = attendeeDataList.get(position);
         String name = (String) attendeeData.get("name");
+        String userId = (String) attendeeData.get("userId");
         List<Timestamp> checkIns = (List<Timestamp>) attendeeData.get("checkIns");
+
         holder.nameTextView.setText(name);
         holder.checkInCountTextView.setText(String.valueOf(checkIns != null ? checkIns.size() : 0));
+
+        ProfileImage.getProfileImage(context, userId, new ProfileImage.ProfileImageCallback() {
+            @Override
+            public void onImageReady(Bitmap image) {
+                holder.profileImageView.setImageBitmap(image);
+            }
+        });
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,6 +118,7 @@ public class CheckedInAttendeeAdapter extends RecyclerView.Adapter<CheckedInAtte
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView nameTextView;
         TextView checkInCountTextView;
+        ImageView profileImageView;
 
         /**
          * constructor for the ViewHolder - used to find and store views (for faster access)
@@ -113,6 +129,7 @@ public class CheckedInAttendeeAdapter extends RecyclerView.Adapter<CheckedInAtte
             super(view);
             nameTextView = view.findViewById(R.id.chkd_usr_text);
             checkInCountTextView = view.findViewById(R.id.chkd_usr_count);
+            profileImageView = view.findViewById(R.id.chkd_usr_image);
         }
     }
 }

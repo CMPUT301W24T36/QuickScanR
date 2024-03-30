@@ -63,7 +63,7 @@ public class CheckedInAttendeeList extends Fragment {
         recyclerView = view.findViewById(R.id.chkd_usrs_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
-        adapter = new CheckedInAttendeeAdapter(attendeesData);
+        adapter = new CheckedInAttendeeAdapter(getContext(), attendeesData);
         recyclerView.setAdapter(adapter);
 
         if (getArguments() != null) {
