@@ -36,5 +36,16 @@ public class AdminFragment extends Fragment {
                         .addToBackStack(null).commit();
             }
         });
+
+
+        ImageButton imgListBtn = v.findViewById(R.id.nav_ad_images_btn);
+        imgListBtn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                activity.getSupportFragmentManager()
+                        .beginTransaction().replace(R.id.content_main, new AdminImageList())
+                        .addToBackStack(null).commit();
+            }
+        });
     }
 }
