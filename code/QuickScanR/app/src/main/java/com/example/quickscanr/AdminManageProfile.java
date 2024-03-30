@@ -1,5 +1,6 @@
 package com.example.quickscanr;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -7,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import androidx.fragment.app.FragmentManager;
 
@@ -138,17 +140,23 @@ public class AdminManageProfile extends InnerPageFragment{
      *  - populate fields with extra user information for admin to see
      * @param v: view that has the fields with the same data that we will populate the fields with
      */
-    public void populateInfo(View v){
+    public void populateInfo(View v) {
 
         //pull the data and then display information about the user
         TextInputEditText name = v.findViewById(R.id.manage_name);
         TextInputEditText phone = v.findViewById(R.id.manage_phone);
         TextInputEditText email = v.findViewById(R.id.manage_email);
-
+        ImageView profileImageView = v.findViewById(R.id.manage_profile_pic);
 
         name.setText(user.getName());
         phone.setText(user.getPhoneNumber());
         email.setText(user.getEmail());
-    }
 
+        new ProfileImage(getContext()).getProfileImage(getContext(), user.getUserId(), new ProfileImage.ProfileImageCallback() {
+            @Override
+            public void onImageReady(Bitmap image) {
+                profileImageView.setImageBitmap(image);
+            }
+        });
+    }
 }
