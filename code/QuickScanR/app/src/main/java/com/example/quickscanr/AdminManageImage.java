@@ -78,7 +78,7 @@ public class AdminManageImage extends InnerPageFragment{
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.admin_manage_image, container, false);
         //go back to events list when clicked
-        addButtonListeners(getActivity(), v);
+        addButtonListeners(getActivity(), v, new AdminImageList());
         populateInfo(v);
 
         deleteImages = v.findViewById(R.id.delete_img);
