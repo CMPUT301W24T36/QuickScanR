@@ -122,7 +122,7 @@ public class AddEvent extends InnerPageFragment {
                 data.put(DatabaseConstants.evEndKey, endDateString);
                 data.put(DatabaseConstants.evRestricKey, eventRestric);
                 data.put(DatabaseConstants.evTimestampKey, timestamp);
-                data.put(DatabaseConstants.evPosterKey, "");  // TO BE REPLACED
+                data.put(DatabaseConstants.evPosterKey, "default");
                 MainActivity mainActivity = (MainActivity) getActivity();
                 String userId = mainActivity.user.getUserId();
                 data.put(DatabaseConstants.evOwnerKey, userId);
