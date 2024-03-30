@@ -43,21 +43,23 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:backgroundTint="#8BC34A"
+                android:backgroundTint="@color/qr_active"
+                android:textColor="@color/black"
                 android:text="View All" />
 
         </LinearLayout>
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="540dp"
+            android:layout_height="match_parent"
             android:layout_marginTop="16dp"
+            android:layout_marginBottom="60dp"
             tools:layout_editor_absoluteX="0dp">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/atnd_ev_list"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:clipToPadding="false"
                 android:visibility="visible"
                 tools:listitem="@layout/event_item" />
