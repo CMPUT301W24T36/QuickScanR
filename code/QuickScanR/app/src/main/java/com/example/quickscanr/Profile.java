@@ -17,6 +17,17 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Typeface;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -158,5 +169,46 @@ public class Profile extends Fragment {
         numberField.setText(user.getPhoneNumber());
         emailField.setText(user.getEmail());
         geoLocSwitch.setChecked(MainActivity.user.getGeoLoc());
+        ImageView profileImageView = v.findViewById(R.id.profile_pic);
+        Bitmap defaultProfileImage = createProfileImage(user.getName(), 200, 200); // Adjust size as necessary
+        profileImageView.setImageBitmap(defaultProfileImage);
+    }
+
+    private Bitmap createProfileImage(String name, int width, int height) {
+        Bitmap image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(image);
+        
+        canvas.drawColor(Color.LTGRAY);
+
+        Paint paint = new Paint();
+        paint.setColor(Color.WHITE);
+        paint.setTextSize(50);
+        paint.setTypeface(Typeface.DEFAULT_BOLD);
+        paint.setTextAlign(Paint.Align.CENTER);
+
+        String initials = getInitials(name);
+
+        float xPos = width / 2f;
+        float yPos = (height / 2f) - ((paint.descent() + paint.ascent()) / 2);
+
+        canvas.drawText(initials, xPos, yPos, paint);
+
+        return image;
+    }
+
+    private String getInitials(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            return "??";
+        }
+
+        String[] words = name.trim().split("\\s+");
+        StringBuilder initials = new StringBuilder();
+        for (String word : words) {
+            if (!word.isEmpty()) {
+                initials.append(word.charAt(0));
+            }
+        }
+        return initials.toString().toUpperCase();
     }
 }
+
