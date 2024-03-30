@@ -112,6 +112,7 @@ public class AdminImageList extends AdminFragment{
 //        String documentId = "bbfAFiW1uJ2aVxZl5oit";
 
         addSnapshotListenerForEvent();
+        AdminFragment.setNavActive(v, 2);
 
         return v;
     }
