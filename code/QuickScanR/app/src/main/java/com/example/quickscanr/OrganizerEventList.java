@@ -2,7 +2,6 @@ package com.example.quickscanr;
 
 import android.os.Bundle;
 
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -10,7 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -116,6 +114,7 @@ public class OrganizerEventList extends OrganizerFragment {
                 String eventRest = doc.getString(DatabaseConstants.evRestricKey);
                 String eventStart = doc.getString(DatabaseConstants.evStartKey);
                 String eventEnd = doc.getString(DatabaseConstants.evEndKey);
+                ArrayList<String> signedUpUsers = (ArrayList<String>) doc.get(DatabaseConstants.evSignedUpUsersKey);
                 User orgTemp = new User("Test","Test","test",0);  // TO BE REMOVED
                 String eventId = doc.getId();
                 Long eventTimestamp; // Declare the timestamp variable
@@ -127,7 +126,9 @@ public class OrganizerEventList extends OrganizerFragment {
                 }
 
                 Log.d("DEBUG", String.format("Event (%s) fetched", eventName));
-                eventDataList.add(new Event(eventName, eventDesc, eventLoc, eventStart, eventEnd, eventRest, orgTemp, eventId, eventTimestamp));
+                Event event = new Event(eventName, eventDesc, eventLoc, eventStart, eventEnd, eventRest, orgTemp, eventId, eventTimestamp);
+                event.setSignedUp(signedUpUsers);   // set list of signed up users
+                eventDataList.add(event);
             }
             eventArrayAdapter.notifyDataSetChanged();
         });
