@@ -57,7 +57,7 @@ public class ProfileImage {
         Bitmap image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(image);
 
-        int backgroundColor = ContextCompat.getColor(context, R.color.slightly_darker_gray);
+        int backgroundColor = ContextCompat.getColor(context, R.color.light_green);
         int textColor = ContextCompat.getColor(context, R.color.black);
 
         canvas.drawColor(backgroundColor);
