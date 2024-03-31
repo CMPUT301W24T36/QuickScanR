@@ -25,13 +25,14 @@ public class PlaceAutoSuggestAdapter extends ArrayAdapter<String> implements Fil
     private int resource;
     private Context context;
 
-    private PlaceAPI placeAPI = new PlaceAPI();
+    private PlaceAPI placeAPI;
 
     public PlaceAutoSuggestAdapter(Context context, int resId) {
         super(context, resId);
         this.context = context;
         this.resource = resId;
         this.results = new ArrayList<>();
+        this.placeAPI = new PlaceAPI(getContext());
     }
 
     @Override

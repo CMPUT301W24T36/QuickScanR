@@ -1,5 +1,9 @@
 package com.example.quickscanr;
 
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,6 +23,13 @@ import java.util.List;
  * @see Place
  */
 public class PlaceAPI {
+
+    Context context;
+
+    public PlaceAPI(Context context) {
+        this.context = context;
+    }
+
     /**
      * Fetches autocomplete suggestions for a place input.
      * This method sends a request to the Google Places API and parses the response to extract
@@ -33,8 +44,9 @@ public class PlaceAPI {
         HttpURLConnection connection = null;
         StringBuilder jsonResult = new StringBuilder();
         try {
+            Bundle appMetadata = context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA).metaData;
+            String apiKey = appMetadata.getString("PLACES_API_KEY");
             // Construct the API request URL with the input and API key
-            String apiKey = "AIzaSyBMQOq8FHVTz3ZX4KfPBruoWEbL5YdrbnU";
             String baseUrl = "https://maps.googleapis.com/maps/api/place/autocomplete/json";
             String requestUrl = String.format("%s?input=%s&key=%s", baseUrl, input, apiKey);
 
