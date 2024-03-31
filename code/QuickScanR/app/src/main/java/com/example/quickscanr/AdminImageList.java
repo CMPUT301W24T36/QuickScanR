@@ -1,12 +1,17 @@
 package com.example.quickscanr;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ArrayAdapter;
+import android.widget.GridView;
+import android.widget.ImageView;
 
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,31 +22,38 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 
 /**
- * AdminEventsList
- * - allows admin to view all the events and click on each one to get more information
+ * Admin Image List:
+ * - allows admin to view all the images and click on each one to view the image,
+ *   who uploaded it, and the date posted
  */
-public class AdminEventsList extends AdminFragment {
+public class AdminImageList extends AdminFragment{
 
-    RecyclerView eventView;
-    ArrayList<Event> eventList;
-    AdminEventArrayAdapter eventArrayAdapter;
+
+    RecyclerView imgView;
+
+    ArrayList<Bitmap> imgList;
+    ArrayList<String> imgIdList;
+    ImgArrayAdapter imgArrayAdapter;
     private FirebaseFirestore db;
-    private CollectionReference eventReference;
-    public static String EVENT_COLLECTION = "events";
+    private CollectionReference imgRef;
+    ImgHandler imgHandler;
 
-    public AdminEventsList() {}
+    public static String img_COLLECTION = "images";
+
+
+    public AdminImageList() {}
 
     /**
-     * AdminEventsList
-     *  - creates a new instance of the AdminEventsList fragment
+     * AdminImageList
+     *  - creates a new instance of the AdminImageList fragment
      * @param param1
      *      -
      * @param param2
      * @return
-     *  - returns fragment: which is of the new instance AdminEventsList
+     *  - returns fragment: which is of the new instance AdminImageList
      */
-    public static AdminEventsList newInstance(String param1, String param2) {
-        AdminEventsList fragment = new AdminEventsList();
+    public static AdminImageList newInstance(String param1, String param2) {
+        AdminImageList fragment = new AdminImageList();
         return fragment;
     }
 
@@ -58,7 +70,7 @@ public class AdminEventsList extends AdminFragment {
     /**
      * onCreateView
      *  - creates the view and inflates layout so that the
-     *      browse event list can be displayed
+     *      browse image list can be displayed
      *
      * @param inflater The LayoutInflater object that can be used to inflate
      * any views in the fragment,
@@ -75,21 +87,32 @@ public class AdminEventsList extends AdminFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.admin_browse_events, container, false);
+        View v = inflater.inflate(R.layout.admin_browse_images, container, false);
         addNavBarListeners(getActivity(), v);
+        Log.d("DEBUG", "hi");
+
 
 //         DB LINKING
         db = FirebaseFirestore.getInstance();
-        eventReference = db.collection(EVENT_COLLECTION);
 
-        eventView = v.findViewById(R.id.view_event_list);
-        eventList = new ArrayList<>();
+        imgRef = db.collection(img_COLLECTION);
+
+        imgView = v.findViewById(R.id.view_img_list);
+        imgList = new ArrayList<>();
+        imgIdList = new ArrayList<>();
+
 
         //so that the events show up
         addListeners();
-        eventView.setLayoutManager(new LinearLayoutManager(getContext()));
+        imgView.setLayoutManager(new GridLayoutManager(getContext(), 3));
+
+        imgHandler = new ImgHandler(getContext());
+
+        // Assuming you have the document ID of the image
+//        String documentId = "bbfAFiW1uJ2aVxZl5oit";
+
         addSnapshotListenerForEvent();
-        AdminFragment.setNavActive(v, 0);
+        AdminFragment.setNavActive(v, 2);
 
         return v;
     }
@@ -97,11 +120,11 @@ public class AdminEventsList extends AdminFragment {
     //snapshot is for real time updates
     /**
      * addSnapshotListenerForEvent()
-     *  - snapshot listener for the firestore database to listen to the event collection
+     *  - snapshot listener for the firestore database to listen to the image collection
      *  - anytime there are any changes within the database it updates
      */
     private void addSnapshotListenerForEvent() {
-        eventReference.addSnapshotListener((value, error) -> {
+        imgRef.addSnapshotListener((value, error) -> {
             if (error != null) {
                 Log.e("DEBUG: AEL", error.getMessage());
                 return;
@@ -111,24 +134,21 @@ public class AdminEventsList extends AdminFragment {
                 return;
             }
 
-            eventList.clear();
+            imgList.clear();
             for (QueryDocumentSnapshot doc: value) {
-                User admin = new User("testing","testing","testing",2);
+                String eventName = doc.getString(DatabaseConstants.imgDataKey);
+                Bitmap bitmap = ImgHandler.base64ToBitmap(eventName);
 
-                //call from database constants is the other class already set up
-                //figure out what to do for admin
-                String eventName = doc.getString(DatabaseConstants.evNameKey);
-                String eventDesc = doc.getString(DatabaseConstants.evDescKey);
-                String eventLocName = doc.getString(DatabaseConstants.evLocNameKey);
-                String eventLocId = doc.getString(DatabaseConstants.evLocIdKey);
-                String eventRest = doc.getString(DatabaseConstants.evRestricKey);
-                String eventStart = doc.getString(DatabaseConstants.evStartKey);
-                String eventEnd = doc.getString(DatabaseConstants.evEndKey);
 
-                Log.d("DEBUG", String.format("Event (%s) fetched", eventName));
-                eventList.add(new Event(eventName, eventDesc, eventLocName, eventLocId, eventStart, eventEnd, eventRest, admin));
+
+                imgList.add(bitmap);
+                imgIdList.add(doc.getId());
+                Log.d("DEBUG", "IMAGE Id HERE" + doc.getId());
+
+
+                Log.d("DEBUG", String.format("Img (%s) fetched: ", bitmap));
             }
-            eventArrayAdapter.notifyDataSetChanged();
+            imgArrayAdapter.notifyDataSetChanged();
 
         });
     }
@@ -140,22 +160,22 @@ public class AdminEventsList extends AdminFragment {
      *  - keeps track of position when event is clicked
      */
     public void addListeners() {
-        eventArrayAdapter = new AdminEventArrayAdapter(getContext(), eventList, position -> buttonClickAction(eventList.get(position)));
-        eventView.setAdapter(eventArrayAdapter);
+        imgArrayAdapter = new ImgArrayAdapter(getContext(), imgList, imgIdList, (position, imageId) -> buttonClickAction(imgList.get(position), imgIdList.get(position)));
+        imgView.setAdapter(imgArrayAdapter);
     }
 
     /**
      * buttonClickAction:
-     *  - when event button is clicked, it will send specific data to AdminManageEvent page
+     *  - when image is clicked, it will send specific data to AdminManageImage page
      *  - includes ability to move forward and backwards to different pages
-     * @param event : pass the specific user data
      */
 
-    private void buttonClickAction(Event event) {
+    private void buttonClickAction(Bitmap bitmap, String imageId) {
         //When you click on the buttonClickAction, it will link the position and take you
-        //to the manage profile that fills in info
+        //to the manage image that fills in more info
+
         getActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.content_main, AdminManageEvent.newInstance(event))
+                .replace(R.id.content_main, AdminManageImage.newInstance(bitmap, imageId))
                 .addToBackStack(null).commit();
     }
 }

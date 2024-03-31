@@ -267,6 +267,7 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.organizer_home, container, false);
         addNavBarListeners(getActivity(), view);
+        OrganizerFragment.setNavActive(view, 0);
 
         milestoneList = new ArrayList<>();
         RecyclerView milestonesRecyclerView = view.findViewById(R.id.milestones_recycler_view);

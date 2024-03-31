@@ -51,8 +51,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Check if camera permission has been granted
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 100);
+//        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA}, 100);
 //        } else {
             // If permission already been granted
             initializeApp();
@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
                         data.put(DatabaseConstants.userTypeKey, user.getUserType());
                         data.put(DatabaseConstants.userGeoLocKey, user.getGeoLoc());
                         data.put(DatabaseConstants.userCheckedEventsKey, new ArrayList<String>());
+                        data.put(DatabaseConstants.userSignedUpEventsKey, new ArrayList<String>());
                         data.put(DatabaseConstants.userImageKey, DatabaseConstants.userDefaultImageID);
                         db.collection(DatabaseConstants.usersColName).document(userId).set(data);
                         showHome(user.getUserType());

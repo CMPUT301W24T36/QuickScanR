@@ -16,6 +16,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -117,6 +118,8 @@ public class AddEvent extends InnerPageFragment {
                 data.put(DatabaseConstants.evRestricKey, eventRestrictions);
                 long timestamp = System.currentTimeMillis();    // Get current time for timestamp
                 data.put(DatabaseConstants.evTimestampKey, timestamp);
+                data.put(DatabaseConstants.evPosterKey, "default");
+                data.put(DatabaseConstants.evSignedUpUsersKey, new ArrayList<String>());
                 MainActivity mainActivity = (MainActivity) getActivity();
                 String userId = mainActivity.user.getUserId();
                 data.put(DatabaseConstants.evOwnerKey, userId);
@@ -132,6 +135,7 @@ public class AddEvent extends InnerPageFragment {
                             String eventId = documentReference.getId();
                             newEvent.setId(eventId);
                             newEvent.setTimestamp(timestamp); // Update event timestamp
+                            newEvent.setSignedUp(new ArrayList<>());
                             // Navigate to the EventDashboard fragment showing the new event
                             getParentFragmentManager().beginTransaction().replace(R.id.content_main, EventDashboard.newInstance(newEvent))
                                     .addToBackStack(null).commit();

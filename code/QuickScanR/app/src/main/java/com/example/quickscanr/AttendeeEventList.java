@@ -1,41 +1,31 @@
 package com.example.quickscanr;
 
-import android.annotation.SuppressLint;
-import android.graphics.Bitmap;
-import android.media.Image;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.ToggleButton;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -52,8 +42,7 @@ public class AttendeeEventList extends AttendeeFragment {
     private ListenerRegistration allEventListenReg;
     private ListenerRegistration checkedEventListenReg;
     private CollectionReference eventsRef;
-    public static String EVENT_COLLECTION = "events";
-    public static String USER_COLLECTION = "users";
+    private CollectionReference usersRef;
     private static boolean toggleAll = false;
     MainActivity mainActivity = (MainActivity) getActivity();
     User user = mainActivity.user;
@@ -98,13 +87,15 @@ public class AttendeeEventList extends AttendeeFragment {
 
         // DB LINKING
         db = FirebaseFirestore.getInstance();
-        eventsRef = db.collection(EVENT_COLLECTION);
+        eventsRef = db.collection(DatabaseConstants.eventColName);
+        usersRef = db.collection(DatabaseConstants.usersColName);
 
         eventRecyclerView = v.findViewById(R.id.atnd_ev_list);
         eventDataList = new ArrayList<>();
 
         addListeners(v);
         eventRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        AttendeeFragment.setNavActive(v, 1);
 
         return v;
     }
@@ -153,9 +144,29 @@ public class AttendeeEventList extends AttendeeFragment {
      * @param event Event object clicked by user
      */
     private void eventClickAction(Event event) {
-        getActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.content_main, EventDetails.newInstance(event))
-                .addToBackStack(null).commit();
+        DocumentReference user = usersRef.document(MainActivity.user.getUserId());
+        user.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    ArrayList<String> checkedEvents = (ArrayList<String>) document.get(DatabaseConstants.userCheckedEventsKey);
+                    ArrayList<String> signedUpEvents = (ArrayList<String>) document.get(DatabaseConstants.userSignedUpEventsKey);
+                    boolean showSignUp = false;
+                    if (!checkedEvents.contains(event.getId()) && !signedUpEvents.contains(event.getId())) {
+                        showSignUp = true;
+                    }
+                    Bundle args = new Bundle();
+                    EventDetails evDetFragment = EventDetails.newInstance(event);
+                    args.putSerializable("event", event);
+                    args.putBoolean("showSignUpDialog", showSignUp);
+                    evDetFragment.setArguments(args);
+                    getActivity().getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.content_main, evDetFragment)
+                            .addToBackStack(null).commit();
+                }
+            }
+        });
     }
 
     /**
@@ -189,7 +200,7 @@ public class AttendeeEventList extends AttendeeFragment {
         eventDataList.clear();   // wipe old data
 
         // add listener and check for errors
-        checkedEventListenReg = db.collection(USER_COLLECTION).document(user.getUserId()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+        checkedEventListenReg = db.collection(DatabaseConstants.usersColName).document(user.getUserId()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot snapshot,
                                 @Nullable FirebaseFirestoreException e) {
@@ -201,6 +212,8 @@ public class AttendeeEventList extends AttendeeFragment {
                 if (snapshot != null && snapshot.exists()) {
                     // get all checked event IDs for loading
                     ArrayList<String> checkedEvents = (ArrayList<String>) snapshot.get(DatabaseConstants.userCheckedEventsKey);
+                    ArrayList<String> signedUpEvents = (ArrayList<String>) snapshot.get(DatabaseConstants.userSignedUpEventsKey);
+                    checkedEvents.addAll(signedUpEvents);   // checkedEvents holds all own events (checked in and signed up)
                     loadEventIDs(checkedEvents);
                 } else {
                     Log.d("AEL", "No checked events to list");
@@ -229,7 +242,7 @@ public class AttendeeEventList extends AttendeeFragment {
                 String eventID = doc.getId();
 
                 // build user object
-                db.collection(USER_COLLECTION).document(eventOwnerID).get().addOnSuccessListener(document -> {
+                db.collection(DatabaseConstants.usersColName).document(eventOwnerID).get().addOnSuccessListener(document -> {
                     String name = document.getString(DatabaseConstants.userFullNameKey);
                     Integer type = Integer.parseInt(document.get(DatabaseConstants.userTypeKey).toString());
                     String phone = document.getString(DatabaseConstants.userPhoneKey);

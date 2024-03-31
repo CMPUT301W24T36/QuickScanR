@@ -105,6 +105,7 @@ public class AttendeeHome extends AttendeeFragment {
 
         TextView nameField = view.findViewById(R.id.user_name);
         nameField.setText(MainActivity.user.getName());
+        AttendeeFragment.setNavActive(view, 0);
 
         return view;
     }
