@@ -1,6 +1,7 @@
 package com.example.quickscanr;
 
 import android.graphics.Bitmap;
+import android.widget.AutoCompleteTextView;
 
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -20,7 +21,8 @@ public class Event implements Serializable {
     private long timestamp;
     private String name;
     private String description;
-    private String location;
+    private String locationName;
+    private String locationId;
     private String start;
     private String end;
     private String restrictions;
@@ -35,7 +37,8 @@ public class Event implements Serializable {
      * This constructor includes eventID and timestamp
      * @param name
      * @param description
-     * @param location
+     * @param locationName
+     * @param locationId
      * @param start
      * @param end
      * @param restrictions
@@ -43,10 +46,10 @@ public class Event implements Serializable {
      * @param id
      * @param timestamp
      */
-    public Event(String name, String description, String location, String start, String end, String restrictions, User organizer, String id, long timestamp) {
+    public Event(String name, String description, String locationName, String locationId, String start, String end, String restrictions, User organizer, String id, long timestamp) {
         this.name = name;
         this.description = description;
-        this.location = location;
+        this.locationName = locationName;
         this.start = start;
         this.end = end;
         this.restrictions = restrictions;
@@ -61,17 +64,19 @@ public class Event implements Serializable {
      * Constructor #2
      * @param name
      * @param description
-     * @param location
+     * @param locationName
+     * @param locationId
      * @param start
      * @param end
      * @param restrictions
      * @param organizer
      */
 
-    public Event(String name, String description, String location, String start, String end, String restrictions, User organizer) {
+    public Event(String name, String description, String locationName, String locationId, String start, String end, String restrictions, User organizer) {
         this.name = name;
         this.description = description;
-        this.location = location;
+        this.locationName = locationName;
+        this.locationId = locationId;
         this.start = start;
         this.end = end;
         this.restrictions = restrictions;
@@ -84,7 +89,8 @@ public class Event implements Serializable {
      * Constructor #3
      * @param name
      * @param description
-     * @param location
+     * @param locationName
+     * @param locationId
      * @param start
      * @param end
      * @param restrictions
@@ -92,10 +98,11 @@ public class Event implements Serializable {
      * @param organizer
      */
 
-    public Event(String name, String description, String location, String start, String end, String restrictions, Bitmap poster, User organizer) {
+    public Event(String name, String description, String locationName, String locationId, String start, String end, String restrictions, Bitmap poster, User organizer) {
         this.name = name;
         this.description = description;
-        this.location = location;
+        this.locationName = locationName;
+        this.locationId = locationId;
         this.start = start;
         this.end = end;
         this.restrictions = restrictions;
@@ -109,7 +116,8 @@ public class Event implements Serializable {
      *
      * @param name
      * @param description
-     * @param location
+     * @param locationName
+     * @param locationId
      * @param start
      * @param end
      * @param restrictions
@@ -118,10 +126,11 @@ public class Event implements Serializable {
      * @param attendees
      * @param checkedInCounts
      */
-    public Event(String name, String description, String location, String start, String end, String restrictions, Bitmap poster, User organizer, ArrayList<User> attendees, HashMap<User, Integer> checkedInCounts) {
+    public Event(String name, String description, String locationName, String locationId, String start, String end, String restrictions, Bitmap poster, User organizer, ArrayList<User> attendees, HashMap<User, Integer> checkedInCounts) {
         this.name = name;
         this.description = description;
-        this.location = location;
+        this.locationName = locationName;
+        this.locationId = locationId;
         this.start = start;
         this.end = end;
         this.restrictions = restrictions;
@@ -135,7 +144,8 @@ public class Event implements Serializable {
      *
      * @param name
      * @param description
-     * @param location
+     * @param locationName
+     * @param locationId
      * @param start
      * @param end
      * @param restrictions
@@ -144,10 +154,11 @@ public class Event implements Serializable {
      * @param checkedInCounts
      */
 
-    public Event(String name, String description, String location, String start, String end, String restrictions, User organizer, ArrayList<User> attendees, HashMap<User, Integer> checkedInCounts) {
+    public Event(String name, String description, String locationName, String locationId, String start, String end, String restrictions, User organizer, ArrayList<User> attendees, HashMap<User, Integer> checkedInCounts) {
         this.name = name;
         this.description = description;
-        this.location = location;
+        this.locationName = locationName;
+        this.locationId = locationId;
         this.start = start;
         this.end = end;
         this.restrictions = restrictions;
@@ -215,19 +226,35 @@ public class Event implements Serializable {
     }
 
     /**
-     * getter: location
-     * @return event location
+     * getter: locationName
+     * @return event locationName
      */
-    public String getLocation() {
-        return location;
+    public String getLocationName() {
+        return locationName;
     }
 
     /**
-     * setter: location
-     * @param location to set the event as
+     * setter: locationName
+     * @param locationName to set the event as
      */
-    public void setLocation(String location) {
-        this.location = location;
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
+    }
+
+    /**
+     * getter: locationId
+     * @return event locationId
+     */
+    public String getLocationId() {
+        return locationId;
+    }
+
+    /**
+     * setter: locationId
+     * @param locationId to set the event as
+     */
+    public void setLocationId(String locationId) {
+        this.locationId = locationId;
     }
 
     /**
@@ -374,20 +401,20 @@ public class Event implements Serializable {
     /**
      * Handles errors for input
      * @param nameInput
-     * @param locationInput
+     * @param locationNameInput
      * @param startDateInput
      * @param endDateInput
      * @return
      */
-    public boolean isErrors (TextInputEditText nameInput, TextInputEditText locationInput, TextInputEditText startDateInput, TextInputEditText endDateInput) {
+    public boolean isErrors (TextInputEditText nameInput, AutoCompleteTextView locationNameInput, TextInputEditText startDateInput, TextInputEditText endDateInput) {
         boolean wasErrors = false;
 
         if (name.equals("")) {
             nameInput.setError("Event must have a name!");
             wasErrors = true;
         }
-        if (location.equals("")) {
-            locationInput.setError("Event must have a location!");
+        if (locationName.equals("")) {
+            locationNameInput.setError("Event must have a locationName!");
             wasErrors = true;
         }
         if (start.equals("")) {

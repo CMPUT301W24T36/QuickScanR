@@ -26,7 +26,8 @@ public class DatabaseConstants {
     public static final String eventColName = "events";
     public static final String evNameKey = "name";
     public static final String evDescKey = "description";
-    public static final String evLocKey = "location";
+    public static final String evLocIdKey = "locationID";
+    public static final String evLocNameKey = "locationName";
     public static final String evStartKey = "startDate";
     public static final String evEndKey = "endDate";
     public static final String evRestricKey = "restrictions";
@@ -50,5 +51,4 @@ public class DatabaseConstants {
     // QR CODE (not 100% DB but fits good here)
     public static final String qrTypeCheckIn = "CI";
     public static final String qrTypePromo = "PR";
-
 }

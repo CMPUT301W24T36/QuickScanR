@@ -109,7 +109,7 @@ public class EventDetails extends InnerPageFragment {
         ImgHandler imgHandler = new ImgHandler(getContext());
         imgHandler.getImage(event.getOrganizer().getImageID(), hostPic::setImageBitmap);
         poster.setImageBitmap(event.getPoster());
-        location.setText(event.getLocation());
+        location.setText(event.getLocationName());
         start.setText(event.getStart());
         end.setText(event.getEnd());
         restrictions.setText(event.getRestrictions());

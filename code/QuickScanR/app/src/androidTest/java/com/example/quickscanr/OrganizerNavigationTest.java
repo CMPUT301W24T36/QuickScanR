@@ -93,7 +93,7 @@ public class OrganizerNavigationTest {
         Map<String, Object> data = new HashMap<>();
         data.put(DatabaseConstants.evNameKey, "Test Event");
         data.put(DatabaseConstants.evDescKey, "Event Description");
-        data.put(DatabaseConstants.evLocKey, "Location");
+        data.put(DatabaseConstants.evLocNameKey, "Location");
         data.put(DatabaseConstants.evStartKey, "26-03-2024");
         data.put(DatabaseConstants.evEndKey, "26-03-2024");
         data.put(DatabaseConstants.evRestricKey, "Restrictions");
