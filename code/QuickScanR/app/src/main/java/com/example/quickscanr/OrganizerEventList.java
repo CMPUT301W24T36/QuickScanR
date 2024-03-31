@@ -127,7 +127,6 @@ public class OrganizerEventList extends OrganizerFragment {
                 }
 
                 Log.d("DEBUG", String.format("Event (%s) fetched", eventName));
-                eventDataList.add(new Event(eventName, eventDesc, eventLocName, eventLocId, eventStart, eventEnd, eventRest, orgTemp, eventId, eventTimestamp));
                 Event event = new Event(eventName, eventDesc, eventLocName, eventLocId, eventStart, eventEnd, eventRest, orgTemp, eventId, eventTimestamp);
                 event.setSignedUp(signedUpUsers);   // set list of signed up users
                 eventDataList.add(event);
