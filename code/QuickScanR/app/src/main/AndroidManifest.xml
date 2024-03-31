@@ -8,6 +8,10 @@
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_PRIVILEGED_PHONE_STATE" />
+    <!--    for push below-->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+
 
     <application
         android:allowBackup="true"
@@ -38,6 +42,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- For push notifications -->
+        <service
+            android:name=".Notification"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+
 
         <provider
             android:name="androidx.core.content.FileProvider"

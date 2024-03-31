@@ -4,11 +4,16 @@
 
 package com.example.quickscanr;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -26,6 +31,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.Manifest;
+
+
 /**
  * This is the main hub when a user opens the app. Depending on
  * the type of user you are, it will show a different home page.
@@ -41,27 +49,27 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Push
-
-
+        // This asks for permission
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1);
+        }
 
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(new OnCompleteListener<String>() {
                     @Override
                     public void onComplete(@NonNull Task<String> task) {
                         if (!task.isSuccessful()) {
-                            Log.w("PushNotif", "Fetching FCM registration token failed", task.getException());
+                            Log.w("PushNotification", "Fetching FCM registration token failed", task.getException());
                             return;
                         }
 
                         // Get new FCM registration token
                         String token = task.getResult();
-
-                        Log.d("PushNotif", "Firebase Token: " + token);
+                        
+                        // Log
+                        Log.d("PushNotification", "Token:" + token);
                     }
                 });
-
-        // end of push
 
 
         Intent intent = getIntent();
@@ -167,5 +175,23 @@ public class MainActivity extends AppCompatActivity {
      */
     public static void updateUser(User newUserInfo) {
         user = newUserInfo;
-    }
-}
+    }}
+
+    // push, extra may delete
+//    private void askNotificationPermission() {
+//        // This is only necessary for API level >= 33 (TIRAMISU) [We are API 34]
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
+//                    PackageManager.PERMISSION_GRANTED) {
+//                // FCM SDK (and your app) can post notifications.
+//            } else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+//                // TODO: display an educational UI explaining to the user the features that will be enabled
+//                //       by them granting the POST_NOTIFICATION permission. This UI should provide the user
+//                //       "OK" and "No thanks" buttons. If the user selects "OK," directly request the permission.
+//                //       If the user selects "No thanks," allow the user to continue without notifications.
+//            } else {
+//                // Directly ask for the permission
+//                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+//            }
+//        }
+//    }}
