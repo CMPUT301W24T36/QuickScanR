@@ -73,6 +73,7 @@ public class AddEvent extends InnerPageFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.add_event, container, false);
+        addButtonListeners(getActivity(), v, new OrganizerEventList());
 
         // Initialize UI components
         TextInputEditText start = v.findViewById(R.id.evadd_txt_start);
