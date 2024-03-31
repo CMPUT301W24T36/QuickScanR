@@ -4,6 +4,8 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -55,9 +57,20 @@ public class CheckInMap extends FragmentActivity implements OnMapReadyCallback {
 
         // TODO: add markers for checked in attendees
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+//        LatLng sydney = new LatLng(-34, 151);
+//        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+//        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+        Handler mainHandler = new Handler(Looper.getMainLooper());
+        PlaceAPI placeAPI = new PlaceAPI(getApplicationContext());
+
+        placeAPI.getPlaceLatLng("ChIJLS8LFA2sDTkRkFtTCi0awLI", mainHandler, new PlaceLatLngCallback() {
+            @Override
+            public void onLatLngReceived(LatLng latLng) {
+                mMap.addMarker(new MarkerOptions().position(latLng).title("awesome"));
+                //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
+            }
+        });
     }
 
     /**
