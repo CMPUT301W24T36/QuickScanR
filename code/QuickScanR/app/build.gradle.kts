@@ -39,6 +39,7 @@ android {
 dependencies {
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
+    implementation("com.google.firebase:firebase-messaging:23.4.1")
     testImplementation("junit:junit:4.13.2")
     implementation("androidx.test.espresso:espresso-contrib:3.5.1") {
         exclude(module = "protobuf-lite")
