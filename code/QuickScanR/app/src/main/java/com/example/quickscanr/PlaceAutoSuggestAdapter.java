@@ -8,6 +8,18 @@ import android.widget.Filterable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class is an adapter which handles the auto-suggestion functionality for place inputs.
+ * It extends ArrayAdapter to display suggestions in a ListView or similar view group, and
+ * implements Filterable to dynamically filter place suggestions based on user input. The class
+ * uses the PlaceAPI to fetch autocomplete suggestions and populates the adapter's dataset with
+ * these results.
+ *
+ * @see ArrayAdapter
+ * @see Filterable
+ * @see PlaceAPI
+ * @see Place
+ */
 public class PlaceAutoSuggestAdapter extends ArrayAdapter<String> implements Filterable {
     private ArrayList<Place> results;
     private int resource;
