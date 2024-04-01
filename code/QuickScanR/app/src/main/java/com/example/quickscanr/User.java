@@ -47,6 +47,14 @@ public class User implements Serializable {
         this.userType = userType;
     }
 
+    public User(String name, String phoneNumber, String email, int userType, String userId) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.userType = userType;
+        this.userId = userId;
+    }
+
     /**
      * getter: name
      *
