@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -14,11 +15,21 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.List;
 
 public class CheckInMap extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private Event event;
+
+    private FirebaseFirestore db;
+    private PlaceAPI placeAPI;
+    private Handler mainHandler;
 
     /**
      * Called when creating the activity CheckInMap
@@ -40,6 +51,11 @@ public class CheckInMap extends FragmentActivity implements OnMapReadyCallback {
 
         setupAdditionalListeners();
 
+        // GETTING EVENTS AND ATTENDEES
+        db = FirebaseFirestore.getInstance();
+
+        mainHandler = new Handler(Looper.getMainLooper());
+        placeAPI = new PlaceAPI(getApplicationContext());
     }
 
     /**
@@ -55,23 +71,54 @@ public class CheckInMap extends FragmentActivity implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // TODO: add markers for checked in attendees
-        // Add a marker in Sydney and move the camera
-//        LatLng sydney = new LatLng(-34, 151);
-//        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        Event event = (Event) getIntent().getSerializableExtra("event");
+        String eventLocationID = event.getLocationId();
+        String eventLocationName = "EVENT: " + event.getName();
+        placePin(eventLocationID, eventLocationName);
 
-        Handler mainHandler = new Handler(Looper.getMainLooper());
-        PlaceAPI placeAPI = new PlaceAPI(getApplicationContext());
-
-        placeAPI.getPlaceLatLng("ChIJLS8LFA2sDTkRkFtTCi0awLI", mainHandler, new PlaceLatLngCallback() {
+        // After placing the pin, move and zoom the map to the event's location
+        placeAPI.getPlaceLatLng(eventLocationID, mainHandler, new PlaceLatLngCallback() {
             @Override
             public void onLatLngReceived(LatLng latLng) {
-                mMap.addMarker(new MarkerOptions().position(latLng).title("awesome"));
-                //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
+            }
+        });
+
+        fetchAndDisplayAttendeeLocations();
+    }
+
+    private void fetchAndDisplayAttendeeLocations() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Event event = (Event) getIntent().getSerializableExtra("event");
+        CollectionReference attendeesRef = db.collection(DatabaseConstants.eventColName).document(event.getId()).collection("attendees");
+
+        attendeesRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                for (DocumentSnapshot attendeeDocument : task.getResult()) {
+                    // Check if locationID exists and is not "no location"
+                    String locationID = attendeeDocument.getString("locationID");
+                    String locationName = attendeeDocument.getString("name");
+                    placePin(locationID, locationName);
+                }
+            } else {
+                Log.w("CheckInMap", "Error getting attendee documents: ", task.getException());
             }
         });
     }
+
+    private void placePin(String locationID, String locationName) {
+        if (locationID != null && !locationID.equals("no location")) {
+            // Fetch the location using the PlaceAPI and place a pin on the map
+            placeAPI.getPlaceLatLng(locationID, mainHandler, new PlaceLatLngCallback() {
+                @Override
+                public void onLatLngReceived(LatLng latLng) {
+                    // Place a pin on the map for this attendee
+                    mMap.addMarker(new MarkerOptions().position(latLng).title(locationName));
+                }
+            });
+        }
+    }
+
 
     /**
      * This sets up listeners for UI buttons

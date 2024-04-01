@@ -50,6 +50,7 @@ public class Event implements Serializable {
         this.name = name;
         this.description = description;
         this.locationName = locationName;
+        this.locationId = locationId;
         this.start = start;
         this.end = end;
         this.restrictions = restrictions;
