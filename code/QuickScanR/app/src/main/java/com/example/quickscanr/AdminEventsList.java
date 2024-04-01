@@ -119,13 +119,14 @@ public class AdminEventsList extends AdminFragment {
                 //figure out what to do for admin
                 String eventName = doc.getString(DatabaseConstants.evNameKey);
                 String eventDesc = doc.getString(DatabaseConstants.evDescKey);
-                String eventLoc = doc.getString(DatabaseConstants.evLocKey);
+                String eventLocName = doc.getString(DatabaseConstants.evLocNameKey);
+                String eventLocId = doc.getString(DatabaseConstants.evLocIdKey);
                 String eventRest = doc.getString(DatabaseConstants.evRestricKey);
                 String eventStart = doc.getString(DatabaseConstants.evStartKey);
                 String eventEnd = doc.getString(DatabaseConstants.evEndKey);
 
                 Log.d("DEBUG", String.format("Event (%s) fetched", eventName));
-                eventList.add(new Event(eventName, eventDesc, eventLoc, eventStart, eventEnd, eventRest, admin));
+                eventList.add(new Event(eventName, eventDesc, eventLocName, eventLocId, eventStart, eventEnd, eventRest, admin));
             }
             eventArrayAdapter.notifyDataSetChanged();
 

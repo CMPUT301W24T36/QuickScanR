@@ -80,7 +80,7 @@ public class AdminManageEvent extends InnerPageFragment{
             public void onClick(View v) {
                 String event_name = event.getName();
                 String event_desc = event.getDescription();
-                String event_loc = event.getLocation();
+                String event_loc = event.getLocationName();
                 Log.d("DEBUG", event_name + event_desc + event_loc);
 
                 eventsRef.whereEqualTo("name", event_name).whereEqualTo("description", event_desc)
@@ -142,7 +142,7 @@ public class AdminManageEvent extends InnerPageFragment{
 
         name.setText(event.getName());
         descrption.setText(event.getDescription());
-        location.setText(event.getLocation());
+        location.setText(event.getLocationName());
         starts.setText(event.getStart());
         ends.setText(event.getEnd());
         guest_rst.setText(event.getRestrictions());

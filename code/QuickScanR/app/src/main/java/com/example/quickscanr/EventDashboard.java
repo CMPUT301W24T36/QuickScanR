@@ -148,7 +148,7 @@ public class EventDashboard extends InnerPageFragment {
         // Bind event data to UI elements
         ((TextView) v.findViewById(R.id.evdash_text_name)).setText(event.getName());
         ((ImageView) v.findViewById(R.id.evdash_img_poster)).setImageResource(R.drawable.ic_launcher_background); // Placeholder, needs replacement.
-        ((TextView) v.findViewById(R.id.evdash_txt_stat1)).setText(event.getLocation());
+        ((TextView) v.findViewById(R.id.evdash_txt_stat1)).setText(event.getLocationName());
         ((TextView) v.findViewById(R.id.evdash_txt_stat2)).setText(event.getStart());
         ((TextView) v.findViewById(R.id.evdash_txt_stat3)).setText(String.valueOf(event.getSignUpCount()));
 
