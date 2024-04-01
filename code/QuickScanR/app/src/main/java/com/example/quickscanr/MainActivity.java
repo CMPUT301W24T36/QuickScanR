@@ -6,6 +6,8 @@ package com.example.quickscanr;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -50,13 +52,14 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // Check if camera permission has been granted
-//        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA}, 100);
-//        } else {
+        // COMMENT THIS OUT LATER !!!!!!!!!!!!!!!!!!
+        //Check if camera permission has been granted
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA}, 100);
+        } else {
             // If permission already been granted
             initializeApp();
-//        }
+        }
     }
 
     /**

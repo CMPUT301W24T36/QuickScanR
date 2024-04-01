@@ -3,8 +3,8 @@ package com.example.quickscanr;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
-
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -43,6 +43,8 @@ public class EventDetails extends InnerPageFragment {
     MainActivity mainActivity = (MainActivity) getActivity();
     User user = mainActivity.user;
 
+    private LocationHelper locationHelper;
+
     public EventDetails() {}
 
     public static EventDetails newInstance(Event event) {
@@ -71,6 +73,16 @@ public class EventDetails extends InnerPageFragment {
                 }
             }
         }
+
+        locationHelper = new LocationHelper(getActivity());
+        locationHelper.startLocationUpdates();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // Stop receiving unnecessary location updates
+        locationHelper.stopLocationUpdates();
     }
 
     @Override
@@ -128,31 +140,43 @@ public class EventDetails extends InnerPageFragment {
                     Long timestamp = System.currentTimeMillis();
                     DocumentReference attRef = db.collection(EVENT_COLLECTION).document(eventID).collection(ATTENDEE_COLLECTION).document(userID);
 
-                    // db request
-                    attRef.get().addOnCompleteListener(doc -> {
-                        if (doc.isSuccessful()) {
-                            DocumentSnapshot attendees = doc.getResult();
-                            if (attendees.exists()) {
-                                // user already checked in prior
-                                addEventToUser(event);
-                                attRef.update("timestamps", FieldValue.arrayUnion(timestamp))
-                                        .addOnSuccessListener(aVoid -> Log.d("DEBUG", "Event notified of check-in"))
-                                        .addOnFailureListener(e -> Log.w("DEBUG", "Event notified of check-in", e));
-                            } else {
-                                // first time user check in
-                                addEventToUser(event);
-                                Map<String, Object> newAttendee = new HashMap<>();
-                                newAttendee.put("timestamps", Arrays.asList(timestamp));
-                                newAttendee.put("name", user.getName());
+                    // Get current location
+                    Location currentLocation = locationHelper.getCurrentLocation();
+                    if (currentLocation != null) {
+                        // db request
+                        attRef.get().addOnCompleteListener(doc -> {
+                            if (doc.isSuccessful()) {
+                                DocumentSnapshot attendees = doc.getResult();
+                                if (attendees.exists()) {
+                                    // user already checked in prior
+                                    addEventToUser(event);
+                                    attRef.update("timestamps", FieldValue.arrayUnion(timestamp),
+                                                    "latitude", currentLocation.getLatitude(),
+                                                    "longitude", currentLocation.getLongitude())
+                                            .addOnSuccessListener(aVoid -> Log.d("DEBUG", "Event notified of check-in"))
+                                            .addOnFailureListener(e -> Log.w("DEBUG", "Event notified of check-in failure", e));
+                                } else {
+                                    // first time user check in
+                                    addEventToUser(event);
+                                    Map<String, Object> newAttendee = new HashMap<>();
+                                    newAttendee.put("timestamps", Arrays.asList(timestamp));
+                                    newAttendee.put("name", user.getName());
+                                    // Add location data
+                                    newAttendee.put("latitude", currentLocation.getLatitude());
+                                    newAttendee.put("longitude", currentLocation.getLongitude());
 
-                                attRef.set(newAttendee)
-                                        .addOnSuccessListener(e -> Log.d("DEBUG", "Event notified of 1st check-in"))
-                                        .addOnFailureListener(e -> Log.d("DEBUG", "Error notifying 1st check-in"));
+                                    attRef.set(newAttendee)
+                                            .addOnSuccessListener(e -> Log.d("DEBUG", "Event notified of 1st check-in"))
+                                            .addOnFailureListener(e -> Log.d("DEBUG", "Error notifying 1st check-in"));
+                                }
+                            } else {
+                                Log.d("DEBUG", "Failed to add event to DB");
                             }
-                        } else {
-                            Log.d("DEBUG", "Failed to add event to DB");
-                        }
-                    });
+                        });
+                    } else {
+                        // Handle case where location is null
+                        Log.d("DEBUG", "Location is null. Cannot check in with location data.");
+                    }
                 })
                 .setNegativeButton(android.R.string.no, null)
                 .show();
