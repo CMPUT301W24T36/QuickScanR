@@ -249,7 +249,8 @@ public class AttendeeEventList extends AttendeeFragment {
                     String email = document.getString(DatabaseConstants.userPhoneKey);
                     String picID = document.getString(DatabaseConstants.userImageKey);
                     User organizer = new User(name,phone,email,type);
-                    organizer.setImageID(picID);
+                    organizer.setImageID(picID,false);
+                    organizer.setUserId(document.getId());
 
                     // continue fetching
                     Log.d("AEL", String.format("Fetched (%s)", eventName));

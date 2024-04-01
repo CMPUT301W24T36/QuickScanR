@@ -95,6 +95,7 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
         data.put("body", announcement.getBody());
         data.put("date", announcement.getDate());
         data.put("userName", announcement.getUserName());
+        data.put(DatabaseConstants.anUserKey, userId);
 
         anncRef.document() // can be changed
                 .set(data)
