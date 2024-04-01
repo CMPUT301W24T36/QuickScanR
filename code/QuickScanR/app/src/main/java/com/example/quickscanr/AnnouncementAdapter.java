@@ -59,6 +59,7 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementViewHo
         holder.titleTextView.setText(announcement.getTitle());
         holder.organizerTextView.setText(String.valueOf(announcement.getUserName()));
         holder.bodyTextView.setText(announcement.getBody());
+        holder.profImageView.setImageBitmap(announcement.getBitmap());
     }
 
 
