@@ -119,14 +119,13 @@
             android:layout_height="148dp"
             android:background="@drawable/rounded_image_border"
             android:clipToOutline="true"
-            android:scaleType="centerCrop"
-            app:srcCompat="@drawable/ic_launcher_background" />
+            android:scaleType="centerCrop" />
 
         <View
             android:id="@+id/profile_picture"
             android:layout_width="152dp"
             android:layout_height="148dp"
-            android:background="@drawable/rounded_image_border" />
+            android:background="@drawable/rounded_image_border"/>
 
     </FrameLayout>
 
@@ -197,21 +196,21 @@
         android:id="@+id/upload_pfp_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="35dp"
+        android:layout_marginTop="15dp"
         android:background="@drawable/rect_rounded_button"
         android:src="@drawable/upload_icon"
         app:layout_constraintStart_toEndOf="@+id/frameLayout"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/frameLayout" />
 
     <ImageButton
         android:id="@+id/remove_pfp_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginBottom="15dp"
         android:background="@drawable/rect_rounded_button"
         android:src="@drawable/trash_can_outline"
-        app:layout_constraintStart_toEndOf="@+id/frameLayout"
-        app:layout_constraintTop_toBottomOf="@+id/upload_pfp_btn" />
+        app:layout_constraintBottom_toBottomOf="@+id/frameLayout"
+        app:layout_constraintStart_toEndOf="@+id/frameLayout" />
 
     <Button
         android:id="@+id/save_profile_btn"
