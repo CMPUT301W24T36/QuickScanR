@@ -126,11 +126,12 @@ public class AdminProfilesList extends AdminFragment {
                 String email = doc.getString(DatabaseConstants.userEmailKey);
                 long type = doc.getLong(DatabaseConstants.userTypeKey);
                 int userType = (int) type;
+                String userId = doc.getId();
 
                 Log.d("DEBUG", String.format("User (%s) fetched", name + " " + home + " " + phone + " "));
                 Log.d("DEBUG", String.format("User (%s) fetched", userType));
 
-                profileList.add(new User(name, phone, email, userType));
+                profileList.add(new User(name, phone, email, userType, userId));
             }
             profileArrayAdapter.notifyDataSetChanged();
 

@@ -80,7 +80,7 @@ public class ProfileImage {
 
     private static String getInitials(String name) {
         if (name == null || name.trim().isEmpty()) {
-            return "??";
+            return "x";
         }
 
         String[] words = name.trim().split("\\s+");
