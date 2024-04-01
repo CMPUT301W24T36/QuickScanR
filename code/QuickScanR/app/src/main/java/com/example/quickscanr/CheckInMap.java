@@ -51,7 +51,6 @@ public class CheckInMap extends FragmentActivity implements OnMapReadyCallback {
 
         setupAdditionalListeners();
 
-        // GETTING EVENTS AND ATTENDEES
         db = FirebaseFirestore.getInstance();
 
         mainHandler = new Handler(Looper.getMainLooper());
@@ -87,6 +86,9 @@ public class CheckInMap extends FragmentActivity implements OnMapReadyCallback {
         fetchAndDisplayAttendeeLocations();
     }
 
+    /**
+     * This fetches attendee locations and calls placePin to put their pins on the map
+     */
     private void fetchAndDisplayAttendeeLocations() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         Event event = (Event) getIntent().getSerializableExtra("event");
@@ -97,8 +99,7 @@ public class CheckInMap extends FragmentActivity implements OnMapReadyCallback {
                 for (DocumentSnapshot attendeeDocument : task.getResult()) {
                     // Check if locationID exists and is not "no location"
                     String locationID = attendeeDocument.getString("locationID");
-                    String locationName = attendeeDocument.getString("name");
-                    placePin(locationID, locationName);
+                    placePin(locationID, "");   // no name
                 }
             } else {
                 Log.w("CheckInMap", "Error getting attendee documents: ", task.getException());
@@ -106,13 +107,20 @@ public class CheckInMap extends FragmentActivity implements OnMapReadyCallback {
         });
     }
 
+    /**
+     * This method places a pin on the map using its unique ID and a name to label it (which can
+     * be left null for attendees)
+     * @param locationID the unique ID of the location
+     * @param locationName the name of the location
+     * a previous saved state, this is the state.
+     */
     private void placePin(String locationID, String locationName) {
         if (locationID != null && !locationID.equals("no location")) {
             // Fetch the location using the PlaceAPI and place a pin on the map
             placeAPI.getPlaceLatLng(locationID, mainHandler, new PlaceLatLngCallback() {
                 @Override
                 public void onLatLngReceived(LatLng latLng) {
-                    // Place a pin on the map for this attendee
+                    // Place a pin on the map
                     mMap.addMarker(new MarkerOptions().position(latLng).title(locationName));
                 }
             });
