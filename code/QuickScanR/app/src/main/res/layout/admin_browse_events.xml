@@ -11,6 +11,8 @@
     android:id="@+id/admin_browse_events"
     tools:context=".AttendeeHome">
 
+    <include layout="@layout/admin_nav_bar" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -26,6 +28,8 @@
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="60dp"
             tools:layout_editor_absoluteX="0dp">
 
 
@@ -40,7 +44,5 @@
 
     </LinearLayout>
 
-
-    <include layout="@layout/admin_nav_bar" />
 
 </FrameLayout>

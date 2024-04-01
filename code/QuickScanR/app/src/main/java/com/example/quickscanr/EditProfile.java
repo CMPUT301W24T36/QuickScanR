@@ -4,8 +4,15 @@
 
 package com.example.quickscanr;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.media.Image;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -14,9 +21,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -40,7 +50,10 @@ public class EditProfile extends Fragment {
     TextInputEditText homepageField;
     TextInputEditText numberField;
     TextInputEditText emailField;
+    ImageView profPic;
     Spinner accountTypeField;
+    Uri tempURI;
+    boolean imgDeleted = false;
 
     FirebaseFirestore db;
     CollectionReference usersRef;
@@ -98,8 +111,19 @@ public class EditProfile extends Fragment {
         numberField = v.findViewById(R.id.edit_profile_phone);
         emailField = v.findViewById(R.id.edit_profile_email);
         accountTypeField = v.findViewById(R.id.edit_profile_usertype);
+        profPic = v.findViewById(R.id.profile_pic);
         populatePage(v);
         setListeners(v);
+
+        // load pfp
+        ProfileImage profileImage = new ProfileImage(getContext());
+        profileImage.getProfileImage(getContext(), user.getUserId(), new ProfileImage.ProfileImageCallback() {
+            @Override
+            public void onImageReady(Bitmap image) {
+                profPic.setImageBitmap(image);
+            }
+        });
+
         return v;
     }
 
@@ -141,6 +165,14 @@ public class EditProfile extends Fragment {
                         }
                     });
 
+                    // sync images with db
+                    if (imgDeleted) {
+                        user.setImageID(DatabaseConstants.userDefaultImageID, true);
+                    }
+                    if (tempURI != null) {
+                        ImgHandler imgHandler = new ImgHandler(getContext());
+                        imgHandler.uploadImage(tempURI, documentID -> user.setImageID(documentID, true));
+                    }
                 }
             }
         });
@@ -152,6 +184,38 @@ public class EditProfile extends Fragment {
                 getParentFragmentManager().beginTransaction().replace(R.id.content_main, Profile.newInstance(MainActivity.user))
                         .addToBackStack(null).commit();
             }
+        });
+        setupImageButtons(v);
+    }
+
+    /**
+     * Sets up listeners for upload and delete buttons
+     * @param view view of the fragment
+     */
+    private void setupImageButtons(View view) {
+        //setup upload button
+        ActivityResultLauncher<PickVisualMediaRequest> imgPicker =
+                registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+                    if (uri != null) {
+                        tempURI = uri;
+                        Bitmap bmp = new ImgHandler(getContext()).uriToBitmap(uri);
+                        imgDeleted = false;
+                        profPic.setImageBitmap(bmp);
+                    }
+                });
+
+        ImageButton pickButton = view.findViewById(R.id.upload_pfp_btn);
+        pickButton.setOnClickListener(v -> imgPicker.launch(new PickVisualMediaRequest.Builder()
+                .setMediaType(new ActivityResultContracts.PickVisualMedia.SingleMimeType("image/*"))
+                .build()));
+
+        // setup delete button
+        ImageButton delButton = view.findViewById(R.id.remove_pfp_btn);
+        delButton.setOnClickListener(v -> {
+            imgDeleted = true;
+            tempURI = null;
+            ProfileImage profileImage = new ProfileImage(getContext());
+            profPic.setImageBitmap(profileImage.createProfileImage(getContext(), "x",200,200));
         });
     }
 
