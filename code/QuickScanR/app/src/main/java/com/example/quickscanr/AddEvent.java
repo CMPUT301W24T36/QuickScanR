@@ -13,6 +13,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
@@ -37,6 +38,9 @@ public class AddEvent extends InnerPageFragment {
     private FirebaseFirestore db;
     private String selectedPlaceId;
     private Uri tempURI;
+    private boolean registeredActivity = false;
+    private ActivityResultLauncher<PickVisualMediaRequest> imgPicker;
+    private Chip pickButton;
 
     /**
      * Constructor of AddEvent fragment
@@ -91,6 +95,7 @@ public class AddEvent extends InnerPageFragment {
         TextInputEditText description = v.findViewById(R.id.evadd_txt_desc);
         TextInputEditText restrictions = v.findViewById(R.id.evadd_txt_restrictions);
         AutoCompleteTextView location = v.findViewById(R.id.evadd_txt_loc); // Ensure this ID is correct in your layout
+        pickButton = v.findViewById(R.id.evadd_chip_upload);
 
         PlaceAutoSuggestAdapter adapter = new PlaceAutoSuggestAdapter(getContext(), android.R.layout.simple_list_item_1);
         location.setAdapter(adapter);
@@ -184,19 +189,44 @@ public class AddEvent extends InnerPageFragment {
         }
     }
 
+    /**
+     * Sets up image picker when attach poster chip is pressed.
+     * @param view view from fragment
+     */
     private void setupPosterAttach(View view) {
         //setup upload button
-        ActivityResultLauncher<PickVisualMediaRequest> imgPicker =
-                registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
-                    if (uri != null) {
-                        tempURI = uri;
-                    }
-                });
+        if (!registeredActivity) {
+            imgPicker = registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+                if (uri != null) {
+                    tempURI = uri;
+                    ImageView imgView = view.findViewById(R.id.previewPic);
+                    ImgHandler imgHandler = new ImgHandler(getContext());
+                    imgView.setImageBitmap(imgHandler.uriToBitmap(uri));
+                    pickButton.setText("Remove Poster");
+                    removePoster(view);
+                }
+            });
+            registeredActivity = true;
+        }
 
-        Chip pickButton = view.findViewById(R.id.evadd_chip_upload);
         pickButton.setOnClickListener(v -> imgPicker.launch(new PickVisualMediaRequest.Builder()
                 .setMediaType(new ActivityResultContracts.PickVisualMedia.SingleMimeType("image/*"))
                 .build()));
+    }
+
+    /**
+     * Called when remove poster chip is pressed, updates preview.
+     * @param view view from fragment
+     */
+    private void removePoster(View view) {
+        Chip pickButton = view.findViewById(R.id.evadd_chip_upload);
+        pickButton.setOnClickListener(v -> {
+            tempURI = null;
+            ImageView imgView = view.findViewById(R.id.previewPic);
+            imgView.setImageResource(R.drawable.close_btn_x);
+            setupPosterAttach(view);
+            pickButton.setText("Attach Poster File");
+        });
     }
 
     private void onClickFuncForDates(EditText dateField) {
