@@ -2,6 +2,8 @@ package com.example.quickscanr;
 
 import android.graphics.Bitmap;
 import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
+import android.widget.Switch;
 
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -31,6 +33,7 @@ public class Event implements Serializable {
     private ArrayList<User> attendees;
     private HashMap<User, Integer> checkedInCounts;
     private ArrayList<String> signedUpUsers;
+    private Integer maxAttendees;
 
     /**
      * Constructor #1
@@ -165,6 +168,29 @@ public class Event implements Serializable {
         this.organizer = organizer;
         this.attendees = attendees;
         this.checkedInCounts = checkedInCounts;
+    }
+
+    /**
+     * Constructor #6
+     * @param name
+     * @param description
+     * @param locationName
+     * @param locationId
+     * @param start
+     * @param end
+     * @param organizer
+     * @param maxAttendees
+     */
+    public Event(String name, String description, String locationName, String locationId, String start, String end, User organizer, Integer maxAttendees) {
+        this.name = name;
+        this.description = description;
+        this.locationName = locationName;
+        this.locationId = locationId;
+        this.start = start;
+        this.end = end;
+        this.poster = poster;
+        this.organizer = organizer;
+        this.maxAttendees = maxAttendees;
     }
 
     /**
@@ -406,7 +432,7 @@ public class Event implements Serializable {
      * @param endDateInput
      * @return
      */
-    public boolean isErrors (TextInputEditText nameInput, AutoCompleteTextView locationNameInput, TextInputEditText startDateInput, TextInputEditText endDateInput) {
+    public boolean isErrors (TextInputEditText nameInput, AutoCompleteTextView locationNameInput, TextInputEditText startDateInput, TextInputEditText endDateInput, Switch isAttendeeLimit, EditText maxAttendeesInput) {
         boolean wasErrors = false;
 
         if (name.equals("")) {
@@ -439,6 +465,10 @@ public class Event implements Serializable {
                 throw new RuntimeException(e);
             }
         }
+        if (isAttendeeLimit.isChecked() && maxAttendeesInput.getText().toString().equals("")) {
+            maxAttendeesInput.setError("Please specify limit!");
+            wasErrors = true;
+        }
 
         return wasErrors;
     }
@@ -451,4 +481,11 @@ public class Event implements Serializable {
         return signedUpUsers.size();
     }
 
+    public Integer getMaxAttendees() {
+        return maxAttendees;
+    }
+
+    public void setMaxAttendees(Integer maxAttendees) {
+        this.maxAttendees = maxAttendees;
+    }
 }
