@@ -1,4 +1,6 @@
 package com.example.quickscanr;
+import android.graphics.Bitmap;
+
 import java.io.Serializable;
 import java.util.*; // for Date
 
@@ -15,8 +17,9 @@ public class Announcement {
     private String title;
     private String body;
     private String date;
+    private String userID;
     private String userName;
-
+    private Bitmap bitmap;
     private String selectedEventId;
 
     /**
@@ -28,10 +31,11 @@ public class Announcement {
      */
 
 
-    public Announcement(String title, String body, String date, String userName, String eventID) {
+    public Announcement(String title, String body, String date, String userID, String userName, String selectedEventId) {
         this.title = title;
         this.body = body;
         this.date = date;
+        this.userID = userID;
         this.userName = userName;
         this.selectedEventId = selectedEventId;
     }
@@ -111,5 +115,21 @@ public class Announcement {
 
     public void setEventID(String eventID) {
         this.selectedEventId = selectedEventId;
+    }
+
+        /**
+         * Setter: sets the announcement bitmap
+         * @param bmp
+         */
+    public void setBitmap(Bitmap bmp) {
+        this.bitmap = bmp;
+    }
+
+    /**
+     * Getter: gets the announcement bitmap
+     * @return bmp
+     */
+    public Bitmap getBitmap() {
+        return bitmap;
     }
 }

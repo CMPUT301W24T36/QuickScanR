@@ -2,6 +2,8 @@ package com.example.quickscanr;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -106,13 +108,20 @@ public class EventDetails extends InnerPageFragment {
         ImageView poster = v.findViewById(R.id.evdetail_img_poster);
 
         host.setText(event.getOrganizer().getName());
-        ImgHandler imgHandler = new ImgHandler(getContext());
-        imgHandler.getImage(event.getOrganizer().getImageID(), hostPic::setImageBitmap);
         poster.setImageBitmap(event.getPoster());
-        location.setText(event.getLocation());
+        location.setText(event.getLocationName());
         start.setText(event.getStart());
         end.setText(event.getEnd());
         restrictions.setText(event.getRestrictions());
+
+        // add profile pic
+        ProfileImage profileImage = new ProfileImage(getContext());
+        profileImage.getProfileImage(getContext(), event.getOrganizer().getUserId(), new ProfileImage.ProfileImageCallback() {
+            @Override
+            public void onImageReady(Bitmap image) {
+                hostPic.setImageBitmap(image);
+            }
+        });
     }
 
     /**

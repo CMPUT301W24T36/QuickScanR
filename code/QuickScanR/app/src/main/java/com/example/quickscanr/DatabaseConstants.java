@@ -27,7 +27,8 @@ public class DatabaseConstants {
     public static final String eventColName = "events";
     public static final String evNameKey = "name";
     public static final String evDescKey = "description";
-    public static final String evLocKey = "location";
+    public static final String evLocIdKey = "locationID";
+    public static final String evLocNameKey = "locationName";
     public static final String evStartKey = "startDate";
     public static final String evEndKey = "endDate";
     public static final String evRestricKey = "restrictions";
@@ -40,7 +41,6 @@ public class DatabaseConstants {
 
     public static final String anBody = "body";
     public static final String anDate = "date";
-
     public static final String anUserName = "userName";
     public static final String anTitle = "title";
     public static final String anUserKey = "userID";

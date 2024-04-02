@@ -77,6 +77,8 @@
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/evadd_txt_name"
+                        android:singleLine="true"
+                        android:scrollHorizontally="true"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -105,6 +107,8 @@
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/evadd_txt_desc"
+                        android:singleLine="true"
+                        android:scrollHorizontally="true"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -131,10 +135,15 @@
                     app:boxCornerRadiusTopEnd="20dp"
                     app:boxCornerRadiusTopStart="20dp">
 
-                    <com.google.android.material.textfield.TextInputEditText
+                    <AutoCompleteTextView
                         android:id="@+id/evadd_txt_loc"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:gravity="center_vertical"
+                        android:singleLine="true"
+                        android:scrollHorizontally="true"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
@@ -219,28 +228,49 @@
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/evadd_txt_restrictions"
+                        android:singleLine="true"
+                        android:scrollHorizontally="true"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/evadd_chip_upload"
-                android:layout_width="wrap_content"
-                android:layout_height="63dp"
-                android:clickable="true"
-                android:text="Attach Poster File"
-                app:chipBackgroundColor="@color/white"
-                app:chipIcon="@android:drawable/ic_menu_gallery"
-                app:rippleColor="#FFFFFF" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="62dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/evadd_chip_upload"
+                    android:layout_width="165dp"
+                    android:layout_height="63dp"
+                    android:clickable="true"
+                    android:text="Attach Poster File"
+                    app:chipBackgroundColor="@color/white"
+                    app:chipIcon="@android:drawable/ic_menu_gallery"
+                    app:rippleColor="#FFFFFF" />
+
+                <ImageView
+                    android:id="@+id/previewPic"
+                    android:layout_width="80dp"
+                    android:layout_height="52dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginEnd="30dp"
+                    android:layout_weight="1"
+                    android:src="@drawable/close_btn_x" />
+
+            </LinearLayout>
 
             <Button
                 android:id="@+id/evadd_btn_add"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
                 android:layout_gravity="center_horizontal"
-                android:backgroundTint="@color/color_primary"
+                android:backgroundTint="@color/qr_active"
                 android:text="Add Event"
                 android:textColor="@color/black"
                 android:textSize="20sp" />

@@ -59,6 +59,7 @@ public class AddAnnouncementFragment extends DialogFragment {
     // Class variables
     private AddAnnounceDialogListener listener;
     private String userName; // Add userName variable
+    private String userID;
     private Spinner eventSpinner;
     private String selectedEventId;
     private String userId;
@@ -70,6 +71,7 @@ public class AddAnnouncementFragment extends DialogFragment {
      */
     public AddAnnouncementFragment(String userName) {
         this.userName = userName;
+        this.userID = userID;
     }
 
     /**
@@ -142,7 +144,7 @@ public class AddAnnouncementFragment extends DialogFragment {
                     // Get the current date
                     String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
                     // Call the listener method with the retrieved data
-                    listener.addAnnouncement(new Announcement(title, body, date, userName, selectedEventId));
+                    listener.addAnnouncement(new Announcement(title, body, date, userID, userName, selectedEventId));
                 }
                 // Dismiss the dialog
                 dismiss();

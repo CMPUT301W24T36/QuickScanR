@@ -15,6 +15,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * Organizer Event List Page Functionality
@@ -110,12 +111,16 @@ public class OrganizerEventList extends OrganizerFragment {
             for (QueryDocumentSnapshot doc: value) {
                 String eventName = doc.getString(DatabaseConstants.evNameKey);
                 String eventDesc = doc.getString(DatabaseConstants.evDescKey);
-                String eventLoc = doc.getString(DatabaseConstants.evLocKey);
+                String eventLocName = doc.getString(DatabaseConstants.evLocNameKey);
+                String eventLocId = doc.getString(DatabaseConstants.evLocIdKey);
                 String eventRest = doc.getString(DatabaseConstants.evRestricKey);
                 String eventStart = doc.getString(DatabaseConstants.evStartKey);
                 String eventEnd = doc.getString(DatabaseConstants.evEndKey);
+                String eventPosterID = doc.getString(DatabaseConstants.evPosterKey);
+                String eventOwnerID = doc.getString(DatabaseConstants.evOwnerKey);
+
                 ArrayList<String> signedUpUsers = (ArrayList<String>) doc.get(DatabaseConstants.evSignedUpUsersKey);
-                User orgTemp = new User("Test","Test","test",0);  // TO BE REMOVED
+                User orgTemp = new User("default","default","default",0, eventOwnerID);  // TO BE REMOVED
                 String eventId = doc.getId();
                 Long eventTimestamp; // Declare the timestamp variable
                 // Check if the document contains the timestamp field; TO BE REMOVED WHEN TIMESTAMPS ALWAYS EXIST
@@ -126,9 +131,21 @@ public class OrganizerEventList extends OrganizerFragment {
                 }
 
                 Log.d("DEBUG", String.format("Event (%s) fetched", eventName));
-                Event event = new Event(eventName, eventDesc, eventLoc, eventStart, eventEnd, eventRest, orgTemp, eventId, eventTimestamp);
+                Event event = new Event(eventName, eventDesc, eventLocName, eventLocId, eventStart, eventEnd, eventRest, orgTemp, eventId, eventTimestamp);
                 event.setSignedUp(signedUpUsers);   // set list of signed up users
-                eventDataList.add(event);
+
+                // add images
+                if (!Objects.equals(eventPosterID, "")) {
+                    ImgHandler imgHandler = new ImgHandler(getContext());
+                    imgHandler.getImage(eventPosterID, bitmap -> {
+                        event.setPoster(bitmap);
+                        eventDataList.add(event);
+                        eventArrayAdapter.notifyDataSetChanged();
+                    });
+                } else {
+                    eventDataList.add(event);
+                    eventArrayAdapter.notifyDataSetChanged();
+                }
             }
             eventArrayAdapter.notifyDataSetChanged();
         });

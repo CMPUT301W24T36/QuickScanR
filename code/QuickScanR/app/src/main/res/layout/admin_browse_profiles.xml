@@ -11,6 +11,8 @@
         android:id="@+id/admin_browse_profiles"
         tools:context=".AdminProfilesList">
 
+    <include layout="@layout/admin_nav_bar" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -26,17 +28,17 @@
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="60dp"
             tools:layout_editor_absoluteX="0dp">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/adm_profile_list"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:clipToPadding="false"
                 tools:listitem="@layout/admin_profile_item" />
         </androidx.core.widget.NestedScrollView>
     </LinearLayout>
 
-    <include
-        layout="@layout/admin_nav_bar" />
 </FrameLayout>

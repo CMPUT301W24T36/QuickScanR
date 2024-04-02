@@ -1,16 +1,25 @@
 package com.example.quickscanr;
 
 import android.app.DatePickerDialog;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
+
+import com.google.android.material.chip.Chip;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -27,6 +36,11 @@ import java.util.Map;
 public class AddEvent extends InnerPageFragment {
 
     private FirebaseFirestore db;
+    private String selectedPlaceId;
+    private Uri tempURI;
+    private boolean registeredActivity = false;
+    private ActivityResultLauncher<PickVisualMediaRequest> imgPicker;
+    private Chip pickButton;
 
     /**
      * Constructor of AddEvent fragment
@@ -69,68 +83,81 @@ public class AddEvent extends InnerPageFragment {
      *
      * @return the View created
      */
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.add_event, container, false); // Inflate layout for this fragment
-        addButtonListeners(getActivity(), v, new OrganizerEventList()); // Set up button listeners (method not shown here)
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.add_event, container, false);
+        addButtonListeners(getActivity(), v, new OrganizerEventList());
 
         // Initialize UI components
         TextInputEditText start = v.findViewById(R.id.evadd_txt_start);
         TextInputEditText end = v.findViewById(R.id.evadd_txt_end);
-
-        // Set click listeners for date input fields
-        start.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickFuncForDates(start);
-            }
-        });
-        end.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickFuncForDates(end);
-            }
-        });
-
-        // Set up the Add Event button and input fields
-        Button addEventBtn = v.findViewById(R.id.evadd_btn_add);
         TextInputEditText name = v.findViewById(R.id.evadd_txt_name);
         TextInputEditText description = v.findViewById(R.id.evadd_txt_desc);
-        TextInputEditText location = v.findViewById(R.id.evadd_txt_loc);
         TextInputEditText restrictions = v.findViewById(R.id.evadd_txt_restrictions);
+        AutoCompleteTextView location = v.findViewById(R.id.evadd_txt_loc); // Ensure this ID is correct in your layout
+        pickButton = v.findViewById(R.id.evadd_chip_upload);
 
-        // Handle Add Event button click
+        PlaceAutoSuggestAdapter adapter = new PlaceAutoSuggestAdapter(getContext(), android.R.layout.simple_list_item_1);
+        location.setAdapter(adapter);
+        location.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Place selectedPlace = adapter.getItemInfo(position);
+                if (selectedPlace != null) {
+                    selectedPlaceId = selectedPlace.placeId;
+                    location.setText(selectedPlace.name, false);
+                }
+            }
+        });
+        setupPosterAttach(v);
+
+        Button addEventBtn = v.findViewById(R.id.evadd_btn_add);
         addEventBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Collect input from the user
-                long timestamp = System.currentTimeMillis(); // Get current time for timestamp
                 String eventName = name.getText().toString();
                 String eventDescription = description.getText().toString();
                 String eventLoc = location.getText().toString();
                 String startDateString = start.getText().toString();
                 String endDateString = end.getText().toString();
-                String eventRestric = restrictions.getText().toString();
+                String eventRestrictions = restrictions.getText().toString();
 
                 // Prepare data for Firestore
                 Map<String, Object> data = new HashMap<>();
                 data.put(DatabaseConstants.evNameKey, eventName);
                 data.put(DatabaseConstants.evDescKey, eventDescription);
-                data.put(DatabaseConstants.evLocKey, eventLoc);
+                data.put(DatabaseConstants.evLocIdKey, selectedPlaceId);
+                data.put(DatabaseConstants.evLocNameKey, eventLoc);
                 data.put(DatabaseConstants.evStartKey, startDateString);
                 data.put(DatabaseConstants.evEndKey, endDateString);
-                data.put(DatabaseConstants.evRestricKey, eventRestric);
+                data.put(DatabaseConstants.evRestricKey, eventRestrictions);
+                long timestamp = System.currentTimeMillis();    // Get current time for timestamp
                 data.put(DatabaseConstants.evTimestampKey, timestamp);
-                data.put(DatabaseConstants.evPosterKey, "default");
                 data.put(DatabaseConstants.evSignedUpUsersKey, new ArrayList<String>());
                 MainActivity mainActivity = (MainActivity) getActivity();
                 String userId = mainActivity.user.getUserId();
                 data.put(DatabaseConstants.evOwnerKey, userId);
 
-                // Create Event object and validate inputs
-                Event newEvent = new Event(eventName, eventDescription, eventLoc, startDateString, endDateString, eventRestric, MainActivity.user);
+                // create new event
+                Event newEvent = new Event(eventName, eventDescription, eventLoc, selectedPlaceId, startDateString, endDateString, eventRestrictions, MainActivity.user);
+
+                // upload poster if exists
+                if (tempURI != null) {
+                    ImgHandler img = new ImgHandler(getContext());
+                    img.uploadImage(tempURI, documentID -> {
+                        data.put(DatabaseConstants.evPosterKey, documentID);
+                    });
+                    newEvent.setPoster(img.uriToBitmap(tempURI));
+                } else {
+                    ImgHandler img = new ImgHandler(getContext());
+                    img.getImage("default", bitmap -> {
+                        newEvent.setPoster(bitmap);
+                    });
+                    data.put(DatabaseConstants.evPosterKey, "default");
+                }
+
+                // validate inputs
                 if (!newEvent.isErrors(name, location, start, end)) {
                     // Add event to Firestore and handle success
                     db.collection(DatabaseConstants.eventColName).add(data).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -149,37 +176,72 @@ public class AddEvent extends InnerPageFragment {
                 }
             }
         });
+
+        // Initialize date pickers for start and end date fields
+        initDatePickers(start, end);
+
         return v;
     }
 
+    private void initDatePickers(TextInputEditText... dateFields) {
+        for (TextInputEditText dateField : dateFields) {
+            dateField.setOnClickListener(v -> onClickFuncForDates(dateField));
+        }
+    }
 
     /**
-     * Handles clicks for date input fields by displaying a DatePicker dialog
-     * @param dateField
+     * Sets up image picker when attach poster chip is pressed.
+     * @param view view from fragment
      */
+    private void setupPosterAttach(View view) {
+        //setup upload button
+        if (!registeredActivity) {
+            imgPicker = registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+                if (uri != null) {
+                    tempURI = uri;
+                    ImageView imgView = view.findViewById(R.id.previewPic);
+                    ImgHandler imgHandler = new ImgHandler(getContext());
+                    imgView.setImageBitmap(imgHandler.uriToBitmap(uri));
+                    pickButton.setText("Remove Poster");
+                    removePoster(view);
+                }
+            });
+            registeredActivity = true;
+        }
+
+        pickButton.setOnClickListener(v -> imgPicker.launch(new PickVisualMediaRequest.Builder()
+                .setMediaType(new ActivityResultContracts.PickVisualMedia.SingleMimeType("image/*"))
+                .build()));
+    }
+
+    /**
+     * Called when remove poster chip is pressed, updates preview.
+     * @param view view from fragment
+     */
+    private void removePoster(View view) {
+        Chip pickButton = view.findViewById(R.id.evadd_chip_upload);
+        pickButton.setOnClickListener(v -> {
+            tempURI = null;
+            ImageView imgView = view.findViewById(R.id.previewPic);
+            imgView.setImageResource(R.drawable.close_btn_x);
+            setupPosterAttach(view);
+            pickButton.setText("Attach Poster File");
+        });
+    }
 
     private void onClickFuncForDates(EditText dateField) {
         final Calendar c = Calendar.getInstance();
-
-        // Get current date
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
 
-        // Create and show date picker dialog
-        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                // Format the date and set it in the EditText
-                String strMonth = String.valueOf(monthOfYear + 1);
-                String strDay = String.valueOf(dayOfMonth);
-                String formattedMonth = strMonth.length() == 2? strMonth : "0" + strMonth;
-                String formattedDay = strDay.length() == 2? strDay : "0" + strDay;
-                dateField.setText(formattedDay + "-" + formattedMonth + "-" + year); // Set formatted date
-            }
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), (view, year1, monthOfYear, dayOfMonth) -> {
+            String formattedMonth = (monthOfYear + 1 < 10) ? "0" + (monthOfYear + 1) : String.valueOf(monthOfYear + 1);
+            String formattedDay = (dayOfMonth < 10) ? "0" + dayOfMonth : String.valueOf(dayOfMonth);
+            dateField.setText(formattedDay + "-" + formattedMonth + "-" + year1);
         }, year, month, day);
-        datePickerDialog.show(); // Show the dialog to pick a date
-        // Set button text colors
+
+        datePickerDialog.show();
         datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
         datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(Color.BLACK);
     }

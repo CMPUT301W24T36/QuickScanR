@@ -1,5 +1,6 @@
 package com.example.quickscanr;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,7 +11,9 @@ import android.widget.Button;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -24,10 +27,16 @@ public class AdminEventsList extends AdminFragment {
 
     RecyclerView eventView;
     ArrayList<Event> eventList;
+    ArrayList<String> eventIdList;
     AdminEventArrayAdapter eventArrayAdapter;
     private FirebaseFirestore db;
     private CollectionReference eventReference;
+    private CollectionReference imgReference;
+
+
     public static String EVENT_COLLECTION = "events";
+    public static String IMAGE_COLLECTION = "images";
+
 
     public AdminEventsList() {}
 
@@ -81,9 +90,12 @@ public class AdminEventsList extends AdminFragment {
 //         DB LINKING
         db = FirebaseFirestore.getInstance();
         eventReference = db.collection(EVENT_COLLECTION);
+        imgReference = db.collection(IMAGE_COLLECTION);
 
         eventView = v.findViewById(R.id.view_event_list);
         eventList = new ArrayList<>();
+        eventIdList = new ArrayList<>();
+
 
         //so that the events show up
         addListeners();
@@ -119,18 +131,33 @@ public class AdminEventsList extends AdminFragment {
                 //figure out what to do for admin
                 String eventName = doc.getString(DatabaseConstants.evNameKey);
                 String eventDesc = doc.getString(DatabaseConstants.evDescKey);
-                String eventLoc = doc.getString(DatabaseConstants.evLocKey);
+                String eventLocName = doc.getString(DatabaseConstants.evLocNameKey);
+                String eventLocId = doc.getString(DatabaseConstants.evLocIdKey);
                 String eventRest = doc.getString(DatabaseConstants.evRestricKey);
                 String eventStart = doc.getString(DatabaseConstants.evStartKey);
                 String eventEnd = doc.getString(DatabaseConstants.evEndKey);
 
-                Log.d("DEBUG", String.format("Event (%s) fetched", eventName));
-                eventList.add(new Event(eventName, eventDesc, eventLoc, eventStart, eventEnd, eventRest, admin));
+                String posterId = doc.getString(DatabaseConstants.evPosterKey);
+                //Bitmap bitmap = ImgHandler.base64ToBitmap(posterId);
+
+                eventIdList.add(doc.getId());
+
+                Log.d("DEBUG", eventName + "outside");
+                Event event = new Event(eventName, eventDesc, eventLocName, eventLocId, eventStart, eventEnd, eventRest, null, admin);
+                eventList.add(event);
+
+                getImage(posterId, event);
+                eventArrayAdapter.notifyDataSetChanged();
+
+
             }
-            eventArrayAdapter.notifyDataSetChanged();
+
 
         });
+
+
     }
+
 
     //listen for the clickable items
     /**
@@ -139,7 +166,7 @@ public class AdminEventsList extends AdminFragment {
      *  - keeps track of position when event is clicked
      */
     public void addListeners() {
-        eventArrayAdapter = new AdminEventArrayAdapter(getContext(), eventList, position -> buttonClickAction(eventList.get(position)));
+        eventArrayAdapter = new AdminEventArrayAdapter(getContext(), eventList, eventIdList, (position, eventId) -> buttonClickAction(eventList.get(position), eventIdList.get(position)));
         eventView.setAdapter(eventArrayAdapter);
     }
 
@@ -150,11 +177,37 @@ public class AdminEventsList extends AdminFragment {
      * @param event : pass the specific user data
      */
 
-    private void buttonClickAction(Event event) {
+    private void buttonClickAction(Event event, String eventId) {
         //When you click on the buttonClickAction, it will link the position and take you
         //to the manage profile that fills in info
         getActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.content_main, AdminManageEvent.newInstance(event))
+                .replace(R.id.content_main, AdminManageEvent.newInstance(event, eventId))
                 .addToBackStack(null).commit();
+    }
+
+    /**
+     * getImage():
+     * @param posterId : the document id of the image that needs to be attached to this event
+     * @param event : the particular event
+     *   - takes in the posterId and event so that it can get the image field value from the
+     *     image collection, get the bitmap, and then set the image as the poster
+     *   - double checks there is no null image, if there is it will set a blank poster for the event
+     */
+    private void getImage(String posterId, Event event){
+        imgReference.document(posterId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                String img = documentSnapshot.getString("image");
+
+                if(img != null){
+                    Bitmap bitmap = ImgHandler.base64ToBitmap(img);
+                    event.setPoster(bitmap);
+                }
+
+                eventArrayAdapter.notifyDataSetChanged();
+
+            }
+        });
     }
 }
