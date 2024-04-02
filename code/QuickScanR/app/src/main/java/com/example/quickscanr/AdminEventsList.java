@@ -185,20 +185,27 @@ public class AdminEventsList extends AdminFragment {
                 .addToBackStack(null).commit();
     }
 
+    /**
+     * getImage():
+     * @param posterId : the document id of the image that needs to be attached to this event
+     * @param event : the particular event
+     *   - takes in the posterId and event so that it can get the image field value from the
+     *     image collection, get the bitmap, and then set the image as the poster
+     *   - double checks there is no null image, if there is it will set a blank poster for the event
+     */
     private void getImage(String posterId, Event event){
         imgReference.document(posterId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
 
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 String img = documentSnapshot.getString("image");
+
                 if(img != null){
                     Bitmap bitmap = ImgHandler.base64ToBitmap(img);
                     event.setPoster(bitmap);
                 }
 
                 eventArrayAdapter.notifyDataSetChanged();
-
-
 
             }
         });
