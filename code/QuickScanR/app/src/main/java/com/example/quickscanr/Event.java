@@ -513,4 +513,12 @@ public class Event implements Serializable {
     public boolean isLimitedAttendees() {
         return getMaxAttendees() != -1;
     }
+
+    /**
+     * checks if the event is full (# of signed up users >= max attendees if there is a max defined)
+     * @return true if full, else false
+     */
+    public boolean isAtCapacity() {
+        return getMaxAttendees() != -1? signedUpUsers.size() >= getMaxAttendees() : false;
+    }
 }
