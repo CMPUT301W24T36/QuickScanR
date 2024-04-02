@@ -17,11 +17,14 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -30,11 +33,19 @@ import java.util.Locale;
  */
 public class AdminManageProfile extends InnerPageFragment{
     private User user;
+
+    private String user_id;
+
     Button deleteProfile;
 
     private FirebaseFirestore db;
     private CollectionReference profiles;
+
+    private CollectionReference eventRef;
+
     public static String USER_COLLECTION = "users";
+    public static String EVENT_COLLECTION = "events";
+
 
     public AdminManageProfile(User user) {
         this.user = user;
@@ -50,6 +61,8 @@ public class AdminManageProfile extends InnerPageFragment{
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             user = (User) getArguments().getSerializable("user");
+            user_id = getArguments().getString("userId");
+
         }
     }
 
@@ -67,6 +80,7 @@ public class AdminManageProfile extends InnerPageFragment{
      * @return
      *       - returns v, which is the view with the inflated layout
      *       - also returns the updated version of any change made with deleting
+     *       - goes through the events collection to remove users that were signed up for events
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -81,36 +95,46 @@ public class AdminManageProfile extends InnerPageFragment{
         db = FirebaseFirestore.getInstance();
         profiles = db.collection(USER_COLLECTION);
 
+        eventRef = db.collection(EVENT_COLLECTION);
+
         deleteProfile = v.findViewById(R.id.delete_btn);
 
         deleteProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // using both name and phone to get document id and then delete from database
-                String username = user.getName();
-                String userphone = user.getPhoneNumber();
-                String useremail = user.getEmail();
-                //match the phone and the name to the document id and then delete it
+                profiles.document(user_id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        eventRef.addSnapshotListener((value, error) -> {
+                            if (error != null) {
+                                Log.e("DEBUG: AEL", error.getMessage());
+                                return;
+                            }
 
-                profiles.whereEqualTo("name", username).whereEqualTo("phoneNumber", userphone)
-                        .whereEqualTo("email", useremail)
-                        .get()
-                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                            @Override
-                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                for (QueryDocumentSnapshot doc : queryDocumentSnapshots){
-                                    String docId = doc.getId();
-                                    profiles.document(docId).delete();
+                            if (value == null) {
+                                return;
+                            }
 
-                                    Log.d("DEBUG", docId);
-                                    //go back to the previous page
-                                    AdminProfilesList adminProfilesList = new AdminProfilesList();
-                                    getActivity().getSupportFragmentManager().beginTransaction()
-                                            .replace(R.id.content_main, adminProfilesList)
-                                            .addToBackStack(null).commit();
+                            for(QueryDocumentSnapshot doc: value){
+                                List<String> signedUp = (List<String>) doc.get("signedUpUsers");
+
+                                if(signedUp != null && signedUp.contains(user_id)){
+                                    signedUp.remove(user_id);
+                                    eventRef.document(doc.getId()).update("signedUpUsers", FieldValue.arrayRemove(user_id));
                                 }
+
                             }
                         });
+
+                        //go back to the previous page
+                        AdminProfilesList adminProfilesList = new AdminProfilesList();
+                        getActivity().getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.content_main, adminProfilesList)
+                                .addToBackStack(null).commit();
+
+                    }
+                });
+
             }
         });
 
@@ -125,11 +149,13 @@ public class AdminManageProfile extends InnerPageFragment{
      * @return
      *  - fragment: a new instance that is initialized with new user data
      */
-    public static AdminManageProfile newInstance(User user) {
+    public static AdminManageProfile newInstance(User user, String userId) {
         AdminManageProfile fragment = new AdminManageProfile(user);
         Bundle args = new Bundle();
 
         args.putSerializable("user", user);
+        args.putString("userId", userId);
+
         fragment.setArguments(args);
 
         return fragment;

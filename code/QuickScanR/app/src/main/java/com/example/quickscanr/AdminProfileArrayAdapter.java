@@ -20,6 +20,8 @@ import java.util.ArrayList;
  */
 public class AdminProfileArrayAdapter extends RecyclerView.Adapter<AdminProfileItemView>{
     private final ArrayList<User> users;
+    private final ArrayList<String> ids;
+
     private Context context;
     private final AdminProfileArrayAdapter.buttonListener listener;
 
@@ -30,8 +32,9 @@ public class AdminProfileArrayAdapter extends RecyclerView.Adapter<AdminProfileI
      * @param users: list of profiles that is being displayed
      * @param listener : for keeping track of clicked buttons for the profiles
      */
-    public AdminProfileArrayAdapter(Context context, ArrayList<User> users, AdminProfileArrayAdapter.buttonListener listener) {
+    public AdminProfileArrayAdapter(Context context, ArrayList<User> users, ArrayList<String> ids, AdminProfileArrayAdapter.buttonListener listener) {
         this.users = users;
+        this.ids = ids;
         this.context = context;
         this.listener = listener;
     }
@@ -52,7 +55,7 @@ public class AdminProfileArrayAdapter extends RecyclerView.Adapter<AdminProfileI
     @Override
     public AdminProfileItemView onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.admin_profile_item, parent, false);
-        return new AdminProfileItemView(view, listener);
+        return new AdminProfileItemView(view, listener, ids);
     }
 
     /**
@@ -68,6 +71,7 @@ public class AdminProfileArrayAdapter extends RecyclerView.Adapter<AdminProfileI
     @Override
     public void onBindViewHolder(@NonNull AdminProfileItemView holder, int position) {
         User user = users.get(position);
+        String id = ids.get(position);
         holder.profileName.setText(user.getName());
         loadProfileImage(holder.profileImage, user);
     }
@@ -110,7 +114,7 @@ public class AdminProfileArrayAdapter extends RecyclerView.Adapter<AdminProfileI
          *  - called when a profile is clicked
          * @param position : position of the clicked item
          */
-        void onClickButton(int position);
+        void onClickButton(int position, String userId);
 
     }
 }
