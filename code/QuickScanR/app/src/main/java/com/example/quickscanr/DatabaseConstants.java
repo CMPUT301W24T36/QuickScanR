@@ -21,6 +21,7 @@ public class DatabaseConstants {
     public static final String userImageKey = "image";
     public static final String userDefaultImageID = "default_user";
     public static final String userSignedUpEventsKey = "signedUp";
+    public static final String userFcmToken = "fcmToken";
 
     // Events
     public static final String eventColName = "events";

@@ -25,6 +25,7 @@ public class User implements Serializable {
     private Boolean geoLoc;
     private String userId;
     private String imageID;
+    private String fcmToken;
 
     /**
      * Constructor
@@ -204,5 +205,21 @@ public class User implements Serializable {
      */
     public void setImageID(String str) {
         imageID = str;
+    }
+
+    /**
+     * Getter for Fcm Token
+     * @return the fcmToken of the user
+     */
+    public String getFcmToken() {
+        return fcmToken;
+    }
+
+    /**
+     * Setter for the Fcm Token
+     * @param fcmToken of the user
+     */
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
     }
 }

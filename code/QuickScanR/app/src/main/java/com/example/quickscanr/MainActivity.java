@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     static User user;
     FirebaseFirestore db;
     CollectionReference usersRef;
+    String fcmToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,10 +78,10 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         // Get new FCM registration token
-                        String token = task.getResult();
+                        String fcmToken = task.getResult();
 
                         // Log
-                        Log.d("PushNotification", "Token:" + token);
+                        Log.d("PushNotification", "Token:" + fcmToken);
                     }
                 });
 
@@ -99,6 +100,8 @@ public class MainActivity extends AppCompatActivity {
                 });
 
 
+
+
         Intent intent = getIntent();
         boolean backFromCheckInMap = intent.getBooleanExtra("backFromCheckInMap", false);
 
@@ -113,8 +116,8 @@ public class MainActivity extends AppCompatActivity {
 //        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
 //            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA}, 100);
 //        } else {
-            // If permission already been granted
-            initializeApp();
+        // If permission already been granted
+        initializeApp();
 //        }
     }
 
@@ -136,11 +139,13 @@ public class MainActivity extends AppCompatActivity {
                         user = document.toObject(User.class);   // user exists already
                         user.setUserId(userId);
                         showHome(user.getUserType());
+
                     } else {
                         // if new user, then add them to the database
                         user = new User("New User", "", "", UserType.ATTENDEE);
                         user.setHomepage("");
                         user.setGeoLoc(false);
+                        user.setFcmToken(fcmToken);
                         Map<String, Object> data = new HashMap<>();
                         data.put(DatabaseConstants.userFullNameKey, user.getName());
                         data.put(DatabaseConstants.userHomePageKey, user.getHomepage());
@@ -151,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
                         data.put(DatabaseConstants.userCheckedEventsKey, new ArrayList<String>());
                         data.put(DatabaseConstants.userSignedUpEventsKey, new ArrayList<String>());
                         data.put(DatabaseConstants.userImageKey, DatabaseConstants.userDefaultImageID);
+                        data.put(DatabaseConstants.userFcmToken, user.getFcmToken()); // For push notifications
                         db.collection(DatabaseConstants.usersColName).document(userId).set(data);
                         showHome(user.getUserType());
                     }
@@ -204,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
         user = newUserInfo;
     }}
 
-    // push, extra may delete
+// push, extra may delete
 //    private void askNotificationPermission() {
 //        // This is only necessary for API level >= 33 (TIRAMISU) [We are API 34]
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
