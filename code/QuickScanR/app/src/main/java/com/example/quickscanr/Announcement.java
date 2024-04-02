@@ -17,6 +17,8 @@ public class Announcement {
     private String date;
     private String userName;
 
+    private String selectedEventId;
+
     /**
      * Constructor
      * @param title
@@ -26,11 +28,12 @@ public class Announcement {
      */
 
 
-    public Announcement(String title, String body, String date, String userName) {
+    public Announcement(String title, String body, String date, String userName, String eventID) {
         this.title = title;
         this.body = body;
         this.date = date;
         this.userName = userName;
+        this.selectedEventId = selectedEventId;
     }
 
 
@@ -100,5 +103,13 @@ public class Announcement {
      */
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getEventID() {
+        return selectedEventId;
+    }
+
+    public void setEventID(String eventID) {
+        this.selectedEventId = selectedEventId;
     }
 }

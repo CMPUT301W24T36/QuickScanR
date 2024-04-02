@@ -17,6 +17,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /***
  * This represents the fragment home page for the Attendee
@@ -101,7 +102,7 @@ public class AttendeeHome extends AttendeeFragment {
         layoutManager.setStackFromEnd(true);
         announcementsRecyclerView.setLayoutManager(layoutManager);
 
-        addSnapshotListenerForAnnouncement();
+        fetchSignedUpEventsAndListenForAnnouncements();
 
         TextView nameField = view.findViewById(R.id.user_name);
         nameField.setText(MainActivity.user.getName());
@@ -114,30 +115,55 @@ public class AttendeeHome extends AttendeeFragment {
      * Add the snapshot listener for the announcement collection
      */
     @SuppressLint("NotifyDataSetChanged")
-    private void addSnapshotListenerForAnnouncement() {
-        citiesRef.addSnapshotListener((value, error) -> {
-            if(error != null){
-                Log.e("DEBUG: AttendeeHome", error.getMessage());
-                return;
+    private void fetchSignedUpEventsAndListenForAnnouncements() {
+        MainActivity mainActivity = (MainActivity) getActivity();
+        if (mainActivity == null || mainActivity.user == null) {
+            Log.e("AttendeeHome", "Main Activity or User is null");
+            return;
+        }
+        String userId = mainActivity.user.getUserId();
+
+        // Fetch signed up event IDs from the user's document
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("users").document(userId).get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists() && documentSnapshot.contains("signedUp")) {
+                List<String> signedUpEvents = (List<String>) documentSnapshot.get("signedUp");
+                if (signedUpEvents != null && !signedUpEvents.isEmpty()) {
+                    // Now, listen for announcements related to these events
+                    listenForAnnouncements(signedUpEvents);
+                }
             }
-            if (value == null) {
-                return;
-            }
-
-            announcementsDataList.clear();
-            for (QueryDocumentSnapshot doc : value) {
-                String announcementBody = doc.getString(DatabaseConstants.anBody);
-                String announcementDate = doc.getString(DatabaseConstants.anDate);
-                String announcementUser= doc.getString(DatabaseConstants.anUserName);
-                String announcementTitle = doc.getString(DatabaseConstants.anTitle);
-
-                Log.d("DEBUG: AttendeeHome", String.format("Announcement( User: %s, Title: %s) fetched", announcementUser, announcementTitle));
-                announcementsDataList.add(new Announcement(announcementTitle, announcementBody,announcementDate, announcementUser));
-
-            }
-
-            announcementAdapter.notifyDataSetChanged();
-        });
+        }).addOnFailureListener(e -> Log.e("AttendeeHome", "Error fetching signed up events", e));
     }
+
+    private void listenForAnnouncements(List<String> eventIds) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection(ANNOUNCEMENT_COLLECTION)
+                .whereIn(DatabaseConstants.anEventID, eventIds)
+                .addSnapshotListener((value, error) -> {
+                    if (error != null) {
+                        Log.e("DEBUG: AttendeeHome", error.getMessage());
+                        return;
+                    }
+                    if (value == null) {
+                        return;
+                    }
+
+                    announcementsDataList.clear();
+                    for (QueryDocumentSnapshot doc : value) {
+                        String announcementBody = doc.getString(DatabaseConstants.anBody);
+                        String announcementDate = doc.getString(DatabaseConstants.anDate);
+                        String announcementUser = doc.getString(DatabaseConstants.anUserName);
+                        String announcementTitle = doc.getString(DatabaseConstants.anTitle);
+                        String announcementEvent = doc.getString(DatabaseConstants.anEventID);
+
+                        Log.d("DEBUG: AttendeeHome", String.format("Announcement(User: %s, Title: %s) fetched", announcementUser, announcementTitle));
+                        announcementsDataList.add(new Announcement(announcementTitle, announcementBody, announcementDate, announcementUser, announcementEvent));
+                    }
+
+                    announcementAdapter.notifyDataSetChanged();
+                });
+    }
+
 
 }

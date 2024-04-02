@@ -73,4 +73,3 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementViewHo
     }
 }
 
-

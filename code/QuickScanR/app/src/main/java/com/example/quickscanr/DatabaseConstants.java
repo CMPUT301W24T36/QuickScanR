@@ -44,6 +44,7 @@ public class DatabaseConstants {
     public static final String anUserName = "userName";
     public static final String anTitle = "title";
     public static final String anUserKey = "userID";
+    public static final String anEventID = "eventID";
 
     // Images
     public static final String imgDataKey = "image";
