@@ -1,9 +1,12 @@
 package com.example.quickscanr;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -59,8 +62,26 @@ public class EventItemArrayAdapter extends RecyclerView.Adapter<EventItemViewHol
         Event event = events.get(position);
         holder.eventTitle.setText(event.getName());
         holder.eventDesc.setText(event.getDescription());
-        holder.eventImage.setImageBitmap(event.getPoster());
+        loadProfileImage(holder.eventImage, event.getOrganizer());
     }
+
+    private void loadProfileImage(ImageView imageView, User organizer) {
+        String userId = organizer.getUserId();
+        if (userId == null || userId.trim().isEmpty()) {
+            Log.e("loadProfileImage", "User ID is null or empty for organizer: " + organizer.getName());
+
+            return;
+        }
+
+        // Assuming ProfileImage class has been correctly implemented to handle fetching of the image
+        ProfileImage.getProfileImage(context, userId, new ProfileImage.ProfileImageCallback() {
+            @Override
+            public void onImageReady(Bitmap image) {
+                imageView.setImageBitmap(image);
+            }
+        });
+    }
+
 
     /**
      * Returns the amount of items in the dataset

@@ -117,8 +117,10 @@ public class OrganizerEventList extends OrganizerFragment {
                 String eventStart = doc.getString(DatabaseConstants.evStartKey);
                 String eventEnd = doc.getString(DatabaseConstants.evEndKey);
                 String eventPosterID = doc.getString(DatabaseConstants.evPosterKey);
+                String eventOwnerID = doc.getString(DatabaseConstants.evOwnerKey);
+
                 ArrayList<String> signedUpUsers = (ArrayList<String>) doc.get(DatabaseConstants.evSignedUpUsersKey);
-                User orgTemp = new User("default","default","default",0);  // TO BE REMOVED
+                User orgTemp = new User("default","default","default",0, eventOwnerID);  // TO BE REMOVED
                 String eventId = doc.getId();
                 Long eventTimestamp; // Declare the timestamp variable
                 // Check if the document contains the timestamp field; TO BE REMOVED WHEN TIMESTAMPS ALWAYS EXIST
