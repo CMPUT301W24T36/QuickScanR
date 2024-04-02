@@ -33,7 +33,7 @@ public class Event implements Serializable {
     private ArrayList<User> attendees;
     private HashMap<User, Integer> checkedInCounts;
     private ArrayList<String> signedUpUsers;
-    private Integer maxAttendees;
+    private Integer maxAttendees = -1;
 
     /**
      * Constructor #1
@@ -49,7 +49,7 @@ public class Event implements Serializable {
      * @param id
      * @param timestamp
      */
-    public Event(String name, String description, String locationName, String locationId, String start, String end, String restrictions, User organizer, String id, long timestamp) {
+    public Event(String name, String description, String locationName, String locationId, String start, String end, String restrictions, User organizer, String id, long timestamp, Integer maxAttendees) {
         this.name = name;
         this.description = description;
         this.locationName = locationName;
@@ -61,6 +61,7 @@ public class Event implements Serializable {
         this.checkedInCounts = new HashMap<>();
         this.id = id;
         this.timestamp = timestamp;
+        this.maxAttendees = maxAttendees;
     }
 
     /**
@@ -473,19 +474,43 @@ public class Event implements Serializable {
         return wasErrors;
     }
 
+    /**
+     * set the signed up users for the event
+     * @param signedUpUsers list of users that's signed up
+     */
     public void setSignedUp(ArrayList<String> signedUpUsers) {
         this.signedUpUsers = signedUpUsers;
     }
 
+    /**
+     * get number of users signed up
+     * @return number of users signed up
+     */
     public int getSignUpCount() {
         return signedUpUsers.size();
     }
 
+    /**
+     * get maximum number of attendees for an event
+     * @return maximum number of attendees for an event
+     */
     public Integer getMaxAttendees() {
         return maxAttendees;
     }
 
+    /**
+     * set maximum number of attendees for an event
+     * @param maxAttendees maximum number of attendees for an event
+     */
     public void setMaxAttendees(Integer maxAttendees) {
         this.maxAttendees = maxAttendees;
+    }
+
+    /**
+     * checks if event is limited
+     * @return true if event is limited, otherwise false
+     */
+    public boolean isLimitedAttendees() {
+        return getMaxAttendees() != -1;
     }
 }
