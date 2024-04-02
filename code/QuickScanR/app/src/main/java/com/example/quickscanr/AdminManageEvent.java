@@ -10,9 +10,13 @@ import android.widget.Button;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.List;
 
 /**
  * AdminManageEvents
@@ -20,12 +24,18 @@ import com.google.firebase.firestore.QuerySnapshot;
  */
 public class AdminManageEvent extends InnerPageFragment{
     private Event event;
+    private String event_id;
+
 
     Button deleteEvents;
 
     private FirebaseFirestore db;
     private CollectionReference eventsRef;
+    private CollectionReference usersRef;
+
     public static String EVENTS_COLLECTION = "events";
+    public static String USERS_COLLECTION = "users";
+
 
     public AdminManageEvent(Event event) {
         this.event = event;
@@ -42,6 +52,8 @@ public class AdminManageEvent extends InnerPageFragment{
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             event = (Event) getArguments().getSerializable("event");
+            event_id = getArguments().getString("eventId");
+
         }
     }
 
@@ -75,33 +87,116 @@ public class AdminManageEvent extends InnerPageFragment{
         db = FirebaseFirestore.getInstance();
         eventsRef = db.collection(EVENTS_COLLECTION);
 
+        usersRef = db.collection(USERS_COLLECTION);
+
         deleteEvents.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String event_name = event.getName();
-                String event_desc = event.getDescription();
-                String event_loc = event.getLocationName();
-                Log.d("DEBUG", event_name + event_desc + event_loc);
+//                String event_name = event.getName();
+//                String event_desc = event.getDescription();
+//                String event_loc = event.getLocationName();
+//                Log.d("DEBUG", event_name + event_desc + event_loc);
+                    //THIS IS CORRECT< DO NOT TOUCH
+                eventsRef.document(event_id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
 
-                eventsRef.whereEqualTo("name", event_name).whereEqualTo("description", event_desc)
-                        .whereEqualTo("location", event_loc)
-                        .get()
-                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                            @Override
-                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                                    String docId = doc.getId();
-                                    eventsRef.document(docId).delete();
+                        //also remove it from the checked events for any user
+                        usersRef.addSnapshotListener((value, error) -> {
+                            if (error != null) {
+                                Log.e("DEBUG: AEL", error.getMessage());
+                                return;
+                            }
 
-                                    Log.d("DEBUG", docId);
-                                    //go back to the previous page
-                                    AdminEventsList adminEventsList = new AdminEventsList();
-                                    getActivity().getSupportFragmentManager().beginTransaction()
-                                            .replace(R.id.content_main, adminEventsList)
-                                            .addToBackStack(null).commit();
+                            if (value == null) {
+                                return;
+                            }
+
+                            for(QueryDocumentSnapshot doc: value){
+                                List<String> checkedEvt = (List<String>) doc.get("checkedEvents");
+
+                                if(checkedEvt != null && checkedEvt.contains(event_id)){
+                                    checkedEvt.remove(event_id);
+                                    usersRef.document(doc.getId()).update("checkedEvents", FieldValue.arrayRemove(event_id));
                                 }
+
                             }
                         });
+
+                        //remove from signed up events for any user
+                        usersRef.addSnapshotListener((value, error) -> {
+                            if (error != null) {
+                                Log.e("DEBUG: AEL", error.getMessage());
+                                return;
+                            }
+
+                            if (value == null) {
+                                return;
+                            }
+
+                            for(QueryDocumentSnapshot doc: value){
+                                List<String> signedUp = (List<String>) doc.get("signedUp");
+
+                                if(signedUp != null && signedUp.contains(event_id)){
+                                    signedUp.remove(event_id);
+                                    usersRef.document(doc.getId()).update("signedUp", FieldValue.arrayRemove(event_id));
+                                }
+
+                            }
+                        });
+
+                        //go back to the previous page
+                        AdminEventsList adminEventsList = new AdminEventsList();
+                        getActivity().getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.content_main, adminEventsList)
+                                .addToBackStack(null).commit();
+                    }
+                });
+
+//                eventsRef.document(event_id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//                    @Override
+//                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+//                        usersRef.addSnapshotListener((value, error) -> {
+//                            if (error != null) {
+//                                Log.e("DEBUG: AEL", error.getMessage());
+//                                return;
+//                            }
+//
+//                            if (value == null) {
+//                                return;
+//                            }
+//
+//                            for(QueryDocumentSnapshot doc: value){
+//                                List<String> checkedEvt = (List<String>) doc.get("checkedEvents");
+//
+//                                if(checkedEvt != null && checkedEvt.contains(event_id)){
+//                                    checkedEvt.remove(event_id);
+//                                    usersRef.document(doc.getId()).update("checkedEvents", FieldValue.arrayRemove(event_id));
+//                                }
+//
+//                            }
+//                        });
+//                    }
+//                });
+//                eventsRef.whereEqualTo("name", event_name).whereEqualTo("description", event_desc)
+//                        .whereEqualTo("location", event_loc)
+//                        .get()
+//                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//                            @Override
+//                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+//                                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+//                                    String docId = doc.getId();
+//                                    eventsRef.document(docId).delete();
+//
+//                                    Log.d("DEBUG", docId);
+//                                    //go back to the previous page
+//                                    AdminEventsList adminEventsList = new AdminEventsList();
+//                                    getActivity().getSupportFragmentManager().beginTransaction()
+//                                            .replace(R.id.content_main, adminEventsList)
+//                                            .addToBackStack(null).commit();
+//                                }
+//                            }
+//                        });
             }
         });
 
@@ -116,11 +211,13 @@ public class AdminManageEvent extends InnerPageFragment{
      * @return
      *  - fragment: a new instance that is initialized with new user data
      */
-    public static AdminManageEvent newInstance(Event event) {
+    public static AdminManageEvent newInstance(Event event, String eventId) {
         AdminManageEvent fragment = new AdminManageEvent(event);
         Bundle args = new Bundle();
 
         args.putSerializable("event", event);
+        args.putString("eventId", eventId);
+
         fragment.setArguments(args);
 
         return fragment;
