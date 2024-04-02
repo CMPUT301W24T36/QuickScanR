@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -18,8 +19,10 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -42,9 +45,13 @@ public class AdminManageProfile extends InnerPageFragment{
     private CollectionReference profiles;
 
     private CollectionReference eventRef;
+    private CollectionReference attendeesRef;
+
 
     public static String USER_COLLECTION = "users";
     public static String EVENT_COLLECTION = "events";
+    public static String ATTEN_COLLECTION = "attendees";
+
 
 
     public AdminManageProfile(User user) {
@@ -97,6 +104,7 @@ public class AdminManageProfile extends InnerPageFragment{
 
         eventRef = db.collection(EVENT_COLLECTION);
 
+
         deleteProfile = v.findViewById(R.id.delete_btn);
 
         deleteProfile.setOnClickListener(new View.OnClickListener() {
@@ -123,6 +131,52 @@ public class AdminManageProfile extends InnerPageFragment{
                                     eventRef.document(doc.getId()).update("signedUpUsers", FieldValue.arrayRemove(user_id));
                                 }
 
+                                CollectionReference attendRef = doc.getReference().collection("attendees");
+
+                                attendRef.document(user_id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        if(documentSnapshot.exists()){
+                                            DocumentReference delAttend = documentSnapshot.getReference();
+
+                                            delAttend.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void unused) {
+                                                    Log.d("DEBUG", "deleted" + doc.getId());
+                                                }
+                                            });
+                                        }
+
+                                    }
+                                });
+                            }
+
+                        });
+
+                        // go through the attendee's collection
+                        CollectionReference attenRef = eventRef.document(user_id).collection(ATTEN_COLLECTION);
+                        Log.d("DEBUG", "HIIIII");
+
+                        attenRef.document(user_id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                Log.d("DEBUG", "user delete from attnedees");
+                            }
+                        });
+
+                        eventRef.whereEqualTo("ownerID", user_id).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                for (QueryDocumentSnapshot documentSnapshot: queryDocumentSnapshots){
+                                    DocumentReference eventDoc = documentSnapshot.getReference();
+
+                                    eventDoc.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void unused) {
+                                            Log.d("DEBUG", "deleted created event");
+                                        }
+                                    });
+                                }
                             }
                         });
 
@@ -137,6 +191,8 @@ public class AdminManageProfile extends InnerPageFragment{
 
             }
         });
+
+
 
         return v;
     }
