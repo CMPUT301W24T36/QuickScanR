@@ -71,6 +71,7 @@ public class AdminManageEvent extends InnerPageFragment{
      * @return
      *       - returns v, which is the view with the inflated layout
      *       - also returns the updated version of any change made with deleting
+     *       - deletes events from users signed up lists
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -92,11 +93,6 @@ public class AdminManageEvent extends InnerPageFragment{
         deleteEvents.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                String event_name = event.getName();
-//                String event_desc = event.getDescription();
-//                String event_loc = event.getLocationName();
-//                Log.d("DEBUG", event_name + event_desc + event_loc);
-                    //THIS IS CORRECT< DO NOT TOUCH
                 eventsRef.document(event_id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
@@ -153,50 +149,6 @@ public class AdminManageEvent extends InnerPageFragment{
                     }
                 });
 
-//                eventsRef.document(event_id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-//                    @Override
-//                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-//                        usersRef.addSnapshotListener((value, error) -> {
-//                            if (error != null) {
-//                                Log.e("DEBUG: AEL", error.getMessage());
-//                                return;
-//                            }
-//
-//                            if (value == null) {
-//                                return;
-//                            }
-//
-//                            for(QueryDocumentSnapshot doc: value){
-//                                List<String> checkedEvt = (List<String>) doc.get("checkedEvents");
-//
-//                                if(checkedEvt != null && checkedEvt.contains(event_id)){
-//                                    checkedEvt.remove(event_id);
-//                                    usersRef.document(doc.getId()).update("checkedEvents", FieldValue.arrayRemove(event_id));
-//                                }
-//
-//                            }
-//                        });
-//                    }
-//                });
-//                eventsRef.whereEqualTo("name", event_name).whereEqualTo("description", event_desc)
-//                        .whereEqualTo("location", event_loc)
-//                        .get()
-//                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-//                            @Override
-//                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-//                                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-//                                    String docId = doc.getId();
-//                                    eventsRef.document(docId).delete();
-//
-//                                    Log.d("DEBUG", docId);
-//                                    //go back to the previous page
-//                                    AdminEventsList adminEventsList = new AdminEventsList();
-//                                    getActivity().getSupportFragmentManager().beginTransaction()
-//                                            .replace(R.id.content_main, adminEventsList)
-//                                            .addToBackStack(null).commit();
-//                                }
-//                            }
-//                        });
             }
         });
 
