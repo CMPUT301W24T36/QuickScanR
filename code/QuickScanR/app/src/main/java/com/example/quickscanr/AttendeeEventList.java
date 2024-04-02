@@ -352,7 +352,7 @@ public class AttendeeEventList extends AttendeeFragment {
                         String phone = document.getString(DatabaseConstants.userPhoneKey);
                         String email = document.getString(DatabaseConstants.userPhoneKey);
                         String picID = document.getString(DatabaseConstants.userImageKey);
-                        User organizer = new User(name,phone,email,type);
+                        User organizer = new User(name,phone,email,type, eventOwnerID);
                         organizer.setImageID(picID,false);
 
                         // continue fetching
