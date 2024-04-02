@@ -76,8 +76,6 @@ public class AdminProfileArrayAdapter extends RecyclerView.Adapter<AdminProfileI
         String userId = user.getUserId();
         if (userId == null || userId.trim().isEmpty()) {
             Log.e("loadProfileImage", "User ID is null or empty for user: " + user.getName());
-            // Optionally set a default or error image here if desired
-            // imageView.setImageResource(R.drawable.default_error_placeholder);
             return;
         }
 

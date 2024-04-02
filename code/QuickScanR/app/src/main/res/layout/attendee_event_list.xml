@@ -37,15 +37,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
 
-            <Button
-                android:id="@+id/attEvListToggle"
-                android:layout_width="70dp"
+            <Spinner
+                android:id="@+id/atd_ev_list_filter"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
                 android:layout_weight="1"
+                android:background="@drawable/rect_rounded_button"
                 android:backgroundTint="@color/qr_active"
-                android:textColor="@color/black"
-                android:text="View All" />
+                android:textAlignment="center" />
 
         </LinearLayout>
 

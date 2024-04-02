@@ -1,8 +1,12 @@
 package com.example.quickscanr;
 
 import android.graphics.Bitmap;
+import android.provider.ContactsContract;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -10,6 +14,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Represents the users of the app; Attendees, Organizers, and Admins
@@ -25,6 +32,8 @@ public class User implements Serializable {
     private Boolean geoLoc;
     private String userId;
     private String imageID;
+    private final static String USER_COLLECTION = "users";
+    private final static String IMAGE_COLLECTION = "images";
 
     /**
      * Constructor
@@ -207,10 +216,29 @@ public class User implements Serializable {
     }
 
     /**
-     * Setter for image ID string
+     * Setter for image ID string for user object. If
+     * a true bool is second param, it will auto update
+     * this in the database.
      * @param str String of image ID
+     * @param updateDB bool to update DB
      */
-    public void setImageID(String str) {
+    public void setImageID(String str, boolean updateDB) {
+        if (updateDB) {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            // delete old image from DB
+            if (!Objects.equals(imageID, DatabaseConstants.userDefaultImageID) && imageID != null) {
+                DocumentReference imgDocRef = db.collection(IMAGE_COLLECTION).document(imageID);
+                imgDocRef.delete();
+            }
+
+            // update in DB
+            DocumentReference userDocRef = db.collection(USER_COLLECTION).document(userId);
+            userDocRef.update(DatabaseConstants.userImageKey, str)
+                    .addOnSuccessListener(aVoid -> Log.d("User", "New PFP uploaded"))
+                    .addOnFailureListener(e -> Log.d("User", "Failed to upload PFP"));
+        }
+
         imageID = str;
     }
 }

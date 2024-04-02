@@ -1,4 +1,6 @@
 package com.example.quickscanr;
+import android.graphics.Bitmap;
+
 import java.io.Serializable;
 import java.util.*; // for Date
 
@@ -16,6 +18,7 @@ public class Announcement {
     private String body;
     private String date;
     private String userName;
+    private Bitmap bitmap;
 
     /**
      * Constructor
@@ -100,5 +103,21 @@ public class Announcement {
      */
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    /**
+     * Setter: sets the announcement bitmap
+     * @param bmp
+     */
+    public void setBitmap(Bitmap bmp) {
+        this.bitmap = bmp;
+    }
+
+    /**
+     * Getter: gets the announcement bitmap
+     * @return bmp
+     */
+    public Bitmap getBitmap() {
+        return bitmap;
     }
 }

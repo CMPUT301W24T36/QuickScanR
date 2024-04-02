@@ -1,6 +1,7 @@
 package com.example.quickscanr;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,6 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /***
  * This represents the fragment home page for the Attendee
@@ -32,7 +34,6 @@ public class AttendeeHome extends AttendeeFragment {
     // db
 
     private FirebaseFirestore db;
-    private CollectionReference citiesRef;
 
     public static String ANNOUNCEMENT_COLLECTION = "announcements";
     private CollectionReference announcementsRef;
@@ -89,7 +90,7 @@ public class AttendeeHome extends AttendeeFragment {
 
         // Connect to the database
         db = FirebaseFirestore.getInstance();
-        citiesRef = db.collection(ANNOUNCEMENT_COLLECTION);
+        announcementsRef = db.collection(ANNOUNCEMENT_COLLECTION);
 
         // Create the announcementAdapter and set it to the RecyclerView
         announcementAdapter = new AnnouncementAdapter(announcementsDataList);
@@ -115,7 +116,7 @@ public class AttendeeHome extends AttendeeFragment {
      */
     @SuppressLint("NotifyDataSetChanged")
     private void addSnapshotListenerForAnnouncement() {
-        citiesRef.addSnapshotListener((value, error) -> {
+        announcementsRef.addSnapshotListener((value, error) -> {
             if(error != null){
                 Log.e("DEBUG: AttendeeHome", error.getMessage());
                 return;
@@ -130,12 +131,21 @@ public class AttendeeHome extends AttendeeFragment {
                 String announcementDate = doc.getString(DatabaseConstants.anDate);
                 String announcementUser= doc.getString(DatabaseConstants.anUserName);
                 String announcementTitle = doc.getString(DatabaseConstants.anTitle);
+                String announcementOwnerID = doc.getString(DatabaseConstants.anUserKey);
+                Announcement an = new Announcement(announcementTitle, announcementBody,announcementDate, announcementUser);
 
-                Log.d("DEBUG: AttendeeHome", String.format("Announcement( User: %s, Title: %s) fetched", announcementUser, announcementTitle));
-                announcementsDataList.add(new Announcement(announcementTitle, announcementBody,announcementDate, announcementUser));
-
+                // build user object
+                db.collection(DatabaseConstants.usersColName).document(announcementOwnerID).get().addOnSuccessListener(document -> {
+                    // add profile pic
+                    ProfileImage profileImage = new ProfileImage(getContext());
+                    profileImage.getProfileImage(getContext(), announcementOwnerID, image -> {
+                        Log.d("DEBUG: AttendeeHome", String.format("Announcement( User: %s, Title: %s) fetched", announcementUser, announcementTitle));
+                        an.setBitmap(image);
+                        announcementsDataList.add(an);
+                        announcementAdapter.notifyDataSetChanged();
+                    });
+                });
             }
-
             announcementAdapter.notifyDataSetChanged();
         });
     }

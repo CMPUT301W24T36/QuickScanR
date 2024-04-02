@@ -1,6 +1,7 @@
 package com.example.quickscanr;
 
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,8 +15,8 @@ import com.example.quickscanr.R;
 public class AnnouncementViewHolder extends RecyclerView.ViewHolder {
     public TextView titleTextView;
     public TextView organizerTextView;
-
     public TextView bodyTextView;
+    public ImageView profImageView;
 
     /**
      * Initialize views in the ViewHolder
@@ -26,6 +27,6 @@ public class AnnouncementViewHolder extends RecyclerView.ViewHolder {
         titleTextView = itemView.findViewById(R.id.announcement_item_title);
         organizerTextView = itemView.findViewById(R.id.announcement_item_organizer);
         bodyTextView = itemView.findViewById(R.id.announcement_item_body);
-
+        profImageView = itemView.findViewById(R.id.announcement_item_profile);
     }
 }

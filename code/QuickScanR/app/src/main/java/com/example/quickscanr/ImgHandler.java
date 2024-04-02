@@ -144,7 +144,7 @@ public class ImgHandler {
      * @param URI URI of given image
      * @return Bitmap of the given URI
      */
-    private Bitmap uriToBitmap(Uri URI) {
+    public Bitmap uriToBitmap(Uri URI) {
         Bitmap bitmap = null;
         ContentResolver contentResolver = context.getContentResolver();
         try {
