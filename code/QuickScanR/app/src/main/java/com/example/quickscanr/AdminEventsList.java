@@ -33,6 +33,7 @@ public class AdminEventsList extends AdminFragment {
     private CollectionReference eventReference;
     private CollectionReference imgReference;
 
+
     public static String EVENT_COLLECTION = "events";
     public static String IMAGE_COLLECTION = "images";
 
@@ -186,14 +187,18 @@ public class AdminEventsList extends AdminFragment {
 
     private void getImage(String posterId, Event event){
         imgReference.document(posterId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 String img = documentSnapshot.getString("image");
-                Bitmap bitmap = ImgHandler.base64ToBitmap(img);
+                if(img != null){
+                    Bitmap bitmap = ImgHandler.base64ToBitmap(img);
+                    event.setPoster(bitmap);
+                }
 
-                Log.d("DEBUG", "hello" + " " + bitmap + posterId);
-                event.setPoster(bitmap);
                 eventArrayAdapter.notifyDataSetChanged();
+
+
 
             }
         });
