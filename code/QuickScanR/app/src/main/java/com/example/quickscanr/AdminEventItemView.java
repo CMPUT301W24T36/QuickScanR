@@ -52,15 +52,16 @@ public class AdminEventItemView extends RecyclerView.ViewHolder {
                 listener.onClickButton(position, eventId);
             }
         });
-//        editEvent.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Log.d("DEBUG", "hi there");
-//                int position = getAdapterPosition();
-//                Log.d("button", "onClick:" + getAdapterPosition());
-//                listener.onClickButton(position);
-//            }
-//        });
+        editEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("DEBUG", "hi there");
+                int position = getAdapterPosition();
+                String eventId = getEventId(position);
+                Log.d("button", "onClick:" + getAdapterPosition());
+                listener.onClickButton(position, eventId);
+            }
+        });
 
     }
 
