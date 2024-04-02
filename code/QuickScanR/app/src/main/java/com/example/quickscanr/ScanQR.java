@@ -69,7 +69,6 @@ public class ScanQR extends AttendeeFragment {
 
                 lastScan = data.getText();
                 onScan(String.valueOf(data));
-                scanView.resume();
             }
         });
     }
