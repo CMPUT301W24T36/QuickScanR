@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
                         user = new User("New User", "", "", UserType.ATTENDEE);
                         user.setHomepage("");
                         user.setGeoLoc(false);
+                        user.setUserId(userId);
                         Map<String, Object> data = new HashMap<>();
                         data.put(DatabaseConstants.userFullNameKey, user.getName());
                         data.put(DatabaseConstants.userHomePageKey, user.getHomepage());
