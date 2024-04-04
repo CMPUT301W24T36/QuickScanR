@@ -6,16 +6,30 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import androidx.annotation.NonNull;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Tests for attendee navigation.
@@ -29,6 +43,8 @@ public class AttendeeNavigationTest {
     public ActivityScenarioRule<MainActivity> scenario = new ActivityScenarioRule<MainActivity>(MainActivity.class);
 
     private static boolean userSet = false;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private static String testEventId;
 
     /**
      * make the current user an attendee
@@ -66,7 +82,52 @@ public class AttendeeNavigationTest {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
 
+    @After
+    public void tearDown() {
+        if (testEventId != null) {
+            db.collection(DatabaseConstants.eventColName).document(testEventId).delete();
+            db.collection(DatabaseConstants.usersColName).document(MainActivity.user.getUserId()).update(DatabaseConstants.userSignedUpEventsKey, FieldValue.arrayRemove(testEventId));
+            testEventId = null;
+        }
+    }
+
+    /**
+     * adding a current event that the user is signed up for
+     */
+    public void addTestEvent() {
+        // test event data
+        Map<String, Object> data = new HashMap<>();
+        data.put(DatabaseConstants.evNameKey, "Test Event");
+        data.put(DatabaseConstants.evDescKey, "Event Description");
+        data.put(DatabaseConstants.evLocIdKey, "ChIJI__egEUioFMRXRX2SgygH0E");  // place id of Edmonton
+        data.put(DatabaseConstants.evLocNameKey, "Edmonton");
+        Date currentDate = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        String formattedCurrentDate = sdf.format(currentDate);
+        data.put(DatabaseConstants.evStartKey, formattedCurrentDate);
+        data.put(DatabaseConstants.evEndKey, formattedCurrentDate);
+        data.put("maxAttendees", -1);
+        data.put(DatabaseConstants.evTimestampKey, System.currentTimeMillis());
+        ArrayList<String> signedUpUsers = new ArrayList<>();
+        signedUpUsers.add(MainActivity.user.getUserId());
+        data.put(DatabaseConstants.evSignedUpUsersKey, signedUpUsers);
+        data.put(DatabaseConstants.evPosterKey, "default");     // default event poster
+        data.put(DatabaseConstants.evOwnerKey, MainActivity.user.getUserId());
+
+        db.collection(DatabaseConstants.eventColName).add(data).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentReference> task) {
+                if (task.isSuccessful()) {
+                    DocumentReference documentReference = task.getResult();
+                    if (documentReference != null) {
+                        testEventId = documentReference.getId();
+                        db.collection(DatabaseConstants.usersColName).document(MainActivity.user.getUserId()).update(DatabaseConstants.userSignedUpEventsKey, FieldValue.arrayUnion(testEventId));
+                    }
+                }
+            }
+        });
     }
 
     /**
@@ -101,10 +162,15 @@ public class AttendeeNavigationTest {
      * click on attendee event list
      * click on first item in attendee event list
      * check that event details page is being shown
-     * TODO: attendee event list not complete yet
      */
 //    @Test
     public void testOpenEventDetails() {
+        addTestEvent();
+        try {
+            Thread.sleep(3000L);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         onView(withId(R.id.nav_a_events_btn)).perform(click());
         onView(withId(R.id.atnd_ev_list)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         onView(withId(R.id.event_details_page)).check(matches(ViewMatchers.isDisplayed()));
