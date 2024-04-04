@@ -30,6 +30,7 @@ public class ScanQR extends AttendeeFragment {
     private DecoratedBarcodeView scanView;
     private FirebaseFirestore db;
     public static String EVENT_COLLECTION = "events";
+    private String lastScan;
 
     public static ScanQR newInstance(String param1, String param2) {
         ScanQR fragment = new ScanQR();
@@ -62,9 +63,12 @@ public class ScanQR extends AttendeeFragment {
         scanView.decodeContinuous(new BarcodeCallback() {
             @Override
             public void barcodeResult(BarcodeResult data) {
-                scanView.pause();
+                if(data.getText() == null || data.getText().equals(lastScan)) {
+                    return;
+                }
+
+                lastScan = data.getText();
                 onScan(String.valueOf(data));
-                scanView.resume();
             }
         });
     }
