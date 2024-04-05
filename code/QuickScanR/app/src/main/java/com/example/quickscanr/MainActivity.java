@@ -46,12 +46,15 @@ public class MainActivity extends AppCompatActivity {
     CollectionReference usersRef;
     String fcmToken;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        FirebaseApp.initializeApp(this); // This is required for firebase cloud messaging
 
+        // Request for permissions for notification
         final ActivityResultLauncher<String> requestPermissionLauncher =
                 registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                     if (isGranted) {
@@ -67,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-
+        // Gets the FCM token of the user.
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(new OnCompleteListener<String>() {
                     @Override
@@ -86,20 +89,18 @@ public class MainActivity extends AppCompatActivity {
                 });
 
         // Subscribe to announcements
-        FirebaseMessaging.getInstance().subscribeToTopic("Announcements")
+        // TODO: Subscribe each user to a specific announcement (more code) / stop notifications if they don't meet a condition (i.e. not signed up, opt this way if possible)
+        FirebaseMessaging.getInstance().subscribeToTopic("announcements")
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        String msg = "Subscribed";
+                        String msg = "Subscribed to announcements!";
                         if (!task.isSuccessful()) {
                             msg = "Subscribe failed";
                         }
                         Log.d("PushNotif", msg);
-                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
                     }
                 });
-
-
 
 
         Intent intent = getIntent();

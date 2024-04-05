@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -28,15 +27,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -46,6 +42,7 @@ import java.util.Objects;
  * ISSUE: There will be duplicates for real time updates regarding milestones.
  * ISSUE: This class is too crowded- will need to apply more modularity.
  * FIX: Just add milestones to the database.
+ * TODO: modularize this class
  * @see Milestone
  * @see Announcement
  */
@@ -87,7 +84,6 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
         // Add to the database
         anncRef = db.collection("announcements"); // Get relevant database path
 
-
         // Set up the data
 
         HashMap<String, String> data = new HashMap<>();
@@ -108,10 +104,10 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
                 });
     }
 
+
     /**
      * This allows dialog fragment and organizer home to talk to each other.
-     * Conversation is essentially -> DialogFragment: I have dismissed (closed)
-     * OrganizerHome: OK, will stop focus on the EditText.
+     * TODO: get rid of this, change announcement_body to a button instead.
      */
     @Override
     public void inDismiss() {
@@ -249,6 +245,7 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
         realtimeData.startListeningForEventCount(userId);
     }
 
+
     /**
      * Creates the view for OrganizerHome fragment, deals with the functionality
      * for displaying the list of milestones AND AddAnnouncementFragment call
@@ -377,4 +374,9 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
             lastEventCount = 1000;
         }
         milestoneAdapter.notifyDataSetChanged();
-    }}
+    }
+
+
+
+}
+

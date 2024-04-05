@@ -47,9 +47,9 @@
             </intent-filter>
         </activity>
 
-        <!-- For push notifications -->
+        <!-- For push notifications, this allows NotificationSender to handle Firebase events -->
         <service
-            android:name=".Notification"
+            android:name=".NotificationHandler"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
