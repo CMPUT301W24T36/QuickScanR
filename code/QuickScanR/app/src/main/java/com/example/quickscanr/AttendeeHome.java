@@ -169,7 +169,7 @@ public class AttendeeHome extends AttendeeFragment {
                 String announcementTitle = doc.getString(DatabaseConstants.anTitle);
                 String announcementOwnerID = doc.getString(DatabaseConstants.anUserKey);
                 String announcementEventID = doc.getString(DatabaseConstants.anEventID);
-                Announcement an = new Announcement(announcementTitle, announcementBody,announcementDate, announcementUser, announcementOwnerID, announcementEventID);
+                Announcement an = new Announcement(announcementTitle, announcementBody,announcementDate,announcementOwnerID, announcementUser, announcementEventID);
 
                 // build user object
                 db.collection(DatabaseConstants.usersColName).document(announcementOwnerID).get().addOnSuccessListener(document -> {
