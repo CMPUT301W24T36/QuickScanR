@@ -149,7 +149,16 @@ public class EventDashboard extends InnerPageFragment {
         ((TextView) v.findViewById(R.id.evdash_text_name)).setText(event.getName());
         ((ImageView) v.findViewById(R.id.evdash_img_poster)).setImageBitmap(event.getPoster());
         ((TextView) v.findViewById(R.id.evdash_txt_stat1)).setText(event.getLocationName());
-        ((TextView) v.findViewById(R.id.evdash_txt_stat2)).setText(event.getStart());
+        ((TextView) v.findViewById(R.id.evdash_start_date)).setText(event.getStart());
+        ((TextView) v.findViewById(R.id.evdash_end_date)).setText(event.getEnd());
         ((TextView) v.findViewById(R.id.evdash_txt_stat3)).setText(String.valueOf(event.getSignUpCount()));
+
+        if (event.isLimitedAttendees()) {
+            ((TextView) v.findViewById(R.id.evdash_max_atd_num)).setText(String.valueOf(event.getMaxAttendees()));
+        } else {
+            v.findViewById(R.id.evdash_max_atd_1).setVisibility(View.INVISIBLE);
+            v.findViewById(R.id.evdash_max_atd_2).setVisibility(View.INVISIBLE);
+            v.findViewById(R.id.evdash_max_atd_num).setVisibility(View.INVISIBLE);
+        }
     }
 }
