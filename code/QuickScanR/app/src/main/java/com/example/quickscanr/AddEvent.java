@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -145,9 +146,10 @@ public class AddEvent extends InnerPageFragment {
                 // upload poster if exists
                 if (tempURI != null) {
                     ImgHandler img = new ImgHandler(getContext());
+                    Log.d("DEBUG", userId + " " + "userid, add event ");
                     img.uploadImage(tempURI, documentID -> {
                         data.put(DatabaseConstants.evPosterKey, documentID);
-                    });
+                    }, userId);
                     newEvent.setPoster(img.uriToBitmap(tempURI));
                 } else {
                     ImgHandler img = new ImgHandler(getContext());

@@ -47,6 +47,8 @@ public class DatabaseConstants {
 
     // Images
     public static final String imgDataKey = "image";
+    public static final String imgUserKey = "user";
+
 
     // QR CODE (not 100% DB but fits good here)
     public static final String qrTypeCheckIn = "CI";

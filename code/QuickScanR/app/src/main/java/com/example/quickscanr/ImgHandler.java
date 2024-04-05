@@ -47,7 +47,7 @@ public class ImgHandler {
      * Converts and uploads an image from a given URI
      * @param imgURI Image URI provided from ImgPicker
      */
-    public void uploadImage(Uri imgURI, uploadCallback callback) {
+    public void uploadImage(Uri imgURI, uploadCallback callback, String uid) {
         String documentID;
 
         // convert URI to bitmap
@@ -69,9 +69,11 @@ public class ImgHandler {
         documentID = imgDocRef.getId();
         Map<String, Object> imageData = new HashMap<>();
         imageData.put(DatabaseConstants.imgDataKey, convertedImg);
+        imageData.put(DatabaseConstants.imgUserKey, uid);
         imgDocRef.set(imageData)
                 .addOnSuccessListener(aVoid -> toastNotify("Uploaded successfully"))
                 .addOnFailureListener(e -> toastNotify("Failed to upload image"));
+
 
         // callback to provide documentID if successful
         callback.onUploadComplete(documentID);
