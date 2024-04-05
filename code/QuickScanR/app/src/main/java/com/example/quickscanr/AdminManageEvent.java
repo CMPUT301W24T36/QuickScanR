@@ -11,12 +11,15 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * AdminManageEvents
@@ -26,15 +29,22 @@ public class AdminManageEvent extends InnerPageFragment{
     private Event event;
     private String event_id;
 
+    private ArrayList<String> posterIds;
+
 
     Button deleteEvents;
 
     private FirebaseFirestore db;
     private CollectionReference eventsRef;
     private CollectionReference usersRef;
+    private CollectionReference imgRef;
+
 
     public static String EVENTS_COLLECTION = "events";
     public static String USERS_COLLECTION = "users";
+
+    public static String IMAGES_COLLECTION = "images";
+
 
 
     public AdminManageEvent(Event event) {
@@ -84,70 +94,91 @@ public class AdminManageEvent extends InnerPageFragment{
         deleteEvents = v.findViewById(R.id.delete_btn);
 
 
+        posterIds = new ArrayList<>();
         //set up the database
         db = FirebaseFirestore.getInstance();
         eventsRef = db.collection(EVENTS_COLLECTION);
 
         usersRef = db.collection(USERS_COLLECTION);
 
+        imgRef = db.collection(IMAGES_COLLECTION);
+
+
+
+
         deleteEvents.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                eventsRef.document(event_id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+
+                eventsRef.document(event_id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
-                    public void onSuccess(Void unused) {
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        String poster = documentSnapshot.getString(DatabaseConstants.evPosterKey);
+                        Log.d("DEBUG", poster);
+                        imgRef.document(poster).delete();
 
-                        //also remove it from the checked events for any user
-                        usersRef.addSnapshotListener((value, error) -> {
-                            if (error != null) {
-                                Log.e("DEBUG: AEL", error.getMessage());
-                                return;
-                            }
+                        eventsRef.document(event_id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                //match
+                                //also remove it from the checked events for any user
+                                usersRef.addSnapshotListener((value, error) -> {
+                                    if (error != null) {
+                                        Log.e("DEBUG: AEL", error.getMessage());
+                                        return;
+                                    }
 
-                            if (value == null) {
-                                return;
-                            }
+                                    if (value == null) {
+                                        return;
+                                    }
 
-                            for(QueryDocumentSnapshot doc: value){
-                                List<String> checkedEvt = (List<String>) doc.get("checkedEvents");
+                                    for(QueryDocumentSnapshot doc: value){
+                                        List<String> checkedEvt = (List<String>) doc.get("checkedEvents");
 
-                                if(checkedEvt != null && checkedEvt.contains(event_id)){
-                                    checkedEvt.remove(event_id);
-                                    usersRef.document(doc.getId()).update("checkedEvents", FieldValue.arrayRemove(event_id));
-                                }
+                                        if(checkedEvt != null && checkedEvt.contains(event_id)){
+                                            checkedEvt.remove(event_id);
+                                            usersRef.document(doc.getId()).update("checkedEvents", FieldValue.arrayRemove(event_id));
+                                        }
 
+                                    }
+                                });
+
+                                //remove from signed up events for any user
+                                usersRef.addSnapshotListener((value, error) -> {
+                                    if (error != null) {
+                                        Log.e("DEBUG: AEL", error.getMessage());
+                                        return;
+                                    }
+
+                                    if (value == null) {
+                                        return;
+                                    }
+
+                                    for(QueryDocumentSnapshot doc: value){
+                                        List<String> signedUp = (List<String>) doc.get("signedUp");
+
+                                        if(signedUp != null && signedUp.contains(event_id)){
+                                            signedUp.remove(event_id);
+                                            usersRef.document(doc.getId()).update("signedUp", FieldValue.arrayRemove(event_id));
+                                        }
+
+                                    }
+                                });
+
+
+                                //go back to the previous page
+                                AdminEventsList adminEventsList = new AdminEventsList();
+                                getActivity().getSupportFragmentManager().beginTransaction()
+                                        .replace(R.id.content_main, adminEventsList)
+                                        .addToBackStack(null).commit();
                             }
                         });
 
-                        //remove from signed up events for any user
-                        usersRef.addSnapshotListener((value, error) -> {
-                            if (error != null) {
-                                Log.e("DEBUG: AEL", error.getMessage());
-                                return;
-                            }
-
-                            if (value == null) {
-                                return;
-                            }
-
-                            for(QueryDocumentSnapshot doc: value){
-                                List<String> signedUp = (List<String>) doc.get("signedUp");
-
-                                if(signedUp != null && signedUp.contains(event_id)){
-                                    signedUp.remove(event_id);
-                                    usersRef.document(doc.getId()).update("signedUp", FieldValue.arrayRemove(event_id));
-                                }
-
-                            }
-                        });
-
-                        //go back to the previous page
-                        AdminEventsList adminEventsList = new AdminEventsList();
-                        getActivity().getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.content_main, adminEventsList)
-                                .addToBackStack(null).commit();
                     }
                 });
+
+
+
 
             }
         });
@@ -197,6 +228,7 @@ public class AdminManageEvent extends InnerPageFragment{
         guest_rst.setText(event.getRestrictions());
 
     }
+
 
 
 }
