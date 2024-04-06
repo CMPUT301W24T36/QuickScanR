@@ -104,9 +104,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_weight="1"
-                android:backgroundTint="#D39494"
+                android:backgroundTint="@color/delete"
                 android:text="Delete"
-                android:textColor="#000000"
+                android:textColor="@color/white"
                 android:textSize="20sp"
                 tools:ignore="ButtonStyle" />
         </LinearLayout>
