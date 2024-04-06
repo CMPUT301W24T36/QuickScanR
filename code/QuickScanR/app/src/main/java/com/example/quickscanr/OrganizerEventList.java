@@ -119,6 +119,13 @@ public class OrganizerEventList extends OrganizerFragment {
                 String eventPosterID = doc.getString(DatabaseConstants.evPosterKey);
                 String eventOwnerID = doc.getString(DatabaseConstants.evOwnerKey);
 
+                Integer eventMaxAttendees;
+                if (doc.contains(DatabaseConstants.evAttendeeLimitKey)) {
+                    eventMaxAttendees = doc.getLong(DatabaseConstants.evAttendeeLimitKey).intValue();
+                } else {
+                    eventMaxAttendees = -1;     // default no limit if limit has not been assigned
+                }
+
                 ArrayList<String> signedUpUsers = (ArrayList<String>) doc.get(DatabaseConstants.evSignedUpUsersKey);
                 User orgTemp = new User("default","default","default",0, eventOwnerID);  // TO BE REMOVED
                 String eventId = doc.getId();
@@ -131,7 +138,7 @@ public class OrganizerEventList extends OrganizerFragment {
                 }
 
                 Log.d("DEBUG", String.format("Event (%s) fetched", eventName));
-                Event event = new Event(eventName, eventDesc, eventLocName, eventLocId, eventStart, eventEnd, eventRest, orgTemp, eventId, eventTimestamp);
+                Event event = new Event(eventName, eventDesc, eventLocName, eventLocId, eventStart, eventEnd, eventRest, orgTemp, eventId, eventTimestamp, eventMaxAttendees);
                 event.setSignedUp(signedUpUsers);   // set list of signed up users
 
                 // add images
