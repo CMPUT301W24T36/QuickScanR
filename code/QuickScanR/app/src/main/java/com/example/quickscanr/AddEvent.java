@@ -1,19 +1,21 @@
 package com.example.quickscanr;
 
 import android.app.DatePickerDialog;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Switch;
+import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
@@ -49,12 +51,10 @@ public class AddEvent extends InnerPageFragment {
 
     /**
      * Creates a new instance of the AddEvent fragment
-     * @param param1
-     * @param param2
      * @return the fragment that is AddEvent
      */
 
-    public static AddEvent newInstance(String param1, String param2) {
+    public static AddEvent newInstance() {
         AddEvent fragment = new AddEvent();
         return fragment;
     }
@@ -93,9 +93,20 @@ public class AddEvent extends InnerPageFragment {
         TextInputEditText end = v.findViewById(R.id.evadd_txt_end);
         TextInputEditText name = v.findViewById(R.id.evadd_txt_name);
         TextInputEditText description = v.findViewById(R.id.evadd_txt_desc);
-        TextInputEditText restrictions = v.findViewById(R.id.evadd_txt_restrictions);
+        TextView attendeeLimText = v.findViewById(R.id.evadd_atd_lim_text);
+        Switch attendeeLimit = v.findViewById(R.id.evadd_atd_lim);
+        EditText attendeeLimitNumber = v.findViewById(R.id.evadd_atd_lim_num);
         AutoCompleteTextView location = v.findViewById(R.id.evadd_txt_loc); // Ensure this ID is correct in your layout
         pickButton = v.findViewById(R.id.evadd_chip_upload);
+
+        attendeeLimitNumber.setVisibility(View.INVISIBLE);  // default no limit
+
+        attendeeLimit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                toggleAttendeeLimit(attendeeLimText, attendeeLimitNumber, isChecked);
+            }
+        });
 
         PlaceAutoSuggestAdapter adapter = new PlaceAutoSuggestAdapter(getContext(), android.R.layout.simple_list_item_1);
         location.setAdapter(adapter);
@@ -121,7 +132,6 @@ public class AddEvent extends InnerPageFragment {
                 String eventLoc = location.getText().toString();
                 String startDateString = start.getText().toString();
                 String endDateString = end.getText().toString();
-                String eventRestrictions = restrictions.getText().toString();
 
                 // Prepare data for Firestore
                 Map<String, Object> data = new HashMap<>();
@@ -131,16 +141,16 @@ public class AddEvent extends InnerPageFragment {
                 data.put(DatabaseConstants.evLocNameKey, eventLoc);
                 data.put(DatabaseConstants.evStartKey, startDateString);
                 data.put(DatabaseConstants.evEndKey, endDateString);
-                data.put(DatabaseConstants.evRestricKey, eventRestrictions);
                 long timestamp = System.currentTimeMillis();    // Get current time for timestamp
                 data.put(DatabaseConstants.evTimestampKey, timestamp);
                 data.put(DatabaseConstants.evSignedUpUsersKey, new ArrayList<String>());
                 MainActivity mainActivity = (MainActivity) getActivity();
                 String userId = mainActivity.user.getUserId();
                 data.put(DatabaseConstants.evOwnerKey, userId);
+                data.put(DatabaseConstants.evAttendeeLimitKey, attendeeLimit);
 
-                // create new event
-                Event newEvent = new Event(eventName, eventDescription, eventLoc, selectedPlaceId, startDateString, endDateString, eventRestrictions, MainActivity.user);
+                // create new event (set no limit on attendees for now)
+                Event newEvent = new Event(eventName, eventDescription, eventLoc, selectedPlaceId, startDateString, endDateString, MainActivity.user, -1);
 
                 // upload poster if exists
                 if (tempURI != null) {
@@ -158,13 +168,19 @@ public class AddEvent extends InnerPageFragment {
                 }
 
                 // validate inputs
-                if (!newEvent.isErrors(name, location, start, end)) {
+                if (!newEvent.isErrors(name, location, start, end, attendeeLimit, attendeeLimitNumber)) {
+                    // set max attendees (either positive int for limit or -1 meaning no limit)
+                    Integer attendeeLimitValue = attendeeLimit.isChecked()? Integer.parseInt(attendeeLimitNumber.getText().toString()) : -1;
+                    newEvent.setMaxAttendees(attendeeLimitValue);
+                    data.put(DatabaseConstants.evAttendeeLimitKey, attendeeLimitValue);
+
                     // Add event to Firestore and handle success
                     db.collection(DatabaseConstants.eventColName).add(data).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override
                         public void onSuccess(DocumentReference documentReference) {
                             // On successful database entry, update event with ID and navigate to EventDashboard
                             String eventId = documentReference.getId();
+                            Log.d("DEBUG", "Event " + eventId + " added successfully");
                             newEvent.setId(eventId);
                             newEvent.setTimestamp(timestamp); // Update event timestamp
                             newEvent.setSignedUp(new ArrayList<>());
@@ -183,6 +199,27 @@ public class AddEvent extends InnerPageFragment {
         return v;
     }
 
+    /**
+     * the on check changed listener for the attendee limit switch
+     * @param userText tells the user if they have a limit set or not
+     * @param limVal limit value field
+     * @param isChecked if the switch is on or not
+     */
+    private void toggleAttendeeLimit(TextView userText, EditText limVal, Boolean isChecked) {
+        limVal.setText("");
+        if (isChecked) {
+            userText.setText("Limit to:");
+            limVal.setVisibility(View.VISIBLE);
+        } else {
+            userText.setText("No Limit");
+            limVal.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    /**
+     * initializes the date fields (start and end) with on click listeners
+     * @param dateFields list of date fields in the form (start and end dates)
+     */
     private void initDatePickers(TextInputEditText... dateFields) {
         for (TextInputEditText dateField : dateFields) {
             dateField.setOnClickListener(v -> onClickFuncForDates(dateField));
@@ -229,6 +266,10 @@ public class AddEvent extends InnerPageFragment {
         });
     }
 
+    /**
+     * acts as the on click function that's called when a date is selected
+     * @param dateField the field for selecting a date
+     */
     private void onClickFuncForDates(EditText dateField) {
         final Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);

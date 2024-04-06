@@ -36,6 +36,7 @@ public class DatabaseConstants {
     public static final String evPosterKey = "posterID";
     public static final String evOwnerKey = "ownerID";
     public static final String evSignedUpUsersKey = "signedUpUsers";
+    public static final String evAttendeeLimitKey = "maxAttendees";
 
     // Announcements
 
