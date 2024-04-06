@@ -217,7 +217,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:backgroundTint="@color/color_primary"
+        android:backgroundTint="@color/add"
         android:text="Save"
         android:textColor="@color/black"
         app:layout_constraintEnd_toStartOf="@+id/cancel_save_profile"

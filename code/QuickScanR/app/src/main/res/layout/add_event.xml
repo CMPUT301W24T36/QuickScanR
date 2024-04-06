@@ -291,7 +291,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_gravity="center_horizontal"
-                android:backgroundTint="@color/light_green"
+                android:backgroundTint="@color/add"
                 android:text="Add Event"
                 android:textColor="@color/black"
                 android:textSize="20sp" />
