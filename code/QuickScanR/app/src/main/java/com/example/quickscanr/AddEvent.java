@@ -138,6 +138,7 @@ public class AddEvent extends InnerPageFragment {
                 data.put(DatabaseConstants.evSignedUpUsersKey, new ArrayList<String>());
                 MainActivity mainActivity = (MainActivity) getActivity();
                 String userId = mainActivity.user.getUserId();
+                String userName = mainActivity.user.getName();
                 data.put(DatabaseConstants.evOwnerKey, userId);
 
                 // create new event
@@ -149,7 +150,7 @@ public class AddEvent extends InnerPageFragment {
                     Log.d("DEBUG", userId + " " + "userid, add event ");
                     img.uploadImage(tempURI, documentID -> {
                         data.put(DatabaseConstants.evPosterKey, documentID);
-                    }, userId);
+                    }, userId, userName);
                     newEvent.setPoster(img.uriToBitmap(tempURI));
                 } else {
                     ImgHandler img = new ImgHandler(getContext());

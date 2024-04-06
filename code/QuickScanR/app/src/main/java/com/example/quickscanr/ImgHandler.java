@@ -7,15 +7,20 @@ import android.graphics.BitmapFactory;
 import android.graphics.ImageDecoder;
 import android.net.Uri;
 import android.os.Build;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.util.Log;
 import android.widget.Toast;
 
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.ByteArrayOutputStream;
 import java.net.URI;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +39,8 @@ public class ImgHandler {
     public static final Integer uploadLimit = 1000000;  // 1mb max on firebase
     public static final Integer uploadQuality = 80;  // slight image compression to save space
 
+    Calendar calendar;
+
     /**
      * Constructor
      * @param context
@@ -47,7 +54,7 @@ public class ImgHandler {
      * Converts and uploads an image from a given URI
      * @param imgURI Image URI provided from ImgPicker
      */
-    public void uploadImage(Uri imgURI, uploadCallback callback, String uid) {
+    public void uploadImage(Uri imgURI, uploadCallback callback, String uid, String name) {
         String documentID;
 
         // convert URI to bitmap
@@ -64,12 +71,20 @@ public class ImgHandler {
             return;
         }
 
+
+        //add current date attached
+        calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+        String currentDate = dateFormat.format(calendar.getTime());
         // upload to db
         DocumentReference imgDocRef = db.collection(IMAGE_COLLECTION).document();
         documentID = imgDocRef.getId();
         Map<String, Object> imageData = new HashMap<>();
         imageData.put(DatabaseConstants.imgDataKey, convertedImg);
         imageData.put(DatabaseConstants.imgUserKey, uid);
+        imageData.put(DatabaseConstants.imgNameKey, name);
+        imageData.put(DatabaseConstants.imgDateUpload, currentDate);
         imgDocRef.set(imageData)
                 .addOnSuccessListener(aVoid -> toastNotify("Uploaded successfully"))
                 .addOnFailureListener(e -> toastNotify("Failed to upload image"));
@@ -189,4 +204,5 @@ public class ImgHandler {
     public interface uploadCallback {
         void onUploadComplete(String documentId);
     }
+
 }

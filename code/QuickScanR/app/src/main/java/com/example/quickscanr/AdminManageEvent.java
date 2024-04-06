@@ -82,6 +82,7 @@ public class AdminManageEvent extends InnerPageFragment{
      *       - returns v, which is the view with the inflated layout
      *       - also returns the updated version of any change made with deleting
      *       - deletes events from users signed up lists
+     *       - deletes event posters in images
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -103,9 +104,6 @@ public class AdminManageEvent extends InnerPageFragment{
 
         imgRef = db.collection(IMAGES_COLLECTION);
 
-
-
-
         deleteEvents.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,7 +113,14 @@ public class AdminManageEvent extends InnerPageFragment{
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         String poster = documentSnapshot.getString(DatabaseConstants.evPosterKey);
                         Log.d("DEBUG", poster);
-                        imgRef.document(poster).delete();
+
+                        //delete event poster (excpet default)
+                        if(!poster.equals("default")){
+                            Log.d("DEBUG", "OK TO DELETE");
+                            imgRef.document(poster).delete();
+                        } else{
+                            Log.d("DEBUG", "no deleting default images");
+                        }
 
                         eventsRef.document(event_id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override

@@ -173,8 +173,9 @@ public class EditProfile extends Fragment {
                     if (tempURI != null) {
                         ImgHandler imgHandler = new ImgHandler(getContext());
                         String uid = user.getUserId();
+                        String userName = user.getName();
                         Log.d("DEBUG", uid + " " + "userid, edit profile");
-                        imgHandler.uploadImage(tempURI, documentID -> user.setImageID(documentID, true), uid);
+                        imgHandler.uploadImage(tempURI, documentID -> user.setImageID(documentID, true), uid, userName);
                     }
                 }
             }

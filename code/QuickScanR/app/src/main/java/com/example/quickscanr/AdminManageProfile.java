@@ -46,11 +46,18 @@ public class AdminManageProfile extends InnerPageFragment{
 
     private CollectionReference eventRef;
     private CollectionReference attendeesRef;
+    private CollectionReference announceRef;
+    private CollectionReference imgRef;
+
 
 
     public static String USER_COLLECTION = "users";
     public static String EVENT_COLLECTION = "events";
     public static String ATTEN_COLLECTION = "attendees";
+    public static String ANN_COLLECTION = "announcements";
+    public static String IMAGE_COLLECTION = "images";
+
+
 
 
 
@@ -88,6 +95,8 @@ public class AdminManageProfile extends InnerPageFragment{
      *       - returns v, which is the view with the inflated layout
      *       - also returns the updated version of any change made with deleting
      *       - goes through the events collection to remove users that were signed up for events
+     *       - delete any image that user uploaded
+     *       - removes all annoucements made by user
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -104,12 +113,18 @@ public class AdminManageProfile extends InnerPageFragment{
 
         eventRef = db.collection(EVENT_COLLECTION);
 
+        announceRef = db.collection(ANN_COLLECTION);
+
+        imgRef = db.collection(IMAGE_COLLECTION);
+
+
 
         deleteProfile = v.findViewById(R.id.delete_btn);
 
         deleteProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 profiles.document(user_id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
@@ -179,6 +194,32 @@ public class AdminManageProfile extends InnerPageFragment{
                                 }
                             }
                         });
+
+                        announceRef.whereEqualTo("userID", user_id).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                for(QueryDocumentSnapshot doc: queryDocumentSnapshots){
+                                    String id = doc.getId();
+                                    doc.getReference().delete();
+                                    Log.d("DEBUG", id + "idk whats happening");
+                                }
+
+                            }
+                        });
+
+                        //remove any images that user uploaded
+                        imgRef.whereEqualTo("user", user_id).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                for(QueryDocumentSnapshot doc: queryDocumentSnapshots){
+                                    if(!doc.getId().equals("default") || !doc.getId().equals("default_user")){
+                                        doc.getReference().delete();
+                                    }
+                                    //Log.d("DEBUG", id + "delete uploaded images");
+                                }
+                            }
+                        });
+
 
                         //go back to the previous page
                         AdminProfilesList adminProfilesList = new AdminProfilesList();
