@@ -1,6 +1,7 @@
 package com.example.quickscanr;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
@@ -9,6 +10,7 @@ import androidx.annotation.NonNull;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -26,6 +28,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -78,6 +81,8 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
      */
     @Override
     public void addAnnouncement(Announcement announcement) {
+
+
         // Add to the database
         anncRef = db.collection("announcements"); // Get relevant database path
 

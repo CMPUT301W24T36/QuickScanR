@@ -28,36 +28,63 @@
 
     <EditText
         android:layout_gravity="center"
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="   Title"
+        android:hint="  Title"
         android:fontFamily="@font/inter_medium"
         android:background="@drawable/rounded_bg"
         android:height="48dp"
         android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:id="@+id/an_title_edit_text">
+
     </EditText>
+
 
     <EditText
         android:layout_gravity="center"
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_bg"
-        android:hint="   Body"
+        android:hint="  Body"
+        android:paddingBottom="60dp"
         android:fontFamily="@font/inter_medium"
-        android:id="@+id/an_body_edit_text"
-        android:layout_marginTop="10dp"
-        android:paddingBottom="100dp"
-        >
+        android:id="@+id/an_body_edit_text">
 
     </EditText>
 
-    <Spinner
-        android:id="@+id/event_spinner"
-        android:layout_width="300dp"
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"/>
+
+
+    <TextView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="16dp"/>
+        android:text="Events:"
+        android:paddingBottom="5dp"
+        android:fontFamily="@font/inter_semibold"
+        android:textSize="15dp">
+
+    </TextView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/rounded_bg">
+
+        <Spinner
+            android:id="@+id/event_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"

@@ -62,14 +62,14 @@ public class NotificationHandler extends FirebaseMessagingService {
             // Retrieve the notification body
             String notificationBody = remoteMessage.getNotification().getBody(); // I dont think this will be used anymore
             String notificationTitle = remoteMessage.getNotification().getTitle();
-            String notificationUser = remoteMessage.getData().get("user");
+            String user = remoteMessage.getData().get("user"); // Extract announcer from notification data
 
 
             // Create a notification
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                     .setSmallIcon(R.drawable.bell) // Change notification icon here
                     .setContentTitle("QuickScanR")
-                    .setContentText(notificationUser + ": " + notificationTitle)
+                    .setContentText(user + ": " + notificationTitle)
                     .setPriority(NotificationCompat.PRIORITY_HIGH); // Makes this heads-up/drop down notification
 
             NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);

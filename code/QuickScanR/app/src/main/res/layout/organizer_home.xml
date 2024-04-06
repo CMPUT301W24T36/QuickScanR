@@ -66,14 +66,16 @@
 
             <EditText
                 android:id="@+id/announcement_trigger"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/rounded_bg"
                 android:hint="Share your event updates with attendees here!"
                 android:focusable="true"
                 android:padding="18dp"
                 android:layout_gravity="fill_horizontal"
-                />
+                android:editable="false"
+                tools:ignore="Deprecated" />
+
 
         </LinearLayout>
 

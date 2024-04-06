@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -136,11 +137,18 @@ public class AddAnnouncementFragment extends DialogFragment {
         positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Get the text from EditText fields
+                String title = editTitle.getText().toString();
+                String body = editBody.getText().toString();
+
+                // Check if an event is selected
+                if (selectedEventId == null || selectedEventId.isEmpty()) {
+                    // Display a message to the user indicating that an event must be selected
+                    Toast.makeText(getContext(), "Please select event to announce for, or press Cancel to exit", Toast.LENGTH_LONG).show();
+                    return; // Stop further execution, keep them in the fragment.
+                }
+
                 if (listener != null) {
-                    // Handle the click behavior of the positive button
-                    // Get the text from EditText fields
-                    String title = editTitle.getText().toString();
-                    String body = editBody.getText().toString();
                     // Get the current date
                     String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
                     // Call the listener method with the retrieved data
@@ -151,6 +159,7 @@ public class AddAnnouncementFragment extends DialogFragment {
                 listener.inDismiss(); // Tell the parent fragment to stop the focus!
             }
         });
+
 
 
         // Set the view of the dialog and create it
