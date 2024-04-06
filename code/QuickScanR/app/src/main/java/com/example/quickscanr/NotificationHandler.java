@@ -67,7 +67,7 @@ public class NotificationHandler extends FirebaseMessagingService {
 
             // Create a notification
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                    .setSmallIcon(R.drawable.bell) // Change notification icon here
+                    .setSmallIcon(R.drawable.white_icon) // Change notification icon here
                     .setContentTitle("QuickScanR")
                     .setContentText(user + ": " + notificationTitle)
                     .setPriority(NotificationCompat.PRIORITY_HIGH); // Makes this heads-up/drop down notification
