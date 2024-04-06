@@ -82,9 +82,9 @@ public class MainActivity extends AppCompatActivity {
 
                         // Get new FCM registration token
                         String fcmToken = task.getResult();
+                        Log.d("FCM", "FCM Token: " + fcmToken);
 
-                        // Log
-                        Log.d("PushNotification", "Token:" + fcmToken);
+                        updateFCMTokenForCurrentUser(fcmToken);
                     }
                 });
 
@@ -113,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+
         // Check if camera permission has been granted
 //        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
 //            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA}, 100);
@@ -120,6 +121,21 @@ public class MainActivity extends AppCompatActivity {
         // If permission already been granted
         initializeApp();
 //        }
+    }
+
+    /* Stores the FCM token for the current user in Firestore.
+     *
+     * @param token The FCM token to store.
+     */
+    private void updateFCMTokenForCurrentUser(String token) {
+        String userId = Settings.Secure.getString(getBaseContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("fcmToken", token);
+
+        db.collection("users").document(userId)
+                .update(updates)
+                .addOnSuccessListener(aVoid -> Log.d("FCM", "FCM token updated for user: " + userId))
+                .addOnFailureListener(e -> Log.e("FCM", "Error updating FCM token for user: " + userId, e));
     }
 
     /**
