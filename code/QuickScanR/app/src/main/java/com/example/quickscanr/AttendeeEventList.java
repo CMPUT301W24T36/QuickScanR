@@ -318,6 +318,14 @@ public class AttendeeEventList extends AttendeeFragment {
                 String eventPosterID = doc.getString(DatabaseConstants.evPosterKey);
                 String eventOwnerID = doc.getString(DatabaseConstants.evOwnerKey);
                 String eventID = doc.getId();
+                ArrayList<String> eventSignedUpUsers = (ArrayList<String>) doc.get(DatabaseConstants.evSignedUpUsersKey);
+
+                Integer eventMaxAttendees;
+                if (doc.contains(DatabaseConstants.evAttendeeLimitKey)) {
+                    eventMaxAttendees = doc.getLong(DatabaseConstants.evAttendeeLimitKey).intValue();
+                } else {
+                    eventMaxAttendees = -1;
+                }
 
                 boolean add = true;
 
@@ -356,9 +364,11 @@ public class AttendeeEventList extends AttendeeFragment {
                         organizer.setImageID(picID,false);
 
                         // continue fetching
-                        Log.d("AEL", String.format("Fetched (%s)", eventName));
+                        Log.d("AEL", String.format("Fetched (%s) with id %s", eventName, eventID));
                         Event newEvent = new Event(eventName, eventDesc, eventLocName, eventLocId, eventStart, eventEnd, eventRest, organizer);
                         newEvent.setId(eventID);
+                        newEvent.setSignedUp(eventSignedUpUsers);
+                        newEvent.setMaxAttendees(eventMaxAttendees);
                         if (!Objects.equals(eventPosterID, "")) {
                             ImgHandler imgHandler = new ImgHandler(getContext());
                             imgHandler.getImage(eventPosterID, bitmap -> {

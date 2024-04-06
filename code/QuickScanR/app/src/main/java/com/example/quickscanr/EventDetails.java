@@ -103,7 +103,6 @@ public class EventDetails extends InnerPageFragment {
         TextView location = v.findViewById(R.id.evdetail_txt_loc);
         TextView start = v.findViewById(R.id.evdetail_txt_start);
         TextView end = v.findViewById(R.id.evdetail_txt_end);
-        TextView restrictions = v.findViewById(R.id.evdetail_txt_restrictions);
         ImageView hostPic = v.findViewById(R.id.evdetail_img_host);
         ImageView poster = v.findViewById(R.id.evdetail_img_poster);
 
@@ -112,7 +111,6 @@ public class EventDetails extends InnerPageFragment {
         location.setText(event.getLocationName());
         start.setText(event.getStart());
         end.setText(event.getEnd());
-        restrictions.setText(event.getRestrictions());
 
         // add profile pic
         ProfileImage profileImage = new ProfileImage(getContext());
@@ -175,27 +173,41 @@ public class EventDetails extends InnerPageFragment {
     private void showSignUp(View v) {
         Button signUpBtn = v.findViewById(R.id.ev_det_signup_btn);
         signUpBtn.setVisibility(View.VISIBLE);
-        signUpBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog alertDialog = new AlertDialog.Builder(getContext())
-                        .setTitle("Sign Up")
-                        .setMessage("Do you want to sign up for this event?")
-                        .setPositiveButton(android.R.string.yes, (dialog, x) -> {
-                            String eventID = event.getId();
-                            String userID = user.getUserId();
-                            DocumentReference eventRef = db.collection(EVENT_COLLECTION).document(eventID);
-                            eventRef.update(DatabaseConstants.evSignedUpUsersKey, FieldValue.arrayUnion(userID));
-                            addSignedUpEvToUser(event);
-                            getParentFragmentManager().beginTransaction().replace(R.id.content_main, new AttendeeEventList())
-                                    .addToBackStack(null).commit();
-                        })
-                        .setNegativeButton(android.R.string.no, null)
-                        .show();
-                alertDialog.getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
-                alertDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(Color.GRAY);
-            }
-        });
+        if (event.isAtCapacity()) {
+            signUpBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+                            .setTitle("Error")
+                            .setMessage("Event is full!")
+                            .setNegativeButton(android.R.string.ok, null)
+                            .show();
+                    alertDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(Color.BLACK);
+                }
+            });
+        } else {
+            signUpBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+                            .setTitle("Sign Up")
+                            .setMessage("Do you want to sign up for this event?")
+                            .setPositiveButton(android.R.string.yes, (dialog, x) -> {
+                                String eventID = event.getId();
+                                String userID = user.getUserId();
+                                DocumentReference eventRef = db.collection(EVENT_COLLECTION).document(eventID);
+                                eventRef.update(DatabaseConstants.evSignedUpUsersKey, FieldValue.arrayUnion(userID));
+                                addSignedUpEvToUser(event);
+                                getParentFragmentManager().beginTransaction().replace(R.id.content_main, new AttendeeEventList())
+                                        .addToBackStack(null).commit();
+                            })
+                            .setNegativeButton(android.R.string.no, null)
+                            .show();
+                    alertDialog.getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
+                    alertDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(Color.GRAY);
+                }
+            });
+        }
     }
 
     /**
