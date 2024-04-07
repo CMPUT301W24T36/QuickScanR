@@ -140,6 +140,7 @@ public class OrganizerEventList extends OrganizerFragment {
                 Log.d("DEBUG", String.format("Event (%s) fetched", eventName));
                 Event event = new Event(eventName, eventDesc, eventLocName, eventLocId, eventStart, eventEnd, eventRest, orgTemp, eventId, eventTimestamp, eventMaxAttendees);
                 event.setSignedUp(signedUpUsers);   // set list of signed up users
+                event.setPosterID(eventPosterID);
 
                 // add images
                 if (!Objects.equals(eventPosterID, "")) {

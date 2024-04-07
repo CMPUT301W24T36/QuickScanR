@@ -22,6 +22,7 @@ import java.util.Collections;
 public class EventDashboard extends InnerPageFragment {
 
     private static final String EVENT = "event";
+    private static final String FROM_MAIN = "fromMainActivity";
     private Event event;
 
 
@@ -95,6 +96,15 @@ public class EventDashboard extends InnerPageFragment {
             MaterialButton mapBtn = v.findViewById(R.id.evdash_btn_map);
             mapBtn.setVisibility(View.INVISIBLE);
         }
+        boolean fromMain = getArguments().getBoolean(FROM_MAIN, false);
+        Object args = getArguments().get(FROM_MAIN);
+        if (fromMain) {
+            ImgHandler img = new ImgHandler(getContext());
+            img.getImage(event.getPosterID(), bitmap -> {
+                event.setPoster(bitmap);
+                ((ImageView) v.findViewById(R.id.evdash_img_poster)).setImageBitmap(event.getPoster());
+            });
+        }
         return v;
     }
 
@@ -119,6 +129,7 @@ public class EventDashboard extends InnerPageFragment {
         v.findViewById(R.id.evdash_btn_map).setOnClickListener(view -> {
             Intent myIntent = new Intent(EventDashboard.this.getContext(), CheckInMap.class);
             myIntent.putExtra("event", event);
+            event.removePoster();
             EventDashboard.this.startActivity(myIntent);
         });
 

@@ -102,16 +102,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-
         Intent intent = getIntent();
         boolean backFromCheckInMap = intent.getBooleanExtra("backFromCheckInMap", false);
-
-        if (backFromCheckInMap) {
-            Event event = (Event) intent.getSerializableExtra("event");
-            this.getSupportFragmentManager().beginTransaction().replace(R.id.content_main, EventDashboard.newInstance(event))
-                    .addToBackStack(null).commit();
-            return;
-        }
 
 
         // Check if camera permission has been granted
@@ -119,11 +111,12 @@ public class MainActivity extends AppCompatActivity {
 //            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA}, 100);
 //        } else {
         // If permission already been granted
-        initializeApp();
+
+        initializeApp(backFromCheckInMap);
 //        }
     }
 
-    /* Stores the FCM token for the current user in Firestore.
+    /** Stores the FCM token for the current user in Firestore.
      *
      * @param token The FCM token to store.
      */
@@ -132,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
         Map<String, Object> updates = new HashMap<>();
         updates.put("fcmToken", token);
 
-        db.collection("users").document(userId)
+        FirebaseFirestore.getInstance().collection("users").document(userId)
                 .update(updates)
                 .addOnSuccessListener(aVoid -> Log.d("FCM", "FCM token updated for user: " + userId))
                 .addOnFailureListener(e -> Log.e("FCM", "Error updating FCM token for user: " + userId, e));
@@ -141,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * This initializes everything necessary and loads data for the app
      */
-    private void initializeApp() {
+    private void initializeApp(Boolean openEvDash) {
         // Move your existing onCreate logic here, after permission check
         String userId = Settings.Secure.getString(getBaseContext().getContentResolver(), Settings.Secure.ANDROID_ID);
         db = FirebaseFirestore.getInstance();
@@ -157,8 +150,6 @@ public class MainActivity extends AppCompatActivity {
                         String imageID = document.getString(DatabaseConstants.userImageKey);
                         user.setUserId(userId);
                         user.setImageID(imageID,false);
-                        showHome(user.getUserType());
-
                     } else {
                         // if new user, then add them to the database
                         user = new User("New User", "", "", UserType.ATTENDEE);
@@ -177,6 +168,13 @@ public class MainActivity extends AppCompatActivity {
                         data.put(DatabaseConstants.userImageKey, DatabaseConstants.userDefaultImageID);
                         data.put(DatabaseConstants.userFcmToken, user.getFcmToken()); // For push notifications
                         db.collection(DatabaseConstants.usersColName).document(userId).set(data);
+                    }
+                    if (openEvDash) {
+                        Intent intent = getIntent();
+                        Event event = (Event) intent.getSerializableExtra("event");
+                        event.removePoster();
+                        showEvDash(event);
+                    } else {
                         showHome(user.getUserType());
                     }
                 } else {
@@ -186,19 +184,43 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * this function is called after permissions have been set by the user
+     * @param requestCode The request code passed in {@link #requestPermissions(
+     * android.app.Activity, String[], int)}
+     * @param permissions The requested permissions. Never null.
+     * @param grantResults The grant results for the corresponding permissions
+     *     which is either {@link android.content.pm.PackageManager#PERMISSION_GRANTED}
+     *     or {@link android.content.pm.PackageManager#PERMISSION_DENIED}. Never null.
+     *
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 100) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // If permission granted, continue with initialization
-                initializeApp();
+                initializeApp(false);
             } else {
                 // If permission denied, show a toast
                 Toast.makeText(this, "Camera permission is required to use the QR scanner feature.", Toast.LENGTH_LONG).show();
-                initializeApp();
+                initializeApp(false);
             }
         }
+    }
+
+    /**
+     * shows the event dashboard for the event
+     * @param event event to show dashboard for
+     */
+    public void showEvDash(Event event) {
+        EventDashboard evDash = EventDashboard.newInstance(event);
+        Bundle args = new Bundle();
+        args.putSerializable("event", event);
+        args.putBoolean("fromMainActivity", true);
+        evDash.setArguments(args);
+        getSupportFragmentManager().beginTransaction().replace(R.id.content_main, evDash)
+                .addToBackStack(null).commit();
     }
 
     /**

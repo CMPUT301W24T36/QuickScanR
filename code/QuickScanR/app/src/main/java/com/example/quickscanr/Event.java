@@ -29,6 +29,7 @@ public class Event implements Serializable {
     private String end;
     private String restrictions;
     private Bitmap poster;
+    private String posterID;
     private User organizer;
     private ArrayList<User> attendees;
     private HashMap<User, Integer> checkedInCounts;
@@ -523,5 +524,28 @@ public class Event implements Serializable {
      */
     public boolean isAtCapacity() {
         return getMaxAttendees() != -1? signedUpUsers.size() >= getMaxAttendees() : false;
+    }
+
+    /**
+     * remove the poster from the event
+     */
+    public void removePoster() {
+        poster = null;
+    }
+
+    /**
+     * get poster id of event
+     * @return poster id
+     */
+    public String getPosterID() {
+        return posterID;
+    }
+
+    /**
+     * set poster id of event
+     * @param posterID of event
+     */
+    public void setPosterID(String posterID) {
+        this.posterID = posterID;
     }
 }
