@@ -18,7 +18,7 @@ public class RealtimeData {
     private EventCountListener eventCountListener;
 
     public interface EventAttendeeCountListener {
-        void onTotalCountUpdated(int totalAttendeeCount);
+        void onTotalCountUpdated(int totalAttendeeCount, String eventId);
     }
 
     public interface EventCountListener {
@@ -47,7 +47,9 @@ public class RealtimeData {
                             if (snapshots != null) {
                                 int currentCount = snapshots.size();
                                 eventToAttendeeCountMap.put(eventId, currentCount);
-                                notifyTotalCountUpdated();
+                                if (listener != null) {
+                                    listener.onTotalCountUpdated(currentCount, eventId);
+                                }
                             }
                         }
                     });
@@ -76,10 +78,15 @@ public class RealtimeData {
     }
 
     private void notifyTotalCountUpdated() {
-        int totalAttendeeCount = eventToAttendeeCountMap.values().stream().mapToInt(Integer::intValue).sum();
-        if (listener != null) {
-            listener.onTotalCountUpdated(totalAttendeeCount);
+        for (Map.Entry<String, Integer> entry : eventToAttendeeCountMap.entrySet()) {
+            String eventId = entry.getKey();
+            int attendeeCount = entry.getValue();
+
+            if (listener != null) {
+                listener.onTotalCountUpdated(attendeeCount, eventId);
+            }
         }
     }
+
 }
 

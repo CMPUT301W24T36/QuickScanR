@@ -15,6 +15,8 @@ public class Milestone {
     private String title;
     private String description;
 
+    private String eventName;
+
     /**
      * Constructor
      * @param title
@@ -23,8 +25,14 @@ public class Milestone {
     public Milestone(String title, String description) {
         this.title = title;
         this.description = description;
+        this.eventName = "";
     }
 
+    public Milestone(String title, String description, String eventName) {
+        this.title = title;
+        this.description = description;
+        this.eventName = eventName;
+    }
     /**
      * Gets title of the milestone
      * @return title of the milestone
@@ -56,5 +64,13 @@ public class Milestone {
      */
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getEventName() {
+        return eventName;
+    }
+
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
     }
 }

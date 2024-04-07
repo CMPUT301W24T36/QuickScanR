@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 public class MilestoneViewHolder extends RecyclerView.ViewHolder {
     public TextView titleTextView;
     public TextView descriptionTextView;
+    public TextView eventNameTextView;
 
     /**
      * Initialize views in the ViewHolder

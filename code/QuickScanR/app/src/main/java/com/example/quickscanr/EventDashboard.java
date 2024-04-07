@@ -58,11 +58,14 @@ public class EventDashboard extends InnerPageFragment {
             attendeeCounter = new RealtimeData();
             attendeeCounter.setEventListener(new RealtimeData.EventAttendeeCountListener() {
                 @Override
-                public void onTotalCountUpdated(int newCount) {
-                    getActivity().runOnUiThread(() -> {
-                        TextView attendeeCountView = getView().findViewById(R.id.evdash_txt_stat4);
-                        attendeeCountView.setText(String.valueOf(newCount));
-                    });
+                public void onTotalCountUpdated(int newCount, String eventId) {
+                    // Since this fragment deals with a single event, you could check if eventId matches event.getId()
+                    if (eventId.equals(event.getId())) {
+                        getActivity().runOnUiThread(() -> {
+                            TextView attendeeCountView = getView().findViewById(R.id.evdash_txt_stat4);
+                            attendeeCountView.setText(String.valueOf(newCount));
+                        });
+                    }
                 }
             });
         }
