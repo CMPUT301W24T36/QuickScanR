@@ -186,8 +186,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * this function is called after permissions have been set by the user
-     * @param requestCode The request code passed in {@link #requestPermissions(
-     * android.app.Activity, String[], int)}
+     * @param requestCode The request code passed
      * @param permissions The requested permissions. Never null.
      * @param grantResults The grant results for the corresponding permissions
      *     which is either {@link android.content.pm.PackageManager#PERMISSION_GRANTED}
