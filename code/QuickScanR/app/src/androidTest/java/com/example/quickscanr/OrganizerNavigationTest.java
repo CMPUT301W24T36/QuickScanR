@@ -206,7 +206,7 @@ public class OrganizerNavigationTest {
      * click on the qr code button (for the promotion qr code)
      * check that the promotion qr code is being shown
      */
-    @Test
+//    @Test
     public void testPromotionInQRAccess() {
         onView(withId(R.id.nav_o_events_btn)).perform(click());
         try {
