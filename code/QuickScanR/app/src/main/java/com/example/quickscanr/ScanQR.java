@@ -19,6 +19,7 @@ import com.journeyapps.barcodescanner.BarcodeCallback;
 import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -148,7 +149,6 @@ public class ScanQR extends AttendeeFragment {
      * Scanning Case: Check-in QR code scanned
      * @param eventID ID of event
      */
-    // TO BE UPDATED: AttEvList should provide this info but for current deadlines we'll do this
     private void checkIn(String eventID) {
         db.collection(EVENT_COLLECTION).document(eventID).get()
                 .addOnSuccessListener(doc -> {
@@ -203,7 +203,6 @@ public class ScanQR extends AttendeeFragment {
      * Scanning Case: Promotional QR code scanned
      * @param eventID ID of event
      */
-    // TO BE UPDATED: AttEvList should provide this info but for current deadlines we'll do this
     private void viewPromo(String eventID) {
         db.collection(EVENT_COLLECTION).document(eventID).get()
                 .addOnSuccessListener(doc -> {
@@ -227,17 +226,10 @@ public class ScanQR extends AttendeeFragment {
                                             ImgHandler imgHandler = new ImgHandler(getContext());
                                             imgHandler.getImage(eventPosterID, bitmap -> {
                                                 newEvent.setPoster(bitmap);
-
-                                                // transition to event after async grab
-                                                getActivity().getSupportFragmentManager().beginTransaction()
-                                                        .replace(R.id.content_main, evDetFragment)
-                                                        .addToBackStack(null).commit();
+                                                showSignUpOrNot(eventID, evDetFragment, newEvent);
                                             });
                                         } else {
-                                            // transition to event
-                                            getActivity().getSupportFragmentManager().beginTransaction()
-                                                    .replace(R.id.content_main, evDetFragment)
-                                                    .addToBackStack(null).commit();
+                                            showSignUpOrNot(eventID, evDetFragment, newEvent);
                                         }
                                     }
                                 }
@@ -248,6 +240,41 @@ public class ScanQR extends AttendeeFragment {
                     }
                 })
                 .addOnFailureListener(e -> Log.d("DEBUG", "Failed to grab event: %e", e));
+    }
+
+    /**
+     * shows the sign up button on the event details page if the user is not signed up or checked in for the event
+     * @param eventID id of the event to show details page for
+     * @param evDetFragment event details fragment for the event
+     * @param newEvent event object with event data
+     */
+    public void showSignUpOrNot(String eventID, EventDetails evDetFragment, Event newEvent) {
+        // show sign up button for event if user is not already signed up or checked in
+        db.collection(DatabaseConstants.usersColName).document(MainActivity.user.getUserId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot userDoc = task.getResult();
+                    if (userDoc.exists()) {
+                        ArrayList<String> checkedEvents = (ArrayList<String>) userDoc.get(DatabaseConstants.userCheckedEventsKey);
+                        ArrayList<String> signedUpEvents = (ArrayList<String>) userDoc.get(DatabaseConstants.userSignedUpEventsKey);
+                        boolean showSignUp = false;
+                        if (!checkedEvents.contains(eventID) && !signedUpEvents.contains(eventID)) {
+                            showSignUp = true;
+                        }
+                        Bundle args = new Bundle();
+                        args.putSerializable("event", newEvent);
+                        args.putBoolean("showSignUpDialog", showSignUp);
+                        evDetFragment.setArguments(args);
+
+                        // transition to event after async grab
+                        getActivity().getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.content_main, evDetFragment)
+                                .addToBackStack(null).commit();
+                    }
+                }
+            }
+        });
     }
 
     /**
