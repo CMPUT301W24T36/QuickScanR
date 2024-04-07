@@ -1,6 +1,8 @@
 package com.example.quickscanr;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +13,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -29,6 +33,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * AdminManageProfile
@@ -36,6 +41,7 @@ import java.util.Locale;
  */
 public class AdminManageProfile extends InnerPageFragment{
     private User user;
+    Profile person;
 
     private String user_id;
 
@@ -117,9 +123,18 @@ public class AdminManageProfile extends InnerPageFragment{
 
         imgRef = db.collection(IMAGE_COLLECTION);
 
-
-
         deleteProfile = v.findViewById(R.id.delete_btn);
+
+
+        //get the name of the user that you acutally are
+        if(Objects.equals(user_id, MainActivity.user.getUserId())){
+            Log.d("DEBUG", MainActivity.user.getUserId() + "MEEEE????" + user_id);
+
+            deleteProfile.setBackgroundColor(Color.parseColor("#B2B2B2"));
+            deleteProfile.setEnabled(false);
+            deleteProfile.setText("Unable to Delete");
+        }
+
 
         deleteProfile.setOnClickListener(new View.OnClickListener() {
             @Override

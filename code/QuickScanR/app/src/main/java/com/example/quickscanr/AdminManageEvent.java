@@ -1,13 +1,19 @@
 package com.example.quickscanr;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.chip.Chip;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -24,10 +30,16 @@ import java.util.Objects;
 /**
  * AdminManageEvents
  * - allows admin to view more info about the user and also delete the user
- */
+ *
+ * Resources used for alert dialog for seeing poster:
+ * https://www.geeksforgeeks.org/how-to-create-an-alert-dialog-box-in-android/
+ * https://stackoverflow.com/questions/6276501/how-to-put-an-image-in-an-alertdialog-android
+ * https://stackoverflow.com/questions/27520967/how-to-change-the-colour-of-positive-and-negative-button-in-custom-alert-dialog */
 public class AdminManageEvent extends InnerPageFragment{
     private Event event;
     private String event_id;
+
+    Chip seePoster;
 
     private ArrayList<String> posterIds;
 
@@ -98,6 +110,8 @@ public class AdminManageEvent extends InnerPageFragment{
 
         deleteEvents = v.findViewById(R.id.delete_btn);
 
+        seePoster = v.findViewById(R.id.manage_upload);
+
 
         posterIds = new ArrayList<>();
         //set up the database
@@ -110,7 +124,61 @@ public class AdminManageEvent extends InnerPageFragment{
 
         announceRef = db.collection(ANNOUNCE_COLLECTION);
 
+        seePoster.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("DEBUG", "HIIIII THEREE ");
 
+                //get the image id and the bitmap of the image so you can do directly to the image
+                eventsRef.document(event_id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        String poster = documentSnapshot.getString(DatabaseConstants.evPosterKey);
+                        Log.d("DEBUG", "still THEREE ");
+
+                        imgRef.document(poster).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                //collect the bitmap and imageid
+                                Log.d("DEBUG", "HIIIII now ");
+
+                                String img = documentSnapshot.getString(DatabaseConstants.imgDataKey);
+                                Bitmap bitmap = ImgHandler.base64ToBitmap(img);
+
+                                //need image to display
+                                ImageView imageView = new ImageView(getContext());
+                                imageView.setImageBitmap(bitmap);
+                                Log.d("DEBUG", "problem ");
+
+                                //create alert dialog and then show the image in the large box
+                                AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+                                builder.setView(imageView).setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+
+                                AlertDialog alertDialog = builder.create();
+                                //change the colour of the text so its black so we can see it
+                                alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                                    @Override
+                                    public void onShow(DialogInterface dialog) {
+                                        ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(Color.BLACK);
+                                    }
+                                });
+
+                                alertDialog.show();
+                                alertDialog.getWindow().setLayout(900, 1000);
+
+
+
+                            }
+                        });
+                    }
+                });
+            }
+        });
         deleteEvents.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,7 +189,7 @@ public class AdminManageEvent extends InnerPageFragment{
                         String poster = documentSnapshot.getString(DatabaseConstants.evPosterKey);
                         Log.d("DEBUG", poster);
 
-                        //delete event poster (excpet default)
+                        //delete event poster (except default)
                         if(!poster.equals("default")){
                             Log.d("DEBUG", "OK TO DELETE");
                             imgRef.document(poster).delete();
