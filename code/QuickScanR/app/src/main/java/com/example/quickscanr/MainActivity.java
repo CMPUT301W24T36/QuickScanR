@@ -52,15 +52,7 @@ public class MainActivity extends AppCompatActivity {
                     .addToBackStack(null).commit();
             return;
         }
-
-        // COMMENT THIS OUT LATER !!!!!!!!!!!!!!!!!!
-        //Check if camera permission has been granted
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA}, 100);
-        } else {
-            // If permission already been granted
-            initializeApp();
-        }
+        
         initializeApp();
     }
 
