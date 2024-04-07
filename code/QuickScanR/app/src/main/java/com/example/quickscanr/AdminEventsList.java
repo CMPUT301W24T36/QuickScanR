@@ -136,14 +136,19 @@ public class AdminEventsList extends AdminFragment {
                 String eventRest = doc.getString(DatabaseConstants.evRestricKey);
                 String eventStart = doc.getString(DatabaseConstants.evStartKey);
                 String eventEnd = doc.getString(DatabaseConstants.evEndKey);
-
+                Integer eventMaxAttendees;
+                if (doc.contains(DatabaseConstants.evAttendeeLimitKey)) {
+                    eventMaxAttendees = doc.getLong(DatabaseConstants.evAttendeeLimitKey).intValue();
+                } else {
+                    eventMaxAttendees = -1;
+                }
                 String posterId = doc.getString(DatabaseConstants.evPosterKey);
                 //Bitmap bitmap = ImgHandler.base64ToBitmap(posterId);
 
                 eventIdList.add(doc.getId());
 
                 Log.d("DEBUG", eventName + "outside");
-                Event event = new Event(eventName, eventDesc, eventLocName, eventLocId, eventStart, eventEnd, eventRest, null, admin);
+                Event event = new Event(eventName, eventDesc, eventLocName, eventLocId, eventStart, eventEnd, eventRest, null, admin, eventMaxAttendees);
                 eventList.add(event);
 
                 getImage(posterId, event);

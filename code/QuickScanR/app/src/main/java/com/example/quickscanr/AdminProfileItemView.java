@@ -8,6 +8,8 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
+
 /**
  * AdminProfileItemView
  * - this is for what is is being displayed for each profile that is listed
@@ -17,6 +19,8 @@ public class AdminProfileItemView extends RecyclerView.ViewHolder {
 
     public TextView profileName;
     public ImageView profileImage;
+    private final ArrayList<String> ids;
+
 
     ImageButton editEvent;
 
@@ -29,8 +33,10 @@ public class AdminProfileItemView extends RecyclerView.ViewHolder {
      * @param itemView : the view for what is displayed on the layout (name, images, etc)
      * @param listener : listens to when button is clicked and gets position
      */
-    public AdminProfileItemView(View itemView, AdminProfileArrayAdapter.buttonListener listener) {
+    public AdminProfileItemView(View itemView, AdminProfileArrayAdapter.buttonListener listener, ArrayList<String> ids) {
         super(itemView);
+        this.ids = ids;
+
         //this is whats being displayed on the screen
         profileName = itemView.findViewById(R.id.adm_prf_name);
         profileImage = itemView.findViewById(R.id.adm_prf_pic);
@@ -39,12 +45,21 @@ public class AdminProfileItemView extends RecyclerView.ViewHolder {
             @Override
             public void onClick(View v) {
                 int position = getAdapterPosition();
+                String userId = getUserId(position);
+
                 Log.d("button", "onClick:" + getAdapterPosition());
-                listener.onClickButton(position);
+                listener.onClickButton(position, userId);
             }
         });
 
 //
+    }
+
+    private String getUserId(int position){
+        if(position < ids.size()){
+            return ids.get(position);
+        }
+        return null;
     }
 
 }

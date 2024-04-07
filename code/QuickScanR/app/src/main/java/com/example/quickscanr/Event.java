@@ -100,9 +100,10 @@ public class Event implements Serializable {
      * @param restrictions
      * @param poster
      * @param organizer
+     * @param maxAttendees
      */
 
-    public Event(String name, String description, String locationName, String locationId, String start, String end, String restrictions, Bitmap poster, User organizer) {
+    public Event(String name, String description, String locationName, String locationId, String start, String end, String restrictions, Bitmap poster, User organizer, Integer maxAttendees) {
         this.name = name;
         this.description = description;
         this.locationName = locationName;
@@ -114,6 +115,7 @@ public class Event implements Serializable {
         this.organizer = organizer;
         this.attendees = new ArrayList<>();
         this.checkedInCounts = new HashMap<>();
+        this.maxAttendees = maxAttendees;
     }
 
     /** Constructor #4
