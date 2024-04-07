@@ -11,7 +11,11 @@
         android:id="@+id/admin_browse_profiles"
         tools:context=".AdminProfilesList">
 
-    <include layout="@layout/admin_nav_bar" />
+    <include
+        layout="@layout/admin_nav_bar"
+        android:layout_gravity="bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -30,6 +34,7 @@
             android:layout_height="match_parent"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="60dp"
+            android:paddingBottom="10dp"
             tools:layout_editor_absoluteX="0dp">
 
             <androidx.recyclerview.widget.RecyclerView

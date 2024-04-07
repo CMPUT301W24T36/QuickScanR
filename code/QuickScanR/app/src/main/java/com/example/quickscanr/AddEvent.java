@@ -146,6 +146,7 @@ public class AddEvent extends InnerPageFragment {
                 data.put(DatabaseConstants.evSignedUpUsersKey, new ArrayList<String>());
                 MainActivity mainActivity = (MainActivity) getActivity();
                 String userId = mainActivity.user.getUserId();
+                String userName = mainActivity.user.getName();
                 data.put(DatabaseConstants.evOwnerKey, userId);
                 data.put(DatabaseConstants.evAttendeeLimitKey, attendeeLimit);
 
@@ -155,9 +156,10 @@ public class AddEvent extends InnerPageFragment {
                 // upload poster if exists
                 if (tempURI != null) {
                     ImgHandler img = new ImgHandler(getContext());
+                    Log.d("DEBUG", userId + " " + "userid, add event ");
                     img.uploadImage(tempURI, documentID -> {
                         data.put(DatabaseConstants.evPosterKey, documentID);
-                    });
+                    }, userId, userName);
                     newEvent.setPoster(img.uriToBitmap(tempURI));
                 } else {
                     ImgHandler img = new ImgHandler(getContext());

@@ -23,6 +23,8 @@ public class AdminProfilesList extends AdminFragment {
 
     RecyclerView profileView;
     ArrayList<User> profileList;
+    ArrayList<String> userIdList;
+
     AdminProfileArrayAdapter profileArrayAdapter;
     private FirebaseFirestore db;
     private CollectionReference usersReference;
@@ -86,6 +88,7 @@ public class AdminProfilesList extends AdminFragment {
         profileView = v.findViewById(R.id.adm_profile_list);
         profileList = new ArrayList<>();
 
+        userIdList = new ArrayList<>();
 
         addListeners();
         profileView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -128,6 +131,8 @@ public class AdminProfilesList extends AdminFragment {
                 int userType = (int) type;
                 String userId = doc.getId();
 
+                userIdList.add(doc.getId());
+
                 Log.d("DEBUG", String.format("User (%s) fetched", name + " " + home + " " + phone + " "));
                 Log.d("DEBUG", String.format("User (%s) fetched", userType));
 
@@ -144,7 +149,7 @@ public class AdminProfilesList extends AdminFragment {
      *  - keeps track of position when profile is clicked
      */
     public void addListeners() {
-        profileArrayAdapter = new AdminProfileArrayAdapter(getContext(), profileList, position -> buttonClickAction(profileList.get(position)));
+        profileArrayAdapter = new AdminProfileArrayAdapter(getContext(), profileList, userIdList, (position, userId) -> buttonClickAction(profileList.get(position), userIdList.get(position)));
         profileView.setAdapter(profileArrayAdapter);
     }
 
@@ -155,9 +160,9 @@ public class AdminProfilesList extends AdminFragment {
      *  - includes ability to move forward and backwards to different pages
      * @param user : pass the specific user data
      */
-    private void buttonClickAction(User user) {
+    private void buttonClickAction(User user, String userId) {
         getActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.content_main, AdminManageProfile.newInstance(user))
+                .replace(R.id.content_main, AdminManageProfile.newInstance(user, userId))
                 .addToBackStack(null).commit();
     }
 }

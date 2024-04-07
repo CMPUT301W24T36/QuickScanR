@@ -16,6 +16,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -171,7 +172,10 @@ public class EditProfile extends Fragment {
                     }
                     if (tempURI != null) {
                         ImgHandler imgHandler = new ImgHandler(getContext());
-                        imgHandler.uploadImage(tempURI, documentID -> user.setImageID(documentID, true));
+                        String uid = user.getUserId();
+                        String userName = user.getName();
+                        Log.d("DEBUG", uid + " " + "userid, edit profile");
+                        imgHandler.uploadImage(tempURI, documentID -> user.setImageID(documentID, true), uid, userName);
                     }
                 }
             }

@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
@@ -31,13 +32,23 @@ public class AdminManageImage extends InnerPageFragment{
     private Bitmap bitmap;
 
     private String img_id;
+    private String username;
     private ImgHandler imgHandler;
+
+    private TextView profileName;
+    private TextView uploadDate;
+
 
     Button deleteImages;
 
     private FirebaseFirestore db;
     private CollectionReference imgRef;
+
+    private CollectionReference usersRef;
+
     public static String IMAGE_COLLECTION = "images";
+    public static String USER_COLLECTION = "users";
+
 
     public AdminManageImage(Bitmap bitmap) {
         this.bitmap = bitmap;
@@ -56,6 +67,7 @@ public class AdminManageImage extends InnerPageFragment{
             bitmap = (Bitmap) getArguments().getParcelable("image");
             img_id = getArguments().getString("imageId");
         }
+
     }
 
     /**
@@ -72,6 +84,8 @@ public class AdminManageImage extends InnerPageFragment{
      * @return
      *       - returns v, which is the view with the inflated layout
      *       - also returns the updated version of any change made with deleting
+     *       - user who uploaded the image is displayed
+     *       - date that image was uploaded is also displayed
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -79,15 +93,22 @@ public class AdminManageImage extends InnerPageFragment{
         View v = inflater.inflate(R.layout.admin_manage_image, container, false);
         //go back to events list when clicked
         addButtonListeners(getActivity(), v, new AdminImageList());
-        populateInfo(v);
 
         deleteImages = v.findViewById(R.id.delete_img);
+
+        profileName = v.findViewById(R.id.img_name);
+
+        uploadDate = v.findViewById(R.id.img_date);
+
 
 
         //set up the database
         db = FirebaseFirestore.getInstance();
         imgRef = db.collection(IMAGE_COLLECTION);
 
+        usersRef = db.collection(USER_COLLECTION);
+
+        populateInfo(v);
 
 
         deleteImages.setOnClickListener(new View.OnClickListener() {
@@ -136,8 +157,28 @@ public class AdminManageImage extends InnerPageFragment{
      * @param v: view that has the fields with the same data that we will populate the fields with
      */
     public void populateInfo(View v){
+        getUserId(img_id);
+
         ImageView img = v.findViewById(R.id.img_pic);
         img.setImageBitmap(bitmap);
 
+    }
+
+    /**
+     * getUserId()
+     * @param img_id : document id of the image
+     *  - queries the database through the image document to collect data to
+     *    populate the username and date upload
+     */
+    public void getUserId(String img_id){
+
+        imgRef.document(img_id).get().addOnSuccessListener(documentSnapshot -> {
+            if(documentSnapshot.exists()){
+                String username = documentSnapshot.getString(DatabaseConstants.imgNameKey);
+                String date = documentSnapshot.getString(DatabaseConstants.imgDateUpload);
+                profileName.setText(username);
+                uploadDate.setText(date);
+            }
+        });
     }
 }
