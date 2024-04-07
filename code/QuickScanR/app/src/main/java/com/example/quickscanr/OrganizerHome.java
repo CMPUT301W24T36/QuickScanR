@@ -1,7 +1,8 @@
 package com.example.quickscanr;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
@@ -17,27 +18,21 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Represents the home page for the organizer, also deals with the
@@ -46,6 +41,7 @@ import java.util.Objects;
  * ISSUE: There will be duplicates for real time updates regarding milestones.
  * ISSUE: This class is too crowded- will need to apply more modularity.
  * FIX: Just add milestones to the database.
+ * TODO: modularize this class
  * @see Milestone
  * @see Announcement
  */
@@ -64,6 +60,7 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference anncRef;
     private List<String> eventIds = new ArrayList<>();
+    private ImageView profPic;
 
      int lastEventCount; // to help with the ranges; may be temporary
      int lastAttendeeCount; // to help with the ranges; may be temporary
@@ -84,9 +81,10 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
      */
     @Override
     public void addAnnouncement(Announcement announcement) {
+
+
         // Add to the database
         anncRef = db.collection("announcements"); // Get relevant database path
-
 
         // Set up the data
 
@@ -95,6 +93,7 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
         data.put("body", announcement.getBody());
         data.put("date", announcement.getDate());
         data.put("userName", announcement.getUserName());
+        data.put("eventId", announcement.getEventID());
         data.put(DatabaseConstants.anUserKey, userId);
 
         anncRef.document() // can be changed
@@ -107,14 +106,14 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
                 });
     }
 
+
     /**
      * This allows dialog fragment and organizer home to talk to each other.
-     * Conversation is essentially -> DialogFragment: I have dismissed (closed)
-     * OrganizerHome: OK, will stop focus on the EditText.
+     * TODO: get rid of this, change announcement_trigger to a button instead.
      */
     @Override
     public void inDismiss() {
-        announcement = getView().findViewById(R.id.announcement_body);
+        announcement = getView().findViewById(R.id.announcement_trigger);
         announcement.clearFocus();
     }
 
@@ -143,6 +142,8 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
         }
         getOrganizerEventIds();
         startListeningForEventCount();
+
+
 
     }
 
@@ -248,6 +249,7 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
         realtimeData.startListeningForEventCount(userId);
     }
 
+
     /**
      * Creates the view for OrganizerHome fragment, deals with the functionality
      * for displaying the list of milestones AND AddAnnouncementFragment call
@@ -262,13 +264,25 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
      *
      * @return the view
      */
-    @SuppressLint("NotifyDataSetChanged")
+    @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.organizer_home, container, false);
         addNavBarListeners(getActivity(), view);
         OrganizerFragment.setNavActive(view, 0);
+
+        profPic = view.findViewById(R.id.organizer_profile_pic); // get the profile pic
+
+        // load pfp
+        ProfileImage profileImage = new ProfileImage(getContext());
+        profileImage.getProfileImage(getContext(), userId, new ProfileImage.ProfileImageCallback() {
+            @Override
+            public void onImageReady(Bitmap image) {
+                profPic.setImageBitmap(image);
+            }
+        });
+
 
         milestoneList = new ArrayList<>();
         RecyclerView milestonesRecyclerView = view.findViewById(R.id.milestones_recycler_view);
@@ -289,7 +303,7 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
 
         // Announcement
 
-        final EditText announcement = view.findViewById(R.id.announcement_body);
+        final EditText announcement = view.findViewById(R.id.announcement_trigger);
         announcement.setOnFocusChangeListener(new View.OnFocusChangeListener() { // Focus = When the announcement body is clicked.
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -376,4 +390,9 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
             lastEventCount = 1000;
         }
         milestoneAdapter.notifyDataSetChanged();
-    }}
+    }
+
+
+
+}
+
