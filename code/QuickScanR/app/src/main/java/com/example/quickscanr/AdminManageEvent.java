@@ -242,7 +242,7 @@ public class AdminManageEvent extends InnerPageFragment{
         TextInputEditText location = v.findViewById(R.id.manage_loc);
         TextInputEditText starts = v.findViewById(R.id.manage_start);
         TextInputEditText ends = v.findViewById(R.id.manage_end);
-        TextInputEditText guest_rst = v.findViewById(R.id.manage_restrictions);
+        TextInputEditText maxAttendees = v.findViewById(R.id.manage_max_attendees);
 
 
         name.setText(event.getName());
@@ -250,7 +250,11 @@ public class AdminManageEvent extends InnerPageFragment{
         location.setText(event.getLocationName());
         starts.setText(event.getStart());
         ends.setText(event.getEnd());
-        guest_rst.setText(event.getRestrictions());
+        if (event.getMaxAttendees() == -1) {
+            maxAttendees.setText("No Limit");
+        } else {
+            maxAttendees.setText(String.valueOf(event.getMaxAttendees()));
+        }
 
     }
 
