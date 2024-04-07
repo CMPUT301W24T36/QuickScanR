@@ -2,9 +2,11 @@ package com.example.quickscanr;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,7 +20,7 @@ import java.util.ArrayList;
  */
 public class AdminProfileArrayAdapter extends RecyclerView.Adapter<AdminProfileItemView>{
     private final ArrayList<User> users;
-    private final Context context;
+    private Context context;
     private final AdminProfileArrayAdapter.buttonListener listener;
 
     /**
@@ -61,20 +63,30 @@ public class AdminProfileArrayAdapter extends RecyclerView.Adapter<AdminProfileI
      *        item at the given position in the data set.
      * @param position The position of the item within the adapter's data set.
      */
+    // Inside AdminProfileArrayAdapter class
+
     @Override
     public void onBindViewHolder(@NonNull AdminProfileItemView holder, int position) {
         User user = users.get(position);
         holder.profileName.setText(user.getName());
-        String userId = user.getUserId(); // Ensure User class has getUserId() method or similar
+        loadProfileImage(holder.profileImage, user);
+    }
 
-        // Load profile image
+    private void loadProfileImage(ImageView imageView, User user) {
+        String userId = user.getUserId();
+        if (userId == null || userId.trim().isEmpty()) {
+            Log.e("loadProfileImage", "User ID is null or empty for user: " + user.getName());
+            return;
+        }
+
         new ProfileImage(context).getProfileImage(context, userId, new ProfileImage.ProfileImageCallback() {
             @Override
             public void onImageReady(Bitmap image) {
-                holder.profileImage.setImageBitmap(image);
+                imageView.setImageBitmap(image);
             }
         });
     }
+
 
     /**
      * getItemCount

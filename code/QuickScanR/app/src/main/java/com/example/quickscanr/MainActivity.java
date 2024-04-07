@@ -78,7 +78,9 @@ public class MainActivity extends AppCompatActivity {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         user = document.toObject(User.class);   // user exists already
+                        String imageID = document.getString(DatabaseConstants.userImageKey);
                         user.setUserId(userId);
+                        user.setImageID(imageID,false);
                         showHome(user.getUserType());
                     } else {
                         // if new user, then add them to the database

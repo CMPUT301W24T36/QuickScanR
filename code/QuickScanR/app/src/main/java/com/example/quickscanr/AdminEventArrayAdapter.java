@@ -1,6 +1,8 @@
 package com.example.quickscanr;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +19,9 @@ import java.util.ArrayList;
  */
 public class AdminEventArrayAdapter extends RecyclerView.Adapter<AdminEventItemView>{
     private final ArrayList<Event> events;
+    private final ArrayList<String> ids;
+
+
     private final Context context;
     private final buttonListener listener;
 
@@ -27,8 +32,9 @@ public class AdminEventArrayAdapter extends RecyclerView.Adapter<AdminEventItemV
      * @param events: list of events that is being displayed
      * @param listener : for keeping track of clicked buttons for the events
      */
-    public AdminEventArrayAdapter(Context context, ArrayList<Event> events, buttonListener listener) {
+    public AdminEventArrayAdapter(Context context, ArrayList<Event> events, ArrayList<String> ids, buttonListener listener) {
         this.events = events;
+        this.ids = ids;
         this.context = context;
         this.listener = listener;
     }
@@ -49,7 +55,7 @@ public class AdminEventArrayAdapter extends RecyclerView.Adapter<AdminEventItemV
     @Override
     public AdminEventItemView onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.admin_event_list, parent, false);
-        return new AdminEventItemView(view, listener);
+        return new AdminEventItemView(view, listener, ids);
     }
 
     /**
@@ -63,8 +69,11 @@ public class AdminEventArrayAdapter extends RecyclerView.Adapter<AdminEventItemV
     @Override
     public void onBindViewHolder(@NonNull AdminEventItemView holder, int position) {
         Event event = events.get(position);
+        String id = ids.get(position);
         holder.eventTitle.setText(event.getName());
-        holder.eventImage.setImageResource(R.drawable.ic_launcher_background);
+        Log.d("POSTER", "hi" + event.getPoster());
+        holder.eventImage.setImageBitmap(event.getPoster());
+//        holder.eventImage.setImageResource(event.getPoster());
     }
 
     /**
@@ -87,7 +96,7 @@ public class AdminEventArrayAdapter extends RecyclerView.Adapter<AdminEventItemV
          *  - called when a event is clicked
          * @param position : position of the clicked item
          */
-        void onClickButton(int position);
+        void onClickButton(int position, String eventId);
 
     }
 

@@ -8,6 +8,8 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
+
 /**
  * AdminEventItemView
  * - this is for what is is being displayed for each event that is listed
@@ -16,6 +18,10 @@ import androidx.recyclerview.widget.RecyclerView;
 public class AdminEventItemView extends RecyclerView.ViewHolder {
     public TextView eventTitle;
     public ImageView eventImage;
+
+    private final ArrayList<String> ids;
+
+
 
     ImageButton editEvent;
 
@@ -27,20 +33,44 @@ public class AdminEventItemView extends RecyclerView.ViewHolder {
      * @param itemView : the view for what is displayed on the layout (name, desc, image, etc)
      * @param listener : listens to when button is clicked and gets position
      */
-    public AdminEventItemView(View itemView, AdminEventArrayAdapter.buttonListener listener) {
+    public AdminEventItemView(View itemView, AdminEventArrayAdapter.buttonListener listener, ArrayList<String> ids) {
         super(itemView);
+        this.ids = ids;
+
         eventTitle = itemView.findViewById(R.id.event_name_detail);
         eventImage = itemView.findViewById(R.id.event_poster);
         editEvent = itemView.findViewById(R.id.edit_event);
 
+
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("DEBUG", "hi there");
+                int position = getAdapterPosition();
+                String eventId = getEventId(position);
+                Log.d("button", "onClick:" + getAdapterPosition());
+                listener.onClickButton(position, eventId);
+            }
+        });
         editEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("DEBUG", "hi there");
                 int position = getAdapterPosition();
+                String eventId = getEventId(position);
                 Log.d("button", "onClick:" + getAdapterPosition());
-                listener.onClickButton(position);
+                listener.onClickButton(position, eventId);
             }
         });
 
     }
+
+    private String getEventId(int position){
+        if(position < ids.size()){
+            return ids.get(position);
+        }
+        return null;
+    }
+
+
 }

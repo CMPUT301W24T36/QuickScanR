@@ -8,4 +8,7 @@
     <color name="light_gray">#e8e8e8</color>
     <color name="green">#1fd655</color>
     <color name="qr_active">#c7eae4</color>
+    <color name="light_green">#a7e8bd</color>
+    <color name="delete">#DD3434</color>
+    <color name="add">#a7e8bd</color>
 </resources>

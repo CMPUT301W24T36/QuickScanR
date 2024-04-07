@@ -2,6 +2,8 @@ package com.example.quickscanr;
 
 import android.graphics.Bitmap;
 import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
+import android.widget.Switch;
 
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -31,6 +33,7 @@ public class Event implements Serializable {
     private ArrayList<User> attendees;
     private HashMap<User, Integer> checkedInCounts;
     private ArrayList<String> signedUpUsers;
+    private Integer maxAttendees = -1;
 
     /**
      * Constructor #1
@@ -46,7 +49,7 @@ public class Event implements Serializable {
      * @param id
      * @param timestamp
      */
-    public Event(String name, String description, String locationName, String locationId, String start, String end, String restrictions, User organizer, String id, long timestamp) {
+    public Event(String name, String description, String locationName, String locationId, String start, String end, String restrictions, User organizer, String id, long timestamp, Integer maxAttendees) {
         this.name = name;
         this.description = description;
         this.locationName = locationName;
@@ -59,6 +62,7 @@ public class Event implements Serializable {
         this.checkedInCounts = new HashMap<>();
         this.id = id;
         this.timestamp = timestamp;
+        this.maxAttendees = maxAttendees;
     }
 
     /**
@@ -166,6 +170,29 @@ public class Event implements Serializable {
         this.organizer = organizer;
         this.attendees = attendees;
         this.checkedInCounts = checkedInCounts;
+    }
+
+    /**
+     * Constructor #6
+     * @param name
+     * @param description
+     * @param locationName
+     * @param locationId
+     * @param start
+     * @param end
+     * @param organizer
+     * @param maxAttendees
+     */
+    public Event(String name, String description, String locationName, String locationId, String start, String end, User organizer, Integer maxAttendees) {
+        this.name = name;
+        this.description = description;
+        this.locationName = locationName;
+        this.locationId = locationId;
+        this.start = start;
+        this.end = end;
+        this.poster = poster;
+        this.organizer = organizer;
+        this.maxAttendees = maxAttendees;
     }
 
     /**
@@ -407,7 +434,7 @@ public class Event implements Serializable {
      * @param endDateInput
      * @return
      */
-    public boolean isErrors (TextInputEditText nameInput, AutoCompleteTextView locationNameInput, TextInputEditText startDateInput, TextInputEditText endDateInput) {
+    public boolean isErrors (TextInputEditText nameInput, AutoCompleteTextView locationNameInput, TextInputEditText startDateInput, TextInputEditText endDateInput, Switch isAttendeeLimit, EditText maxAttendeesInput) {
         boolean wasErrors = false;
 
         if (name.equals("")) {
@@ -440,16 +467,59 @@ public class Event implements Serializable {
                 throw new RuntimeException(e);
             }
         }
+        if (isAttendeeLimit.isChecked() && maxAttendeesInput.getText().toString().equals("")) {
+            maxAttendeesInput.setError("Please specify limit!");
+            wasErrors = true;
+        }
 
         return wasErrors;
     }
 
+    /**
+     * set the signed up users for the event
+     * @param signedUpUsers list of users that's signed up
+     */
     public void setSignedUp(ArrayList<String> signedUpUsers) {
         this.signedUpUsers = signedUpUsers;
     }
 
+    /**
+     * get number of users signed up
+     * @return number of users signed up
+     */
     public int getSignUpCount() {
         return signedUpUsers.size();
     }
 
+    /**
+     * get maximum number of attendees for an event
+     * @return maximum number of attendees for an event
+     */
+    public Integer getMaxAttendees() {
+        return maxAttendees;
+    }
+
+    /**
+     * set maximum number of attendees for an event
+     * @param maxAttendees maximum number of attendees for an event
+     */
+    public void setMaxAttendees(Integer maxAttendees) {
+        this.maxAttendees = maxAttendees;
+    }
+
+    /**
+     * checks if event is limited
+     * @return true if event is limited, otherwise false
+     */
+    public boolean isLimitedAttendees() {
+        return getMaxAttendees() != -1;
+    }
+
+    /**
+     * checks if the event is full (# of signed up users >= max attendees if there is a max defined)
+     * @return true if full, else false
+     */
+    public boolean isAtCapacity() {
+        return getMaxAttendees() != -1? signedUpUsers.size() >= getMaxAttendees() : false;
+    }
 }
