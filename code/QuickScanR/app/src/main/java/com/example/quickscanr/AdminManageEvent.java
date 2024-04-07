@@ -139,22 +139,25 @@ public class AdminManageEvent extends InnerPageFragment{
                         imgRef.document(poster).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                             @Override
                             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                //collect the bitmap and imageid and send it to manage
+                                //collect the bitmap and imageid
                                 Log.d("DEBUG", "HIIIII now ");
 
                                 String img = documentSnapshot.getString(DatabaseConstants.imgDataKey);
                                 Bitmap bitmap = ImgHandler.base64ToBitmap(img);
 
+                                //need image to display
                                 ImageView imageView = new ImageView(getContext());
                                 imageView.setImageBitmap(bitmap);
                                 Log.d("DEBUG", "problem ");
 
+                                //create alert dialog and then show the image in the large box
                                 AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
                                 builder.setView(imageView);
 
                                 AlertDialog alertDialog = builder.create();
                                 alertDialog.show();
 
+                                //when click on the image it should go away
                                 imageView.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
@@ -179,7 +182,7 @@ public class AdminManageEvent extends InnerPageFragment{
                         String poster = documentSnapshot.getString(DatabaseConstants.evPosterKey);
                         Log.d("DEBUG", poster);
 
-                        //delete event poster (excpet default)
+                        //delete event poster (except default)
                         if(!poster.equals("default")){
                             Log.d("DEBUG", "OK TO DELETE");
                             imgRef.document(poster).delete();
