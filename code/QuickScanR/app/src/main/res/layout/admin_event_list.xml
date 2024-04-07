@@ -25,7 +25,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="15dp"
-                android:paddingTop="25dp">
+                android:paddingTop="30dp">
 
                 <ImageView
                     android:id="@+id/event_poster"
@@ -44,38 +44,33 @@
 
             </FrameLayout>
 
-            <TextView
-                android:id="@+id/event_name_detail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxLength="13"
-                android:paddingLeft="13dp"
-                android:paddingTop="55dp"
-                android:text="Event Name"
-                android:textSize="24sp" />
-
-            <TextView
-                android:id="@+id/textView6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="..." />
-
-            <ImageButton
-                android:id="@+id/edit_event"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_weight="1"
-                android:backgroundTint="#00FFFFFF"
-                android:padding="10dp"
-                app:srcCompat="@drawable/cog_outline" />
-
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/event_name_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:maxLength="13"
+                    android:maxLines="1"
+                    android:paddingLeft="15dp"
+                    android:paddingTop="55dp"
+                    android:text="Event Name"
+                    android:textSize="24sp" />
+
+                <ImageButton
+                    android:id="@+id/edit_event"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    android:backgroundTint="#00FFFFFF"
+                    android:padding="10dp"
+                    app:srcCompat="@drawable/cog_outline" />
 
             </LinearLayout>
 
