@@ -38,12 +38,16 @@ public class AdminManageEvent extends InnerPageFragment{
     private CollectionReference eventsRef;
     private CollectionReference usersRef;
     private CollectionReference imgRef;
+    private CollectionReference announceRef;
+
 
 
     public static String EVENTS_COLLECTION = "events";
     public static String USERS_COLLECTION = "users";
 
     public static String IMAGES_COLLECTION = "images";
+    public static String ANNOUNCE_COLLECTION = "announcements";
+
 
 
 
@@ -104,6 +108,9 @@ public class AdminManageEvent extends InnerPageFragment{
 
         imgRef = db.collection(IMAGES_COLLECTION);
 
+        announceRef = db.collection(ANNOUNCE_COLLECTION);
+
+
         deleteEvents.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,6 +128,8 @@ public class AdminManageEvent extends InnerPageFragment{
                         } else{
                             Log.d("DEBUG", "no deleting default images");
                         }
+
+
 
                         eventsRef.document(event_id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
@@ -167,6 +176,17 @@ public class AdminManageEvent extends InnerPageFragment{
                                             usersRef.document(doc.getId()).update("signedUp", FieldValue.arrayRemove(event_id));
                                         }
 
+                                    }
+                                });
+
+                                announceRef.whereEqualTo("eventId", event_id).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                        for(QueryDocumentSnapshot doc: queryDocumentSnapshots){
+                                            String id = doc.getId();
+                                            Log.d("DEBUG", id + "DELETE");
+                                            doc.getReference().delete();
+                                        }
                                     }
                                 });
 
