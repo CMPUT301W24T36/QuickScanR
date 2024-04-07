@@ -164,6 +164,7 @@ public class ScanQR extends AttendeeFragment {
                                     DocumentSnapshot doc = task.getResult();
                                     if (doc.exists()) {
                                         User organizer = doc.toObject(User.class);
+                                        organizer.setUserId(doc.getId());
                                         newEvent.setOrganizer(organizer);
                                         EventDetails evDetFragment = EventDetails.newInstance(newEvent);
                                         args.putBoolean("showCheckInDialog", true);
@@ -208,26 +209,40 @@ public class ScanQR extends AttendeeFragment {
                 .addOnSuccessListener(doc -> {
                     if (doc.exists()) {
                         Event newEvent = buildEvent(doc);
-
-                        // add image async
                         String eventPosterID = doc.getString(DatabaseConstants.evPosterKey);
-                        if (!Objects.equals(eventPosterID, "")) {
-                            ImgHandler imgHandler = new ImgHandler(getContext());
-                            imgHandler.getImage(eventPosterID, bitmap -> {
-                                newEvent.setPoster(bitmap);
 
-                                // transition to event after async grab
-                                getActivity().getSupportFragmentManager().beginTransaction()
-                                        .replace(R.id.content_main, EventDetails.newInstance(newEvent))
-                                        .addToBackStack(null).commit();
-                            });
-                        } else {
-                            // transition to event
-                            getActivity().getSupportFragmentManager().beginTransaction()
-                                    .replace(R.id.content_main, EventDetails.newInstance(newEvent))
-                                    .addToBackStack(null).commit();
-                        }
+                        // get user data + imgs
+                        db.collection(DatabaseConstants.usersColName).document(doc.getString(DatabaseConstants.evOwnerKey)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot doc = task.getResult();
+                                    if (doc.exists()) {
+                                        User organizer = doc.toObject(User.class);
+                                        organizer.setUserId(doc.getId());
+                                        newEvent.setOrganizer(organizer);
+                                        EventDetails evDetFragment = EventDetails.newInstance(newEvent);
 
+                                        if (!Objects.equals(eventPosterID, "")) {
+                                            ImgHandler imgHandler = new ImgHandler(getContext());
+                                            imgHandler.getImage(eventPosterID, bitmap -> {
+                                                newEvent.setPoster(bitmap);
+
+                                                // transition to event after async grab
+                                                getActivity().getSupportFragmentManager().beginTransaction()
+                                                        .replace(R.id.content_main, evDetFragment)
+                                                        .addToBackStack(null).commit();
+                                            });
+                                        } else {
+                                            // transition to event
+                                            getActivity().getSupportFragmentManager().beginTransaction()
+                                                    .replace(R.id.content_main, evDetFragment)
+                                                    .addToBackStack(null).commit();
+                                        }
+                                    }
+                                }
+                            }
+                        });
                     } else {
                         Log.d("DEBUG", "Attempted to retrieve event that did not exist");
                     }
@@ -251,7 +266,7 @@ public class ScanQR extends AttendeeFragment {
         String eventEnd = doc.getString(DatabaseConstants.evEndKey);
         String eventID = doc.getId();
 
-        User orgTemp = new User("Test","Test","test",0);  // TO BE REMOVED
+        User orgTemp = new User("Loading","Loading","Loading",0);
         Event newEvent = new Event(eventName, eventDesc, eventLocName, eventLocId, eventStart, eventEnd, eventRest, orgTemp);
         newEvent.setId(eventID);
         Log.d("DEBUG", String.format("Event (%s) fetched", eventName));
