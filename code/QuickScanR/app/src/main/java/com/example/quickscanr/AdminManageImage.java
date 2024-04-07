@@ -1,6 +1,7 @@
 package com.example.quickscanr;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -116,12 +118,22 @@ public class AdminManageImage extends InnerPageFragment{
 
 
         populateInfo(v);
+        Log.d("DEBUG", "light rded plz" + img_id);
+
+
+
+        if(Objects.equals(img_id, "default") || Objects.equals(img_id, "default_user")){
+            Log.d("DEBUG", "light rded plz hi" + img_id);
+
+            deleteImages.setBackgroundColor(Color.parseColor("#B2B2B2"));
+            deleteImages.setEnabled(false);
+            deleteImages.setText("Unable to Delete");
+        }
 
 
         deleteImages.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 imgRef.document(img_id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
