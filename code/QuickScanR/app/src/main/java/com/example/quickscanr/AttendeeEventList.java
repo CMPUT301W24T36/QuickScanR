@@ -32,7 +32,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Attendee Event List Page functionality
@@ -281,16 +283,24 @@ public class AttendeeEventList extends AttendeeFragment {
                 }
                 if (value != null && value.exists()) {
                     // get all the user's event IDs for loading
-                    ArrayList<String> checkedEvents = (ArrayList<String>) value.get(DatabaseConstants.userCheckedEventsKey);
-                    ArrayList<String> signedUpEvents = (ArrayList<String>) value.get(DatabaseConstants.userSignedUpEventsKey);
-                    if (checkedEvents == null && signedUpEvents != null) {
-                        checkedEvents = signedUpEvents;
+                    Set<String> eventSet = new HashSet<>();
+
+                    ArrayList<String> docCheckedEvents = (ArrayList<String>) value.get(DatabaseConstants.userCheckedEventsKey);
+                    ArrayList<String> docSignedUpEvents = (ArrayList<String>) value.get(DatabaseConstants.userSignedUpEventsKey);
+
+                    if (docCheckedEvents != null) {
+                        eventSet.addAll(docCheckedEvents);
                     }
-                    else if (checkedEvents != null && signedUpEvents != null) {
-                        checkedEvents.addAll(signedUpEvents);
+                    if (docCheckedEvents == null && docSignedUpEvents != null) {
+                        eventSet.addAll(docSignedUpEvents);
                     }
-                    if (checkedEvents != null) {    // checkedEvents holds all own events (checked in and signed up)
-                        loadEventIDs(checkedEvents, current);
+                    else if (docCheckedEvents != null && docSignedUpEvents != null) {
+                        eventSet.addAll(docSignedUpEvents);
+                    }
+
+                    ArrayList<String> allFilteredEvents = new ArrayList<>(eventSet);
+                    if (allFilteredEvents != null) {    // allFilteredEvents holds all own events (checked in and signed up)
+                        loadEventIDs(allFilteredEvents, current);
                     }
                 } else {
                     Log.d("AEL", "No current events to list");
@@ -335,7 +345,8 @@ public class AttendeeEventList extends AttendeeFragment {
                         Date startDate = format.parse(eventStart);
                         Date endDate = format.parse(eventEnd);
                         Date currentDate = new Date();
-                        if (!((currentDate.equals(startDate) || currentDate.after(startDate)) && (currentDate.equals(endDate) || currentDate.before(endDate)))) {
+                        String formattedCurrDate = format.format(currentDate);
+                        if (!((formattedCurrDate.equals(eventStart) || currentDate.after(startDate)) && (formattedCurrDate.equals(eventEnd) || currentDate.before(endDate)))) {
                             add = false;
                         }
                     } catch (ParseException e) {}
