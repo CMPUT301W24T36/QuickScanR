@@ -1,13 +1,18 @@
 package com.example.quickscanr;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.chip.Chip;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -24,10 +29,17 @@ import java.util.Objects;
 /**
  * AdminManageEvents
  * - allows admin to view more info about the user and also delete the user
+ *
+ * Resources used for alert dialog for seeing poster:
+ * https://www.geeksforgeeks.org/how-to-create-an-alert-dialog-box-in-android/
+ * https://stackoverflow.com/questions/6276501/how-to-put-an-image-in-an-alertdialog-android
+ * https://stackoverflow.com/questions/24134611/how-to-close-alertdialog-with-click-on-imageview
  */
 public class AdminManageEvent extends InnerPageFragment{
     private Event event;
     private String event_id;
+
+    Chip seePoster;
 
     private ArrayList<String> posterIds;
 
@@ -98,6 +110,8 @@ public class AdminManageEvent extends InnerPageFragment{
 
         deleteEvents = v.findViewById(R.id.delete_btn);
 
+        seePoster = v.findViewById(R.id.manage_upload);
+
 
         posterIds = new ArrayList<>();
         //set up the database
@@ -110,7 +124,51 @@ public class AdminManageEvent extends InnerPageFragment{
 
         announceRef = db.collection(ANNOUNCE_COLLECTION);
 
+        seePoster.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("DEBUG", "HIIIII THEREE ");
 
+                //get the image id and the bitmap of the image so you can do directly to the image
+                eventsRef.document(event_id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        String poster = documentSnapshot.getString(DatabaseConstants.evPosterKey);
+                        Log.d("DEBUG", "still THEREE ");
+
+                        imgRef.document(poster).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                //collect the bitmap and imageid and send it to manage
+                                Log.d("DEBUG", "HIIIII now ");
+
+                                String img = documentSnapshot.getString(DatabaseConstants.imgDataKey);
+                                Bitmap bitmap = ImgHandler.base64ToBitmap(img);
+
+                                ImageView imageView = new ImageView(getContext());
+                                imageView.setImageBitmap(bitmap);
+                                Log.d("DEBUG", "problem ");
+
+                                AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+                                builder.setView(imageView);
+
+                                AlertDialog alertDialog = builder.create();
+                                alertDialog.show();
+
+                                imageView.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        alertDialog.dismiss();
+                                    }
+                                });
+
+
+                            }
+                        });
+                    }
+                });
+            }
+        });
         deleteEvents.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
