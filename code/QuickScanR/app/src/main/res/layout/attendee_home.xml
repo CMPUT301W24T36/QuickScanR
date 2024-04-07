@@ -63,6 +63,12 @@
 
     </LinearLayout>
 
-    <include layout="@layout/attendee_nav_bar"></include>
+    <include
+        layout="@layout/attendee_nav_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom">
+
+    </include>
 
 </FrameLayout>
