@@ -43,6 +43,8 @@ import java.util.Map;
 /**
  * Tests for admin navigation.
  * Tests navigation between the 4 main pages.
+ * referenced https://medium.com/azimolabs/guide-to-make-custom-viewaction-solving-problem-of-nestedscrollview-in-espresso-35b133850254
+ *      for clicking on gear icon on the admin browse events page (the ViewAction)
  */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
