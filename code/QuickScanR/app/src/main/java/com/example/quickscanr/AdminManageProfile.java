@@ -167,17 +167,7 @@ public class AdminManageProfile extends InnerPageFragment{
                             }
 
                         });
-
-                        // go through the attendee's collection
-                        CollectionReference attenRef = eventRef.document(user_id).collection(ATTEN_COLLECTION);
-                        Log.d("DEBUG", "HIIIII");
-
-                        attenRef.document(user_id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void unused) {
-                                Log.d("DEBUG", "user delete from attnedees");
-                            }
-                        });
+                        
 
                         eventRef.whereEqualTo("ownerID", user_id).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                             @Override
@@ -201,7 +191,7 @@ public class AdminManageProfile extends InnerPageFragment{
                                 for(QueryDocumentSnapshot doc: queryDocumentSnapshots){
                                     String id = doc.getId();
                                     doc.getReference().delete();
-                                    Log.d("DEBUG", id + "idk whats happening");
+                                    Log.d("DEBUG", id + "id");
                                 }
 
                             }
