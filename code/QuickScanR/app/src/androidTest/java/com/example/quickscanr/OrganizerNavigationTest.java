@@ -84,11 +84,17 @@ public class OrganizerNavigationTest {
         addTestEvent();
     }
 
+    /**
+     * removes a test event that was added
+     */
     @After
     public void tearDown() {
         db.collection(DatabaseConstants.eventColName).document(testEventId).delete();
     }
 
+    /**
+     * add a test event for testing
+     */
     public void addTestEvent() {
         // test event data
         Map<String, Object> data = new HashMap<>();
@@ -230,6 +236,7 @@ public class OrganizerNavigationTest {
     public void testCheckInMapAccess() {
         boolean needsReset = false;
 
+        // if geolocation not on then turn it on
         if (!MainActivity.user.getGeoLoc()) {
             needsReset = true;
             Map<String, Object> data = new HashMap<>();
@@ -242,6 +249,7 @@ public class OrganizerNavigationTest {
         onView(withId(R.id.evdash_btn_map)).perform(click());
         onView(withId(R.id.check_in_map_page)).check(matches(ViewMatchers.isDisplayed()));
 
+        // if geolocation was originally off then reset it
         if (needsReset) {
             Map<String, Object> data = new HashMap<>();
             data.put(DatabaseConstants.userGeoLocKey, false);
