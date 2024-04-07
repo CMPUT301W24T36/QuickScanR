@@ -3,6 +3,7 @@ package com.example.quickscanr;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,8 +34,7 @@ import java.util.Objects;
  * Resources used for alert dialog for seeing poster:
  * https://www.geeksforgeeks.org/how-to-create-an-alert-dialog-box-in-android/
  * https://stackoverflow.com/questions/6276501/how-to-put-an-image-in-an-alertdialog-android
- * https://stackoverflow.com/questions/24134611/how-to-close-alertdialog-with-click-on-imageview
- */
+ * https://stackoverflow.com/questions/27520967/how-to-change-the-colour-of-positive-and-negative-button-in-custom-alert-dialog */
 public class AdminManageEvent extends InnerPageFragment{
     private Event event;
     private String event_id;
@@ -152,18 +152,25 @@ public class AdminManageEvent extends InnerPageFragment{
 
                                 //create alert dialog and then show the image in the large box
                                 AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-                                builder.setView(imageView);
-
-                                AlertDialog alertDialog = builder.create();
-                                alertDialog.show();
-
-                                //when click on the image it should go away
-                                imageView.setOnClickListener(new View.OnClickListener() {
+                                builder.setView(imageView).setNegativeButton("OK", new DialogInterface.OnClickListener() {
                                     @Override
-                                    public void onClick(View v) {
-                                        alertDialog.dismiss();
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
                                     }
                                 });
+
+                                AlertDialog alertDialog = builder.create();
+                                //change the colour of the text so its black so we can see it
+                                alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                                    @Override
+                                    public void onShow(DialogInterface dialog) {
+                                        ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(Color.BLACK);
+                                    }
+                                });
+
+                                alertDialog.show();
+                                alertDialog.getWindow().setLayout(900, 1000);
+
 
 
                             }
