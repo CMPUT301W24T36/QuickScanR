@@ -81,7 +81,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/rounded_bg"
-                android:hint="Share your event updates with attendees here!"
+                android:hint="@string/share_your_event_updates_with_attendees_here"
                 android:focusable="true"
                 android:padding="18dp"
                 android:layout_gravity="fill_horizontal"
