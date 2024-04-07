@@ -30,7 +30,8 @@
         android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="  Title"
+        android:hint="Title"
+        android:padding="10dp"
         android:fontFamily="@font/inter_medium"
         android:background="@drawable/rounded_bg"
         android:height="48dp"
@@ -46,8 +47,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_bg"
-        android:hint="  Body"
-        android:paddingBottom="60dp"
+        android:hint="Body"
+        android:paddingTop="10dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="50dp"
         android:fontFamily="@font/inter_medium"
         android:id="@+id/an_body_edit_text">
 
