@@ -131,7 +131,7 @@ public class AdminManageImage extends InnerPageFragment{
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         for (QueryDocumentSnapshot doc: queryDocumentSnapshots){
-                            Log.d("TEST", "hiiiiii" + doc.getId());
+                            Log.d("TEST", "documentId" + doc.getId());
 
                             doc.getReference().update("image", "default_user");
                         }
