@@ -137,6 +137,8 @@ public class AddAnnouncementFragment extends DialogFragment {
         positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                View no_event = view.findViewById(R.id.no_event_handler);
+                no_event.setVisibility(View.GONE);
                 // Get the text from EditText fields
                 String title = editTitle.getText().toString();
                 String body = editBody.getText().toString();
@@ -144,7 +146,7 @@ public class AddAnnouncementFragment extends DialogFragment {
                 // Check if an event is selected
                 if (selectedEventId == null || selectedEventId.isEmpty()) {
                     // Display a message to the user indicating that an event must be selected
-                    Toast.makeText(getContext(), "Please select event to announce for, or press Cancel to exit", Toast.LENGTH_LONG).show();
+                    no_event.setVisibility(View.VISIBLE);
                     return; // Stop further execution, keep them in the fragment.
                 }
 
