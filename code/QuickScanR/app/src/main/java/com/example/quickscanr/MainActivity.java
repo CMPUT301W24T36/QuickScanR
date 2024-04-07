@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
             // If permission already been granted
             initializeApp();
         }
+        initializeApp();
     }
 
     /**
