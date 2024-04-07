@@ -7,6 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -151,28 +155,42 @@ public class ScanQR extends AttendeeFragment {
                     if (doc.exists()) {
                         Bundle args = new Bundle();
                         Event newEvent = buildEvent(doc);
-                        EventDetails evDetFragment = EventDetails.newInstance(newEvent);
-                        args.putBoolean("showCheckInDialog", true);
-                        args.putSerializable("event", newEvent);
-                        evDetFragment.setArguments(args);
-
                         String eventPosterID = doc.getString(DatabaseConstants.evPosterKey);
-                        if (!Objects.equals(eventPosterID, "")) {
-                            ImgHandler imgHandler = new ImgHandler(getContext());
-                            imgHandler.getImage(eventPosterID, bitmap -> {
-                                newEvent.setPoster(bitmap);
 
-                                // transition to event after async grab
-                                getActivity().getSupportFragmentManager().beginTransaction()
-                                        .replace(R.id.content_main, evDetFragment)
-                                        .addToBackStack(null).commit();
-                            });
-                        } else {
-                            // transition to event
-                            getActivity().getSupportFragmentManager().beginTransaction()
-                                    .replace(R.id.content_main, evDetFragment)
-                                    .addToBackStack(null).commit();
-                        }
+                        db.collection(DatabaseConstants.usersColName).document(doc.getString(DatabaseConstants.evOwnerKey)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot doc = task.getResult();
+                                    if (doc.exists()) {
+                                        User organizer = doc.toObject(User.class);
+                                        newEvent.setOrganizer(organizer);
+                                        EventDetails evDetFragment = EventDetails.newInstance(newEvent);
+                                        args.putBoolean("showCheckInDialog", true);
+                                        args.putSerializable("event", newEvent);
+                                        evDetFragment.setArguments(args);
+
+
+                                        if (!Objects.equals(eventPosterID, "")) {
+                                            ImgHandler imgHandler = new ImgHandler(getContext());
+                                            imgHandler.getImage(eventPosterID, bitmap -> {
+                                                newEvent.setPoster(bitmap);
+
+                                                // transition to event after async grab
+                                                getActivity().getSupportFragmentManager().beginTransaction()
+                                                        .replace(R.id.content_main, evDetFragment)
+                                                        .addToBackStack(null).commit();
+                                            });
+                                        } else {
+                                            // transition to event
+                                            getActivity().getSupportFragmentManager().beginTransaction()
+                                                    .replace(R.id.content_main, evDetFragment)
+                                                    .addToBackStack(null).commit();
+                                        }
+                                    }
+                                }
+                            }
+                        });
                     } else {
                         Log.d("DEBUG", "Attempted to retrieve event that did not exist");
                     }
