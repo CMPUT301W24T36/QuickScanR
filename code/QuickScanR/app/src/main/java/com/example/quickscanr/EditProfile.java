@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.text.TextUtils;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -128,6 +129,10 @@ public class EditProfile extends Fragment {
         return v;
     }
 
+    private boolean isValidEmail(CharSequence target) {
+        return !TextUtils.isEmpty(target) && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+    }
+
     /**
      * adds listeners for the save and cancel button
      * @param v the edit profile view
@@ -145,38 +150,48 @@ public class EditProfile extends Fragment {
                 String phone = numberField.getText().toString();
                 String email = emailField.getText().toString();
                 Integer type = UserType.valueOf((String) accountTypeField.getSelectedItem());
-                if (!user.isErrors(nameField)) {
-                    user.setName(name);
-                    user.setHomepage(homepage);
-                    user.setPhoneNumber(phone);
-                    user.setEmail(email);
-                    user.setUserType(type);
-                    MainActivity.updateUser(user);
-                    Map<String, Object> data = new HashMap<>();
-                    data.put(DatabaseConstants.userFullNameKey, name);
-                    data.put(DatabaseConstants.userHomePageKey, homepage);
-                    data.put(DatabaseConstants.userPhoneKey, phone);
-                    data.put(DatabaseConstants.userEmailKey, email);
-                    data.put(DatabaseConstants.userTypeKey, type);
-                    userDocRef.update(data).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void unused) {
-                            getParentFragmentManager().beginTransaction().replace(R.id.content_main, Profile.newInstance(MainActivity.user))
-                                    .addToBackStack(null).commit();
-                        }
-                    });
 
-                    // sync images with db
-                    if (imgDeleted) {
-                        user.setImageID(DatabaseConstants.userDefaultImageID, true);
+                if (phone.length() != 10 || !phone.matches("\\d{10}")) {
+                    numberField.setError("Please enter a valid 10-digit phone number.");
+                    return;
+                }
+
+                if (isValidEmail(email)) {
+                    if (!user.isErrors(nameField)) {
+                        user.setName(name);
+                        user.setHomepage(homepage);
+                        user.setPhoneNumber(phone);
+                        user.setEmail(email);
+                        user.setUserType(type);
+                        MainActivity.updateUser(user);
+                        Map<String, Object> data = new HashMap<>();
+                        data.put(DatabaseConstants.userFullNameKey, name);
+                        data.put(DatabaseConstants.userHomePageKey, homepage);
+                        data.put(DatabaseConstants.userPhoneKey, phone);
+                        data.put(DatabaseConstants.userEmailKey, email);
+                        data.put(DatabaseConstants.userTypeKey, type);
+                        userDocRef.update(data).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                getParentFragmentManager().beginTransaction().replace(R.id.content_main, Profile.newInstance(MainActivity.user))
+                                        .addToBackStack(null).commit();
+                            }
+                        });
+
+                        // sync images with db
+                        if (imgDeleted) {
+                            user.setImageID(DatabaseConstants.userDefaultImageID, true);
+                        }
+                        if (tempURI != null) {
+                            ImgHandler imgHandler = new ImgHandler(getContext());
+                            String uid = user.getUserId();
+                            String userName = user.getName();
+                            Log.d("DEBUG", uid + " " + "userid, edit profile");
+                            imgHandler.uploadImage(tempURI, documentID -> user.setImageID(documentID, true), uid, userName);
+                        }
                     }
-                    if (tempURI != null) {
-                        ImgHandler imgHandler = new ImgHandler(getContext());
-                        String uid = user.getUserId();
-                        String userName = user.getName();
-                        Log.d("DEBUG", uid + " " + "userid, edit profile");
-                        imgHandler.uploadImage(tempURI, documentID -> user.setImageID(documentID, true), uid, userName);
-                    }
+                } else {
+                    emailField.setError("Invalid email format");
                 }
             }
         });
