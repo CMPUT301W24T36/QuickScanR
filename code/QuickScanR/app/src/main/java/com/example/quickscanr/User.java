@@ -32,8 +32,12 @@ public class User implements Serializable {
     private Boolean geoLoc;
     private String userId;
     private String imageID;
+
+    private String fcmToken;
+
     private final static String USER_COLLECTION = "users";
     private final static String IMAGE_COLLECTION = "images";
+
 
     /**
      * Constructor
@@ -240,5 +244,21 @@ public class User implements Serializable {
         }
 
         imageID = str;
+    }
+
+    /**
+     * Getter for Fcm Token
+     * @return the fcmToken of the user
+     */
+    public String getFcmToken() {
+        return fcmToken;
+    }
+
+    /**
+     * Setter for the Fcm Token
+     * @param fcmToken of the user
+     */
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
     }
 }
