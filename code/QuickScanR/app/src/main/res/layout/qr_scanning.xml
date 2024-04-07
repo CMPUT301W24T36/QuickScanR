@@ -25,7 +25,7 @@
             android:textSize="25sp"
             android:typeface="normal"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/include_nav_bar" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
             android:id="@+id/flash_button"
@@ -34,7 +34,6 @@
             android:layout_marginTop="30dp"
             android:layout_marginBottom="150dp"
             android:background="@drawable/round_button"
-            app:layout_constraintBottom_toBottomOf="@+id/include_nav_bar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/qr_card_view"
@@ -62,9 +61,10 @@
             android:id="@+id/include_nav_bar"
             layout="@layout/attendee_nav_bar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:layout_editor_absoluteX="29dp"
-            tools:layout_editor_absoluteY="301dp" />
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

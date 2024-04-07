@@ -12,12 +12,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import org.checkerframework.checker.units.qual.A;
 
@@ -25,7 +32,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -43,23 +53,31 @@ public class AddAnnouncementFragment extends DialogFragment {
      */
     interface AddAnnounceDialogListener {
         void addAnnouncement(Announcement announcement);
+
         void inDismiss();
     }
 
     // Class variables
     private AddAnnounceDialogListener listener;
     private String userName; // Add userName variable
+    private String userID;
+    private Spinner eventSpinner;
+    private String selectedEventId;
+    private String userId;
 
     /**
      * Constructor
+     *
      * @param userName is the one that is announcing!
      */
     public AddAnnouncementFragment(String userName) {
         this.userName = userName;
+        this.userID = userID;
     }
 
     /**
      * This one checks if the parent fragment (Organizer Home) has the listener that we need!
+     *
      * @param context
      */
     @Override
@@ -77,9 +95,9 @@ public class AddAnnouncementFragment extends DialogFragment {
     }
 
 
-
     /**
      * We are creating the Dialog here.
+     *
      * @param savedInstanceState The last saved instance state of the Fragment,
      *                           or null if this is a freshly created Fragment.
      * @return the dialog
@@ -93,6 +111,9 @@ public class AddAnnouncementFragment extends DialogFragment {
 
         // Inflate the layout for the dialog
         View view = LayoutInflater.from(requireContext()).inflate(R.layout.add_announcement_fragment, null);
+
+        eventSpinner = view.findViewById(R.id.event_spinner);
+        fetchEvents();
 
         // Find the EditText fields in the inflated layout
         EditText editTitle = view.findViewById(R.id.an_title_edit_text);
@@ -116,21 +137,31 @@ public class AddAnnouncementFragment extends DialogFragment {
         positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                View no_event = view.findViewById(R.id.no_event_handler);
+                no_event.setVisibility(View.GONE);
+                // Get the text from EditText fields
+                String title = editTitle.getText().toString();
+                String body = editBody.getText().toString();
+
+                // Check if an event is selected
+                if (selectedEventId == null || selectedEventId.isEmpty()) {
+                    // Display a message to the user indicating that an event must be selected
+                    no_event.setVisibility(View.VISIBLE);
+                    return; // Stop further execution, keep them in the fragment.
+                }
+
                 if (listener != null) {
-                    // Handle the click behavior of the positive button
-                        // Get the text from EditText fields
-                    String title = editTitle.getText().toString();
-                    String body = editBody.getText().toString();
                     // Get the current date
                     String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
                     // Call the listener method with the retrieved data
-                    listener.addAnnouncement(new Announcement(title, body, date, userName));
+                    listener.addAnnouncement(new Announcement(title, body, date, userID, userName, selectedEventId));
                 }
                 // Dismiss the dialog
                 dismiss();
                 listener.inDismiss(); // Tell the parent fragment to stop the focus!
             }
         });
+
 
 
         // Set the view of the dialog and create it
@@ -162,6 +193,46 @@ public class AddAnnouncementFragment extends DialogFragment {
         }
 
         return view;
+    }
+
+    private void fetchEvents() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        MainActivity mainActivity = (MainActivity) getActivity();
+        userId = mainActivity.user.getUserId();
+        List<String> eventNames = new ArrayList<>();
+        Map<String, String> eventNameToId = new HashMap<>();
+
+        db.collection("events")
+                .whereEqualTo("ownerID", userId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            String eventName = document.getString("name");
+                            String eventId = document.getId();
+                            eventNames.add(eventName);
+                            eventNameToId.put(eventName, eventId);
+                        }
+                        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, eventNames);
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        eventSpinner.setAdapter(adapter);
+
+                        eventSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                            @Override
+                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                String eventName = (String) parent.getItemAtPosition(position);
+                                selectedEventId = eventNameToId.get(eventName);
+                                Log.d("AddAnnouncementFragment", "Selected event ID: " + selectedEventId);
+                            }
+
+                            @Override
+                            public void onNothingSelected(AdapterView<?> parent) {
+                            }
+                        });
+                    } else {
+                        Log.e("FetchEvents", "Error getting documents: ", task.getException());
+                    }
+                });
     }
 }
 

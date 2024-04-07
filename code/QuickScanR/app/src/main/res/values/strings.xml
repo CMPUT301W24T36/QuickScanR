@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">QuickScanR</string>
     <string name="title_activity_checked_in_map">CheckedInMap</string>
+    <string name="share_your_event_updates_with_attendees_here">Share your event updates with attendees here!</string>
 </resources>

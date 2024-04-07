@@ -1,6 +1,7 @@
 package com.example.quickscanr;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
@@ -20,6 +22,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -31,13 +34,27 @@ public class AdminManageImage extends InnerPageFragment{
     private Bitmap bitmap;
 
     private String img_id;
+    private String username;
     private ImgHandler imgHandler;
+
+    private TextView profileName;
+    private TextView uploadDate;
+
 
     Button deleteImages;
 
     private FirebaseFirestore db;
     private CollectionReference imgRef;
+
+    private CollectionReference usersRef;
+    private CollectionReference eventsRef;
+
+
     public static String IMAGE_COLLECTION = "images";
+    public static String USER_COLLECTION = "users";
+    public static String EVENT_COLLECTION = "events";
+
+
 
     public AdminManageImage(Bitmap bitmap) {
         this.bitmap = bitmap;
@@ -56,6 +73,7 @@ public class AdminManageImage extends InnerPageFragment{
             bitmap = (Bitmap) getArguments().getParcelable("image");
             img_id = getArguments().getString("imageId");
         }
+
     }
 
     /**
@@ -72,6 +90,8 @@ public class AdminManageImage extends InnerPageFragment{
      * @return
      *       - returns v, which is the view with the inflated layout
      *       - also returns the updated version of any change made with deleting
+     *       - user who uploaded the image is displayed
+     *       - date that image was uploaded is also displayed
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -79,32 +99,76 @@ public class AdminManageImage extends InnerPageFragment{
         View v = inflater.inflate(R.layout.admin_manage_image, container, false);
         //go back to events list when clicked
         addButtonListeners(getActivity(), v, new AdminImageList());
-        populateInfo(v);
 
         deleteImages = v.findViewById(R.id.delete_img);
+
+        profileName = v.findViewById(R.id.img_name);
+
+        uploadDate = v.findViewById(R.id.img_date);
+
 
 
         //set up the database
         db = FirebaseFirestore.getInstance();
         imgRef = db.collection(IMAGE_COLLECTION);
 
+        usersRef = db.collection(USER_COLLECTION);
+
+        eventsRef = db.collection(EVENT_COLLECTION);
+
+
+        populateInfo(v);
+        Log.d("DEBUG", "light rded plz" + img_id);
+
+
+
+        if(Objects.equals(img_id, "default") || Objects.equals(img_id, "default_user")){
+            Log.d("DEBUG", "light rded plz hi" + img_id);
+
+            deleteImages.setBackgroundColor(Color.parseColor("#B2B2B2"));
+            deleteImages.setEnabled(false);
+            deleteImages.setText("Unable to Delete");
+        }
 
 
         deleteImages.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 imgRef.document(img_id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
-                        //go back to the previous page
-                                    AdminImageList adminImageList = new AdminImageList();
-                                    getActivity().getSupportFragmentManager().beginTransaction()
-                                            .replace(R.id.content_main, adminImageList)
-                                            .addToBackStack(null).commit();
-                    }
-                });
+                        //when profile pics get deleted, just replace with default images
+                        usersRef.whereEqualTo("image", img_id).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                for (QueryDocumentSnapshot doc: queryDocumentSnapshots){
+                                    Log.d("TEST", "hiiiiii" + doc.getId());
 
+                                    doc.getReference().update("image", "default_user");
+                                }
+                            }
+                        });
+
+                        //when event poster is deleted just replace with default
+                        eventsRef.whereEqualTo("posterID", img_id).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                for (QueryDocumentSnapshot doc: queryDocumentSnapshots){
+                                    Log.d("TEST", "hiiiiii" + doc.getId());
+
+                                    doc.getReference().update("posterID", "default");
+                                }
+                            }
+                        });
+
+                        //go back to the previous page
+                        AdminImageList adminImageList = new AdminImageList();
+                        getActivity().getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.content_main, adminImageList)
+                                .addToBackStack(null).commit();
+                    }
+
+                });
 
             }
         });
@@ -136,8 +200,28 @@ public class AdminManageImage extends InnerPageFragment{
      * @param v: view that has the fields with the same data that we will populate the fields with
      */
     public void populateInfo(View v){
+        getUserId(img_id);
+
         ImageView img = v.findViewById(R.id.img_pic);
         img.setImageBitmap(bitmap);
 
+    }
+
+    /**
+     * getUserId()
+     * @param img_id : document id of the image
+     *  - queries the database through the image document to collect data to
+     *    populate the username and date upload
+     */
+    public void getUserId(String img_id){
+
+        imgRef.document(img_id).get().addOnSuccessListener(documentSnapshot -> {
+            if(documentSnapshot.exists()){
+                String username = documentSnapshot.getString(DatabaseConstants.imgNameKey);
+                String date = documentSnapshot.getString(DatabaseConstants.imgDateUpload);
+                profileName.setText(username);
+                uploadDate.setText(date);
+            }
+        });
     }
 }

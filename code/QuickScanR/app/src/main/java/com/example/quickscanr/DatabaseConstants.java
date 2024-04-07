@@ -21,6 +21,7 @@ public class DatabaseConstants {
     public static final String userImageKey = "image";
     public static final String userDefaultImageID = "default_user";
     public static final String userSignedUpEventsKey = "signedUp";
+    public static final String userFcmToken = "fcmToken";
 
     // Events
     public static final String eventColName = "events";
@@ -41,15 +42,26 @@ public class DatabaseConstants {
 
     public static final String anBody = "body";
     public static final String anDate = "date";
-
     public static final String anUserName = "userName";
     public static final String anTitle = "title";
     public static final String anUserKey = "userID";
+    public static final String anEventID = "eventID";
 
     // Images
     public static final String imgDataKey = "image";
+    public static final String imgUserKey = "user";
+    public static final String imgNameKey = "name";
+
+    public static final String imgDateUpload = "dateUpload";
+
+
+
+
+
+
 
     // QR CODE (not 100% DB but fits good here)
     public static final String qrTypeCheckIn = "CI";
     public static final String qrTypePromo = "PR";
+
 }
