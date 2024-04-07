@@ -346,25 +346,25 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
             //do nothing
         }
         else if (totalAttendeeCount >=1 && totalAttendeeCount <5 && lastAttendeeCount < 1){
-            milestoneList.add(new Milestone("Iron Check-in", "Congratulations! You got your first check in for " + eventName + "!", eventName));
+            milestoneList.add(new Milestone("Iron Check-in", "Congratulations! You got your first check in!", eventName));
             lastAttendeeCount = 1;
         } else if ((totalAttendeeCount >=10 && totalAttendeeCount <50 && lastAttendeeCount < 10)) {
-            milestoneList.add(new Milestone("Bronze Check-in", "Congratulations! You've achieved 10 check-ins for " + eventName + "!", eventName));
+            milestoneList.add(new Milestone("Bronze Check-in", "Congratulations! You've achieved 10 check-ins.", eventName));
             lastAttendeeCount = 10;
         } else if ((totalAttendeeCount >=50 && totalAttendeeCount <100 && lastAttendeeCount < 50)) {
-            milestoneList.add(new Milestone("Silver Check-in", "Wow! You've achieved 50 check-ins for " + eventName + "!", eventName));
+            milestoneList.add(new Milestone("Silver Check-in", "Wow! You've achieved 50 check-ins.", eventName));
             lastAttendeeCount = 50;
         } else if ((totalAttendeeCount >=100 && totalAttendeeCount <500 && lastAttendeeCount < 100)){
-            milestoneList.add(new Milestone("Gold Check-in", "Nice! You've achieved 100 check-ins for " + eventName + "!", eventName));
+            milestoneList.add(new Milestone("Gold Check-in", "Nice! You've achieved 100 check-ins.", eventName));
             lastAttendeeCount = 100;
         } else if (((totalAttendeeCount >=500 && totalAttendeeCount <1000 && lastAttendeeCount < 500))){
-            milestoneList.add(new Milestone("Platinum Check-in", "Incredible! You've achieved 500 check-ins for " + eventName + "!", eventName));
+            milestoneList.add(new Milestone("Platinum Check-in", "Incredible! You've achieved 500 check-ins.", eventName));
             lastAttendeeCount = 500;
         } else if ((totalAttendeeCount >=1000 && totalAttendeeCount <10000 && lastAttendeeCount < 1000)) {
-            milestoneList.add(new Milestone("Diamond Check-in", "Impressive! You've achieved 1000 check-ins for " + eventName + "!", eventName));
+            milestoneList.add(new Milestone("Diamond Check-in", "Impressive! You've achieved 1000 check-ins.", eventName));
             lastAttendeeCount = 1000;
         } else if (totalAttendeeCount>=10000 && lastAttendeeCount < 10000) {
-            milestoneList.add(new Milestone("Emerald Check-in", "You've hit the epic milestone of 10,000 event check-ins for" + eventName + "! Your passion for events is truly extraordinary.", eventName));
+            milestoneList.add(new Milestone("Emerald Check-in", "You've hit the epic milestone of 10,000 event check-ins! Your passion for events is truly extraordinary.", eventName));
             lastAttendeeCount = 10000;
         }
         milestoneAdapter.notifyDataSetChanged();
@@ -402,8 +402,6 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
         }
         milestoneAdapter.notifyDataSetChanged();
     }
-
-
 
 }
 

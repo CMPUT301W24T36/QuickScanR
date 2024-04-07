@@ -14,7 +14,6 @@ public class Milestone {
 
     private String title;
     private String description;
-
     private String eventName;
 
     /**
@@ -25,7 +24,7 @@ public class Milestone {
     public Milestone(String title, String description) {
         this.title = title;
         this.description = description;
-        this.eventName = "";
+        this.eventName = null;
     }
 
     public Milestone(String title, String description, String eventName) {
@@ -33,6 +32,7 @@ public class Milestone {
         this.description = description;
         this.eventName = eventName;
     }
+
     /**
      * Gets title of the milestone
      * @return title of the milestone
@@ -73,4 +73,5 @@ public class Milestone {
     public void setEventName(String eventName) {
         this.eventName = eventName;
     }
+
 }

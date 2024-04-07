@@ -23,5 +23,6 @@ public class MilestoneViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
         titleTextView = itemView.findViewById(R.id.milestone_item_title);
         descriptionTextView = itemView.findViewById(R.id.milestone_description);
+        eventNameTextView = itemView.findViewById(R.id.milestone_event_name);
     }
 }
