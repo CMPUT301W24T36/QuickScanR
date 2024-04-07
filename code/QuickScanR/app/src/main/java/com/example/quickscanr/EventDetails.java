@@ -141,54 +141,68 @@ public class EventDetails extends InnerPageFragment {
         AlertDialog alertDialog = new AlertDialog.Builder(getContext())
                 .setTitle("Check In")
                 .setMessage("Do you want to check in to this event?")
-                .setPositiveButton(android.R.string.yes, (dialog, x) -> {
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> {
                     String eventID = event.getId();
                     String userID = user.getUserId();
                     Long timestamp = System.currentTimeMillis();
-                    DocumentReference attRef = db.collection(EVENT_COLLECTION).document(eventID).collection(ATTENDEE_COLLECTION).document(userID);
+                    DocumentReference attRef = db.collection(EVENT_COLLECTION).document(eventID)
+                            .collection(ATTENDEE_COLLECTION).document(userID);
 
-                    // Get current location
-                    Location currentLocation = locationHelper.getCurrentLocation();
-                    if (currentLocation != null) {
-                        // db request
-                        attRef.get().addOnCompleteListener(doc -> {
-                            if (doc.isSuccessful()) {
-                                DocumentSnapshot attendees = doc.getResult();
-                                if (attendees.exists()) {
-                                    // user already checked in prior
-                                    addEventToUser(event);
-                                    attRef.update("timestamps", FieldValue.arrayUnion(timestamp),
-                                                    "latitude", currentLocation.getLatitude(),
-                                                    "longitude", currentLocation.getLongitude())
-                                            .addOnSuccessListener(aVoid -> Log.d("DEBUG", "Event notified of check-in"))
-                                            .addOnFailureListener(e -> Log.w("DEBUG", "Event notified of check-in failure", e));
-                                } else {
-                                    // first time user check in
-                                    addEventToUser(event);
-                                    Map<String, Object> newAttendee = new HashMap<>();
-                                    newAttendee.put("timestamps", Arrays.asList(timestamp));
-                                    newAttendee.put("name", user.getName());
-                                    // Add location data
-                                    newAttendee.put("latitude", currentLocation.getLatitude());
-                                    newAttendee.put("longitude", currentLocation.getLongitude());
+                    boolean isGeoLocOn = user.getGeoLoc();
 
-                                    attRef.set(newAttendee)
-                                            .addOnSuccessListener(e -> Log.d("DEBUG", "Event notified of 1st check-in"))
-                                            .addOnFailureListener(e -> Log.d("DEBUG", "Error notifying 1st check-in"));
-                                }
-                            } else {
-                                Log.d("DEBUG", "Failed to add event to DB");
-                            }
-                        });
+                    if (isGeoLocOn) {
+                        Location currentLocation = locationHelper.getCurrentLocation();
+                        if (currentLocation != null) {
+                            updateAttendeeWithLocation(attRef, timestamp, currentLocation);
+                        }
                     } else {
-                        // Handle case where location is null
-                        Log.d("DEBUG", "Location is null. Cannot check in with location data.");
+                        updateAttendeeWithoutLocation(attRef, timestamp);
                     }
                 })
                 .setNegativeButton(android.R.string.no, null)
                 .show();
-        alertDialog.getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
-        alertDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(Color.GRAY);
+    }
+
+    private void updateAttendeeWithLocation(DocumentReference attRef, Long timestamp, Location currentLocation) {
+        attRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    // Update existing entry
+                    attRef.update("timestamps", FieldValue.arrayUnion(timestamp),
+                            "latitude", currentLocation.getLatitude(),
+                            "longitude", currentLocation.getLongitude(),
+                            "geoLoc", true);
+                } else {
+                    // Create a new entry
+                    Map<String, Object> attendeeData = new HashMap<>();
+                    attendeeData.put("timestamps", Arrays.asList(timestamp));
+                    attendeeData.put("latitude", currentLocation.getLatitude());
+                    attendeeData.put("longitude", currentLocation.getLongitude());
+                    attendeeData.put("geoLoc", true);
+                    attRef.set(attendeeData);
+                }
+            }
+        });
+    }
+
+    private void updateAttendeeWithoutLocation(DocumentReference attRef, Long timestamp) {
+        attRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    // Update existing entry
+                    attRef.update("timestamps", FieldValue.arrayUnion(timestamp),
+                            "geoLoc", false);
+                } else {
+                    // Create a entry
+                    Map<String, Object> attendeeData = new HashMap<>();
+                    attendeeData.put("timestamps", Arrays.asList(timestamp));
+                    attendeeData.put("geoLoc", false);
+                    attRef.set(attendeeData);
+                }
+            }
+        });
     }
 
     /**

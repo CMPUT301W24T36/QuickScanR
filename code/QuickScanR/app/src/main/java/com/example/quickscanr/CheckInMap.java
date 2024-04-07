@@ -69,20 +69,15 @@ public class CheckInMap extends FragmentActivity implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        Event event = (Event) getIntent().getSerializableExtra("event");
+        event = (Event) getIntent().getSerializableExtra("event");
         String eventLocationID = event.getLocationId();
-        String eventLocationName = "EVENT: " + event.getName();
-        placePin(eventLocationID, eventLocationName);
-
-        // After placing the pin, move and zoom the map to the event's location
         placeAPI.getPlaceLatLng(eventLocationID, mainHandler, new PlaceLatLngCallback() {
             @Override
             public void onLatLngReceived(LatLng latLng) {
+                placePin(latLng.latitude, latLng.longitude, "EVENT: " + event.getName());
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
             }
         });
-
         fetchAndDisplayAttendeeLocations();
     }
 
@@ -97,9 +92,12 @@ public class CheckInMap extends FragmentActivity implements OnMapReadyCallback {
         attendeesRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 for (DocumentSnapshot attendeeDocument : task.getResult()) {
-                    // Check if locationID exists and is not "no location"
-                    String locationID = attendeeDocument.getString("locationID");
-                    placePin(locationID, "");   // no name
+                    Boolean geoLoc = attendeeDocument.getBoolean("geoLoc"); // Get the geoLoc value
+                    if (geoLoc != null && geoLoc) { // Check if geoLoc is true
+                        double latitude = attendeeDocument.getDouble("latitude");
+                        double longitude = attendeeDocument.getDouble("longitude");
+                        placePin(latitude, longitude, ""); // No name for attendees
+                    }
                 }
             } else {
                 Log.w("CheckInMap", "Error getting attendee documents: ", task.getException());
@@ -108,23 +106,16 @@ public class CheckInMap extends FragmentActivity implements OnMapReadyCallback {
     }
 
     /**
-     * This method places a pin on the map using its unique ID and a name to label it (which can
-     * be left null for attendees)
-     * @param locationID the unique ID of the location
+     * This method places a pin on the map using its long and lat and a name to label it)
+     * @param latitude the latitude of the location
+     * @param longitude the longitude of the location
      * @param locationName the name of the location
      * a previous saved state, this is the state.
      */
-    private void placePin(String locationID, String locationName) {
-        if (locationID != null && !locationID.equals("no location")) {
-            // Fetch the location using the PlaceAPI and place a pin on the map
-            placeAPI.getPlaceLatLng(locationID, mainHandler, new PlaceLatLngCallback() {
-                @Override
-                public void onLatLngReceived(LatLng latLng) {
-                    // Place a pin on the map
-                    mMap.addMarker(new MarkerOptions().position(latLng).title(locationName));
-                }
-            });
-        }
+    private void placePin(double latitude, double longitude, String locationName) {
+        LatLng latLng = new LatLng(latitude, longitude);
+        Log.d("MARKER ADDED", "Lat: " + latitude + ", Long: " + longitude);
+        mMap.addMarker(new MarkerOptions().position(latLng).title(locationName));
     }
 
 
