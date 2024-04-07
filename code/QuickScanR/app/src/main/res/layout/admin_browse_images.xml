@@ -5,6 +5,7 @@
     android:id="@+id/admin_browse_images"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginLeft="5dp"
     android:background="@android:color/white"
     android:paddingLeft="40dp"
     android:paddingTop="50dp"
@@ -28,16 +29,51 @@
 
         <EditText
             android:layout_width="305dp"
-            android:layout_height="70dp"
+            android:layout_height="60dp"
             android:background="@drawable/rounded_image_border"
             android:hint="Type to filter"
             android:padding="18dp"
             android:paddingEnd="50dp" />
 
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="12dp">
+
+            <Button
+                android:id="@+id/show_event"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="#9C77D39A"
+                android:text="Events" />
+
+            <Button
+                android:id="@+id/show_prof"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="1"
+                android:backgroundTint="#B576D39A"
+                android:text="Profile" />
+
+            <Button
+                android:id="@+id/button3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="#B5BAB7"
+                android:text="All" />
+        </LinearLayout>
+
+
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:paddingBottom="10dp">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/view_img_list"
@@ -56,8 +92,7 @@
     </LinearLayout>
 
 
-    <include
-        layout="@layout/admin_nav_bar" />
+    <include layout="@layout/admin_nav_bar" />
 
 
 </FrameLayout>

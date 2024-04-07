@@ -1,6 +1,7 @@
 package com.example.quickscanr;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
@@ -12,12 +13,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /***
@@ -30,6 +34,7 @@ import java.util.Objects;
 public class AttendeeHome extends AttendeeFragment {
 
     private ArrayList<Announcement> announcementsDataList;
+    private String currentUserId;
 
     // db
 
@@ -54,6 +59,20 @@ public class AttendeeHome extends AttendeeFragment {
         AttendeeHome fragment = new AttendeeHome();
         return fragment;
     }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        // Initialize currentUserId with the ID of the logged-in user here
+        MainActivity mainActivity = (MainActivity) getActivity();
+        if (mainActivity != null && mainActivity.user != null) {
+            currentUserId = mainActivity.user.getUserId();
+        } else {
+            // Handle the scenario when MainActivity or user is null
+            throw new IllegalStateException("User must be logged in to view AttendeeHome");
+        }
+    }
+
 
     /**
      * Is called when the fragment is first created
@@ -102,7 +121,7 @@ public class AttendeeHome extends AttendeeFragment {
         layoutManager.setStackFromEnd(true);
         announcementsRecyclerView.setLayoutManager(layoutManager);
 
-        addSnapshotListenerForAnnouncement();
+        fetchSignedUpEventsAndListenForAnnouncements();
 
         TextView nameField = view.findViewById(R.id.user_name);
         nameField.setText(MainActivity.user.getName());
@@ -111,19 +130,36 @@ public class AttendeeHome extends AttendeeFragment {
         return view;
     }
 
+    private void fetchSignedUpEventsAndListenForAnnouncements() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("users").document(currentUserId).get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists() && documentSnapshot.contains("signedUp")) {
+                List<String> signedUpEvents = (List<String>) documentSnapshot.get("signedUp");
+                if (signedUpEvents != null && !signedUpEvents.isEmpty()) {
+                    // Now listen for announcements related to these events
+                    addSnapshotListenerForAnnouncements(signedUpEvents);
+                }
+            }
+        }).addOnFailureListener(e -> Log.e("AttendeeHome", "Error fetching signed up events", e));
+    }
+
+
     /**
      * Add the snapshot listener for the announcement collection
      */
-    @SuppressLint("NotifyDataSetChanged")
-    private void addSnapshotListenerForAnnouncement() {
-        announcementsRef.addSnapshotListener((value, error) -> {
-            if(error != null){
-                Log.e("DEBUG: AttendeeHome", error.getMessage());
-                return;
-            }
-            if (value == null) {
-                return;
-            }
+
+
+    private void addSnapshotListenerForAnnouncements(List<String> eventIds) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        announcementsRef.whereIn("eventId", eventIds)
+                .addSnapshotListener((value, error) -> {
+                    if(error != null){
+                        Log.e("DEBUG: AttendeeHome", error.getMessage());
+                        return;
+                    }
+                    if (value == null) {
+                        return;
+                    }
 
             announcementsDataList.clear();
             for (QueryDocumentSnapshot doc : value) {
@@ -132,7 +168,8 @@ public class AttendeeHome extends AttendeeFragment {
                 String announcementUser= doc.getString(DatabaseConstants.anUserName);
                 String announcementTitle = doc.getString(DatabaseConstants.anTitle);
                 String announcementOwnerID = doc.getString(DatabaseConstants.anUserKey);
-                Announcement an = new Announcement(announcementTitle, announcementBody,announcementDate, announcementUser);
+                String announcementEventID = doc.getString(DatabaseConstants.anEventID);
+                Announcement an = new Announcement(announcementTitle, announcementBody,announcementDate,announcementOwnerID, announcementUser, announcementEventID);
 
                 // build user object
                 db.collection(DatabaseConstants.usersColName).document(announcementOwnerID).get().addOnSuccessListener(document -> {
