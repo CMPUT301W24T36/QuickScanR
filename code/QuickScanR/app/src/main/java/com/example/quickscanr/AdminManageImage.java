@@ -126,6 +126,18 @@ public class AdminManageImage extends InnerPageFragment{
                     }
                 });
 
+                //when profile pics get deleted, just replace with default images
+                usersRef.whereEqualTo("image", img_id).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        for (QueryDocumentSnapshot doc: queryDocumentSnapshots){
+                            Log.d("TEST", "hiiiiii" + doc.getId());
+
+                            doc.getReference().update("image", "default_user");
+                        }
+                    }
+                });
+
 
             }
         });

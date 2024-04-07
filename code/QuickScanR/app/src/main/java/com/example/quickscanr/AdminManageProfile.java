@@ -167,7 +167,7 @@ public class AdminManageProfile extends InnerPageFragment{
                             }
 
                         });
-                        
+
 
                         eventRef.whereEqualTo("ownerID", user_id).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                             @Override
