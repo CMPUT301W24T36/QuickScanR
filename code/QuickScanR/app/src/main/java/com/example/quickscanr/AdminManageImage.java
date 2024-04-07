@@ -45,9 +45,13 @@ public class AdminManageImage extends InnerPageFragment{
     private CollectionReference imgRef;
 
     private CollectionReference usersRef;
+    private CollectionReference eventsRef;
+
 
     public static String IMAGE_COLLECTION = "images";
     public static String USER_COLLECTION = "users";
+    public static String EVENT_COLLECTION = "events";
+
 
 
     public AdminManageImage(Bitmap bitmap) {
@@ -108,6 +112,9 @@ public class AdminManageImage extends InnerPageFragment{
 
         usersRef = db.collection(USER_COLLECTION);
 
+        eventsRef = db.collection(EVENT_COLLECTION);
+
+
         populateInfo(v);
 
 
@@ -118,14 +125,38 @@ public class AdminManageImage extends InnerPageFragment{
                 imgRef.document(img_id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
-                        //go back to the previous page
-                                    AdminImageList adminImageList = new AdminImageList();
-                                    getActivity().getSupportFragmentManager().beginTransaction()
-                                            .replace(R.id.content_main, adminImageList)
-                                            .addToBackStack(null).commit();
-                    }
-                });
+                        //when profile pics get deleted, just replace with default images
+                        usersRef.whereEqualTo("image", img_id).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                for (QueryDocumentSnapshot doc: queryDocumentSnapshots){
+                                    Log.d("TEST", "hiiiiii" + doc.getId());
 
+                                    doc.getReference().update("image", "default_user");
+                                }
+                            }
+                        });
+
+                        //when event poster is deleted just replace with default
+                        eventsRef.whereEqualTo("posterID", img_id).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                for (QueryDocumentSnapshot doc: queryDocumentSnapshots){
+                                    Log.d("TEST", "hiiiiii" + doc.getId());
+
+                                    doc.getReference().update("posterID", "default");
+                                }
+                            }
+                        });
+
+                        //go back to the previous page
+                        AdminImageList adminImageList = new AdminImageList();
+                        getActivity().getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.content_main, adminImageList)
+                                .addToBackStack(null).commit();
+                    }
+
+                });
 
             }
         });

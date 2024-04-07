@@ -51,6 +51,9 @@ public class AdminImageList extends AdminFragment{
 
     Button showProfiles;
 
+    Button allImgs;
+
+
     public static String img_COLLECTION = "images";
     public static String user_COLLECTION = "users";
     public static String event_COLLECTION = "events";
@@ -114,6 +117,9 @@ public class AdminImageList extends AdminFragment{
 
         imgRef = db.collection(img_COLLECTION);
         userRef = db.collection(user_COLLECTION);
+        eventRef = db.collection(event_COLLECTION);
+
+
 
 
         imgView = v.findViewById(R.id.view_img_list);
@@ -124,6 +130,10 @@ public class AdminImageList extends AdminFragment{
 
 
         showProfiles = v.findViewById(R.id.show_prof);
+        showEvents = v.findViewById(R.id.show_event);
+        allImgs = v.findViewById(R.id.show_all);
+
+
         //so that the events show up
         addListeners();
         imgView.setLayoutManager(new GridLayoutManager(getContext(), 3));
@@ -147,9 +157,38 @@ public class AdminImageList extends AdminFragment{
 
                 imgHandler = new ImgHandler(getContext());
 
-                addSnapshotListenerImgEv();
+                addSnapshotListenerImgProfile();
 
 
+            }
+        });
+
+        showEvents.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("DEBUG", "hi ther poster");
+                //so that the events show up
+                addListeners();
+                imgView.setLayoutManager(new GridLayoutManager(getContext(), 3));
+
+                imgHandler = new ImgHandler(getContext());
+
+                addSnapshotListenerImgEvent();
+            }
+
+        });
+
+
+        allImgs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //so that the all images show up
+                addListeners();
+                imgView.setLayoutManager(new GridLayoutManager(getContext(), 3));
+
+                imgHandler = new ImgHandler(getContext());
+
+                addSnapshotListenerForEvent();
             }
         });
 
@@ -195,7 +234,7 @@ public class AdminImageList extends AdminFragment{
     }
 
     //filter profile images only
-    private void addSnapshotListenerImgEv() {
+    private void addSnapshotListenerImgProfile() {
 
         userRef.addSnapshotListener((value, error) -> {
             posterIdList.clear();
@@ -247,9 +286,9 @@ public class AdminImageList extends AdminFragment{
     }
 
     //filter event posters
-    private void addSnapshotListenerImgUsers() {
+    private void addSnapshotListenerImgEvent() {
 
-        userRef.addSnapshotListener((value, error) -> {
+        eventRef.addSnapshotListener((value, error) -> {
             posterIdList.clear();
             imgList.clear();
             imgIdList.clear();
@@ -264,7 +303,7 @@ public class AdminImageList extends AdminFragment{
             }
 
             for (QueryDocumentSnapshot doc: value) {
-                String profileImg = doc.getString(DatabaseConstants.userImageKey);
+                String profileImg = doc.getString(DatabaseConstants.evPosterKey);
                 if(!posterIdList.contains(profileImg)){
                     posterIdList.add(profileImg);
                 }
@@ -275,10 +314,13 @@ public class AdminImageList extends AdminFragment{
             }
 
             for(String id : posterIdList){
+                Log.d("DEBUG", id + "hi there");
                 imgRef.document(id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         String eventName = documentSnapshot.getString(DatabaseConstants.imgDataKey);
+                        //Log.d("DEBUG", eventName + " error");
+
                         Bitmap bitmap = ImgHandler.base64ToBitmap(eventName);
 
                         imgList.add(bitmap);
@@ -292,8 +334,6 @@ public class AdminImageList extends AdminFragment{
                 });
 
             }
-
-
 
         });
     }
