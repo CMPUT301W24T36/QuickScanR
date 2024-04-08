@@ -1,3 +1,6 @@
+/**
+ * This file is responsible for the Promotion QR
+ */
 package com.example.quickscanr;
 
 import android.content.Intent;
@@ -35,6 +38,11 @@ public class PromotionQR extends InnerPageFragment {
 
     private FirebaseFirestore db;
 
+    /**
+     * Creates a new instance
+     * @param event the relevant event of the QR code
+     * @return the new instance of PromotionQR
+     */
     public static PromotionQR newInstance(Event event) {
         PromotionQR fragment = new PromotionQR();
         Bundle args = new Bundle();
@@ -43,6 +51,11 @@ public class PromotionQR extends InnerPageFragment {
         return fragment;
     }
 
+    /**
+     * Called when creating the fragment
+     * @param savedInstanceState If the fragment is being re-created from
+     * a previous saved state, this is the state.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +68,19 @@ public class PromotionQR extends InnerPageFragment {
             eventTimestamp = event.getTimestamp();
         }
     }
+
+    /**
+     * Called when creating the view
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return the view created for promotion QR
+     */
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
