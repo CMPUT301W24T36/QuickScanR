@@ -48,7 +48,7 @@ public class ProfPicTest {
     EditProfile editInstance;
     FragmentManager fragManager;
     String imgID;
-    User user;
+    static User user;
     MainActivity mActivity;
 
     /**
@@ -99,6 +99,7 @@ public class ProfPicTest {
             onView(withText(UserType.getString(UserType.ATTENDEE))).perform(click());
             onView(withId(R.id.save_profile_btn)).perform(click());
             onView(withId(R.id.nav_a_announcements_btn)).perform(click());
+            user = MainActivity.user;
             userSet = true;
         }
 
@@ -111,7 +112,6 @@ public class ProfPicTest {
             EditProfile editFragment = (EditProfile) fragManager.findFragmentByTag("EDIT_PROFILE");
             assertNotNull(editFragment);
             editInstance = editFragment;
-            user = activity.user;
             mActivity = activity;
         });
 
