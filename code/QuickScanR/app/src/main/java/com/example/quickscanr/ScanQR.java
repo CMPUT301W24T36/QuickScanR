@@ -1,3 +1,6 @@
+/**
+ * This file deals with the QR Scanning
+ */
 package com.example.quickscanr;
 
 import android.os.Bundle;
@@ -9,6 +12,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 
+import com.example.quickscanr.AttendeeFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
@@ -31,24 +35,52 @@ import java.util.Objects;
  */
 public class ScanQR extends AttendeeFragment {
 
+    /**
+     * Constructor
+     */
     public ScanQR() {}
+
+    // Variables
     private DecoratedBarcodeView scanView;
     private FirebaseFirestore db;
     public static String EVENT_COLLECTION = "events";
     private String lastScan;
     private static ScanQR instance;
 
+    /**
+     *  Creates a newInstance for scan QR
+     * @param param1 a String, default for newInstance
+     * @param param2 a String, default for newInstance
+     * @return
+     */
     public static ScanQR newInstance(String param1, String param2) {
         ScanQR fragment = new ScanQR();
         instance = fragment;
         return fragment;
     }
 
+    /**
+     * Called for the initial creation of the fragment
+     * @param savedInstanceState If the fragment is being re-created from
+     * a previous saved state, this is the state.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * Creates the view
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return View to be created
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
