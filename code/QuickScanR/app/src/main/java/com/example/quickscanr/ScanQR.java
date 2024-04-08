@@ -320,9 +320,7 @@ public class ScanQR extends AttendeeFragment {
 
     /**
      * Class to build a new event object from DB data
-     * !!! Note: This class will be removed after halfway point,
-     * AttEvList should provide all events just currently
-     * unsure if it updates when fragment is not displayed.
+     * @param doc DocumentSnapshot of event
      */
     private Event buildEvent(DocumentSnapshot doc) {
         String eventName = doc.getString(DatabaseConstants.evNameKey);
