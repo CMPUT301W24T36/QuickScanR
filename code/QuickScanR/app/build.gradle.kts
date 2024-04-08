@@ -58,6 +58,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1") {
         exclude(module = "protobuf-lite")
     }
+    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.3.0");
 
     // Add the dependencies for the Firebase Cloud Messaging and Analytics libraries
     // When using the BoM, you don't specify versions in Firebase library dependencies

@@ -36,9 +36,11 @@ public class ScanQR extends AttendeeFragment {
     private FirebaseFirestore db;
     public static String EVENT_COLLECTION = "events";
     private String lastScan;
+    private static ScanQR instance;
 
     public static ScanQR newInstance(String param1, String param2) {
         ScanQR fragment = new ScanQR();
+        instance = fragment;
         return fragment;
     }
 
@@ -56,6 +58,13 @@ public class ScanQR extends AttendeeFragment {
         initScanner(v);
         AttendeeFragment.setNavActive(v, 2);
         return v;
+    }
+
+    /**
+     * Returns current instance of ScanQR. Needed for testing.
+     */
+    public ScanQR getInstance() {
+        return instance;
     }
 
     /**
@@ -101,7 +110,7 @@ public class ScanQR extends AttendeeFragment {
      * and actions are performed on it.
      * @param data Data from latest scan
      */
-    private void onScan(String data) {
+    public void onScan(String data) {
         if (!checkQR(data)) return;  // validity check
         String[] qrInfo = parseQRData(data);
         String type = qrInfo[0];
@@ -179,13 +188,13 @@ public class ScanQR extends AttendeeFragment {
 
                                                 // transition to event after async grab
                                                 getActivity().getSupportFragmentManager().beginTransaction()
-                                                        .replace(R.id.content_main, evDetFragment)
+                                                        .replace(R.id.content_main, evDetFragment, "CI_EVENT")
                                                         .addToBackStack(null).commit();
                                             });
                                         } else {
                                             // transition to event
                                             getActivity().getSupportFragmentManager().beginTransaction()
-                                                    .replace(R.id.content_main, evDetFragment)
+                                                    .replace(R.id.content_main, evDetFragment, "CI_EVENT")
                                                     .addToBackStack(null).commit();
                                         }
                                     }
@@ -269,7 +278,7 @@ public class ScanQR extends AttendeeFragment {
 
                         // transition to event after async grab
                         getActivity().getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.content_main, evDetFragment)
+                                .replace(R.id.content_main, evDetFragment, "PR_EVENT")
                                 .addToBackStack(null).commit();
                     }
                 }
