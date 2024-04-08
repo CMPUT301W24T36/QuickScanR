@@ -1,3 +1,7 @@
+/**
+ * user model
+ */
+
 package com.example.quickscanr;
 
 import android.graphics.Bitmap;

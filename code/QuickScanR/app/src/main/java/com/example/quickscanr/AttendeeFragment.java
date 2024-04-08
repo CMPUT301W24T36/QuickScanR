@@ -1,3 +1,7 @@
+/**
+ * specialized fragment that sets up nav bar for attendees
+ */
+
 package com.example.quickscanr;
 
 import android.graphics.Color;

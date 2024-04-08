@@ -1,3 +1,8 @@
+/**
+ * admin manage profile page
+ * admin can see profile information and delete profile
+ */
+
 package com.example.quickscanr;
 
 import android.content.Intent;

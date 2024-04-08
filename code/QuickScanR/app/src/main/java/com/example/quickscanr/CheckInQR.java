@@ -1,3 +1,7 @@
+/**
+ * the check in qr page
+ */
+
 package com.example.quickscanr;
 
 

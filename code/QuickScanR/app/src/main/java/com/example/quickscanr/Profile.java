@@ -1,3 +1,7 @@
+/**
+ * the profile page for all user types
+ */
+
 package com.example.quickscanr;
 
 import android.os.Bundle;

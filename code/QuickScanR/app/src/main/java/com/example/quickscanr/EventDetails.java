@@ -1,3 +1,10 @@
+/**
+ * event details page for attendees
+ * view event details
+ * also landing page for scanning qr codes
+ * also allows for sign up if you haven't already
+ */
+
 package com.example.quickscanr;
 
 import android.app.AlertDialog;

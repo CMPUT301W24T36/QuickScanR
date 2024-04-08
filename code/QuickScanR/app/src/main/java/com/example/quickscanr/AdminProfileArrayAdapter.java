@@ -1,3 +1,7 @@
+/**
+ * array adapter for profiles in the admin browse profile page
+ */
+
 package com.example.quickscanr;
 
 import android.content.Context;

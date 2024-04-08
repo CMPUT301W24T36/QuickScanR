@@ -1,3 +1,7 @@
+/**
+ * view holder for the events on the admin browse events page
+ */
+
 package com.example.quickscanr;
 
 import android.util.Log;
