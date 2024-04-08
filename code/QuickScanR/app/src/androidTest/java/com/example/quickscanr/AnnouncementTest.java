@@ -47,7 +47,7 @@ import java.util.concurrent.ExecutionException;
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 
-public class PushNotificationTest {
+public class AnnouncementTest {
 
     @Rule
     public ActivityScenarioRule<MainActivity> scenario = new ActivityScenarioRule<MainActivity>(MainActivity.class);
