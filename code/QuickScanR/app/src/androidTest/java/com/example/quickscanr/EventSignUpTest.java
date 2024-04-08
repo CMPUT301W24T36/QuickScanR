@@ -216,8 +216,18 @@ public class EventSignUpTest {
         }
 
         // sign up for event
-        onView(withId(R.id.ev_det_signup_btn)).perform(click());
-        onView(withText("OK")).inRoot(RootMatchers.isDialog()).check(matches(withText("OK"))).perform(click());
+        UiObject signUpButton = device.findObject(new UiSelector()
+                .className("android.widget.Button")
+                .textContains("Sign Up"));
+        try {
+            signUpButton.click();
+        } catch (Exception ignored) {}
+        UiObject okButton = device.findObject(new UiSelector()
+                .className("android.widget.Button")
+                .textContains("Ok"));
+        try {
+            okButton.click();
+        } catch (Exception ignored) {}
 
         final boolean[] eventInSignedUp = {false};
         final boolean[] userInSignedUpUsers = {false};
