@@ -58,12 +58,15 @@ public class AnnouncementTest {
 
 
     /**
-     * To delete the tested announcement
+     * To delete the tested announcement & test event
      */
 
     @After
     public void tearDown() {
 
+        db.collection(DatabaseConstants.eventColName).document(testEventId).delete(); // delete the test event made
+
+        // iterate through announcements and delete the test announcement
         db.collection("announcements")
                 .whereEqualTo("eventId", testEventId)
                 .get()
