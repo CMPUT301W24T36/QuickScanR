@@ -271,6 +271,7 @@ public class EventDetails extends InnerPageFragment {
                     Log.d("DEBUG", "Updating existing attendee (with location)");
                     // Update existing entry
                     attRef.update("timestamps", FieldValue.arrayUnion(timestamp),
+                            "name", MainActivity.user.getName(),
                             "latitude", currentLocation.getLatitude(),
                             "longitude", currentLocation.getLongitude(),
                             "geoLoc", true);
@@ -279,6 +280,7 @@ public class EventDetails extends InnerPageFragment {
                     // Create a new entry
                     Map<String, Object> attendeeData = new HashMap<>();
                     attendeeData.put("timestamps", Arrays.asList(timestamp));
+                    attendeeData.put("name", MainActivity.user.getName());
                     attendeeData.put("latitude", currentLocation.getLatitude());
                     attendeeData.put("longitude", currentLocation.getLongitude());
                     attendeeData.put("geoLoc", true);
@@ -302,6 +304,7 @@ public class EventDetails extends InnerPageFragment {
                     Log.d("DEBUG", "Updating existing attendee (without location)");
                     // Update existing entry
                     attRef.update("timestamps", FieldValue.arrayUnion(timestamp),
+                            "name", MainActivity.user.getName(),
                             "geoLoc", false);
                 } else {
                     Log.d("DEBUG", "Creating new attendee doc (without location)");
@@ -309,6 +312,7 @@ public class EventDetails extends InnerPageFragment {
                     Map<String, Object> attendeeData = new HashMap<>();
                     attendeeData.put("timestamps", Arrays.asList(timestamp));
                     attendeeData.put("geoLoc", false);
+                    attendeeData.put("name", MainActivity.user.getName());
                     attRef.set(attendeeData);
                     addEventToUser(event);
                 }
