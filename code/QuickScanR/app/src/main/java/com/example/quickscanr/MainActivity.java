@@ -1,5 +1,6 @@
 /**
  * This file acts as the main hub when a user opens the app.
+ * Reference: https://stackoverflow.com/questions/7793576/switching-between-fragment-view
  */
 
 package com.example.quickscanr;
@@ -13,7 +14,6 @@ import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -47,6 +47,14 @@ public class MainActivity extends AppCompatActivity {
     String fcmToken;
 
 
+    /**
+     *
+     * This is called when the activity is starting.
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,8 +92,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        // Subscribe to announcements
-        // TODO: Subscribe each user to a specific announcement (more code) / stop notifications if they don't meet a condition (i.e. not signed up, opt this way if possible)
+        // Subscribe to announcements: Firebase Cloud Functions deals with the filtering.
         FirebaseMessaging.getInstance().subscribeToTopic("announcements")
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -98,27 +105,23 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-
         Intent intent = getIntent();
         boolean backFromCheckInMap = intent.getBooleanExtra("backFromCheckInMap", false);
 
-        if (backFromCheckInMap) {
-            Event event = (Event) intent.getSerializableExtra("event");
-            this.getSupportFragmentManager().beginTransaction().replace(R.id.content_main, EventDashboard.newInstance(event))
-                    .addToBackStack(null).commit();
-            return;
-        }
 
         // Check if camera permission has been granted
 //        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
 //            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA}, 100);
 //        } else {
         // If permission already been granted
-        initializeApp();
+
+        initializeApp(backFromCheckInMap);
 //        }
     }
 
-    /* Stores the FCM token for the current user in Firestore.
+
+    /**
+     * Stores the FCM token for the current user in Firestore.
      *
      * @param token The FCM token to store.
      */
@@ -127,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
         Map<String, Object> updates = new HashMap<>();
         updates.put("fcmToken", token);
 
-        db.collection("users").document(userId)
+        FirebaseFirestore.getInstance().collection("users").document(userId)
                 .update(updates)
                 .addOnSuccessListener(aVoid -> Log.d("FCM", "FCM token updated for user: " + userId))
                 .addOnFailureListener(e -> Log.e("FCM", "Error updating FCM token for user: " + userId, e));
@@ -161,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * This initializes everything necessary and loads data for the app
      */
-    private void initializeApp() {
+    private void initializeApp(Boolean openEvDash) {
         // Move your existing onCreate logic here, after permission check
         String userId = Settings.Secure.getString(getBaseContext().getContentResolver(), Settings.Secure.ANDROID_ID);
         db = FirebaseFirestore.getInstance();
@@ -177,7 +180,6 @@ public class MainActivity extends AppCompatActivity {
                         String imageID = document.getString(DatabaseConstants.userImageKey);
                         user.setUserId(userId);
                         user.setImageID(imageID,false);
-                        showHome(user.getUserType());
                     } else {
                         // if new user, then add them to the database
                         user = new User("New User", "", "", UserType.ATTENDEE);
@@ -197,6 +199,52 @@ public class MainActivity extends AppCompatActivity {
                         data.put(DatabaseConstants.userImageKey, DatabaseConstants.userDefaultImageID);
                         data.put(DatabaseConstants.userFcmToken, user.getFcmToken()); // For push notifications
                         db.collection(DatabaseConstants.usersColName).document(userId).set(data);
+                    }
+                    if (openEvDash) {
+                        // if need to go to event dashboard page, set up the Event object again based on the event ID
+                        Intent intent = getIntent();
+                        String eventID = intent.getStringExtra("eventID");
+                        db.collection(DatabaseConstants.eventColName).document(eventID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot doc = task.getResult();
+                                    if (doc.exists()) {
+                                        Event event = doc.toObject(Event.class);
+                                        event.setStart(doc.getString(DatabaseConstants.evStartKey));
+                                        event.setEnd(doc.getString(DatabaseConstants.evEndKey));
+                                        event.setId(doc.getId());
+                                        event.setLocationId(doc.getString(DatabaseConstants.evLocIdKey));
+                                        ImgHandler img = new ImgHandler(getBaseContext());
+                                        img.getImage(event.getPosterID(), bitmap -> {
+                                            event.setPoster(bitmap);
+
+                                            event.setSignedUp((ArrayList<String>) doc.get(DatabaseConstants.evSignedUpUsersKey));
+
+                                            String organizerID = doc.getString(DatabaseConstants.evOwnerKey);
+                                            usersRef.document(organizerID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                    if (task.isSuccessful()) {
+                                                        DocumentSnapshot userDoc = task.getResult();
+                                                        if (userDoc.exists()) {
+                                                            User organizer = userDoc.toObject(User.class);
+                                                            String imageID = userDoc.getString(DatabaseConstants.userImageKey);
+                                                            organizer.setUserId(userDoc.getId());
+                                                            organizer.setImageID(imageID,false);
+                                                            event.setOrganizer(organizer);
+                                                            showEvDash(event);
+                                                        }
+                                                    }
+                                                }
+                                            });
+                                        });
+                                    }
+                                }
+                            }
+                        });
+
+                    } else {
                         showHome(user.getUserType());
                     }
                 } else {
@@ -206,24 +254,42 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * this function is called after permissions have been set by the user
+     * @param requestCode The request code passed
+     * @param permissions The requested permissions. Never null.
+     * @param grantResults The grant results for the corresponding permissions
+     *     which is either {@link android.content.pm.PackageManager#PERMISSION_GRANTED}
+     *     or {@link android.content.pm.PackageManager#PERMISSION_DENIED}. Never null.
+     *
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 100) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // If permission granted, continue with initialization
-                initializeApp();
+                initializeApp(false);
             } else {
                 // If permission denied, show a toast
                 Toast.makeText(this, "Camera permission is required to use the QR scanner feature.", Toast.LENGTH_LONG).show();
-                initializeApp();
+                initializeApp(false);
             }
         }
     }
 
     /**
+     * shows the event dashboard for the event
+     * @param event event to show dashboard for
+     */
+    public void showEvDash(Event event) {
+        EventDashboard evDash = EventDashboard.newInstance(event);
+        getSupportFragmentManager().beginTransaction().replace(R.id.content_main, evDash)
+                .addToBackStack(null).commit();
+    }
+
+    /**
      * shows a different home page depending on the type of user you are
-     * Reference: https://stackoverflow.com/questions/7793576/switching-between-fragment-view
      * @param userType type of the user
      */
     public void showHome(Integer userType) {

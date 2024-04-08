@@ -64,7 +64,7 @@ public class AnnouncementTest {
 
 
     /**
-     * To delete the tested announcement, signed up event for user, & test event
+     * To delete the tested announcement, signed up event for user, and test event
      */
 
     @After
