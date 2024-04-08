@@ -7,9 +7,11 @@ import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 
 import static org.hamcrest.CoreMatchers.allOf;
 
+import androidx.annotation.NonNull;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.contrib.RecyclerViewActions;
@@ -17,19 +19,37 @@ import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
+import androidx.test.uiautomator.UiDevice;
+import androidx.test.uiautomator.UiObject;
+import androidx.test.uiautomator.UiSelector;
 
 import org.hamcrest.Matcher;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Tests for admin navigation.
  * Tests navigation between the 4 main pages.
+ * referenced https://medium.com/azimolabs/guide-to-make-custom-viewaction-solving-problem-of-nestedscrollview-in-espresso-35b133850254
+ *      for clicking on gear icon on the admin browse events page (the ViewAction)
+ * referenced https://stackoverflow.com/questions/34439072/espresso-click-on-the-button-of-the-dialog
+ *      for UIAutomator allow permissions idea
  */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
@@ -39,12 +59,36 @@ public class AdminNavigationTest {
     public ActivityScenarioRule<MainActivity> scenario = new ActivityScenarioRule<MainActivity>(MainActivity.class);
 
     private static boolean userSet = false;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private static String testEventId;
+    private static String testUserId;
+    private static String testImageId;
+
+    /**
+     * Uses UIAutomator to allow permissions on startup
+     */
+    private static void allowPermissionsIfNeeded() {
+        UiDevice device = UiDevice.getInstance(getInstrumentation());
+        UiObject allowButton = device.findObject(new UiSelector()
+                .className("android.widget.Button")
+                .textContains("Allow"));
+
+        // wait for 1000 ms to see if appears
+        if (allowButton.waitForExists(1000)) {
+            try {
+                allowButton.click();
+            } catch (Exception e) {
+                Log.d("PERMS", "Failed to allow permissions for testing");
+            }
+        }
+    }
 
     /**
      * makes the current user an admin
      */
     @Before
     public void setUp() {
+        allowPermissionsIfNeeded();
         // only setup once
         if (!userSet) {
             try {
@@ -79,6 +123,104 @@ public class AdminNavigationTest {
     }
 
     /**
+     * runs after each test
+     */
+    @After
+    public void tearDown() {
+        if (testEventId != null) {
+            db.collection(DatabaseConstants.eventColName).document(testEventId).delete();
+            testEventId = null;
+        }
+        if (testUserId != null) {
+            db.collection(DatabaseConstants.usersColName).document(testUserId).delete();
+            testUserId = null;
+        }
+        if (testImageId != null) {
+            db.collection("images").document(testImageId).delete();
+            testImageId = null;
+        }
+    }
+
+    /**
+     * adding a test event so event pages can be tested
+     */
+    public void addTestEvent() {
+        // test event data
+        Map<String, Object> data = new HashMap<>();
+        data.put(DatabaseConstants.evNameKey, "Test Event");
+        data.put(DatabaseConstants.evDescKey, "Event Description");
+        data.put(DatabaseConstants.evLocIdKey, "ChIJI__egEUioFMRXRX2SgygH0E");  // place id of Edmonton
+        data.put(DatabaseConstants.evLocNameKey, "Edmonton");
+        data.put(DatabaseConstants.evStartKey, "26-03-2024");
+        data.put(DatabaseConstants.evEndKey, "26-03-2024");
+        data.put("maxAttendees", -1);
+        data.put(DatabaseConstants.evTimestampKey, System.currentTimeMillis());
+        data.put(DatabaseConstants.evSignedUpUsersKey, new ArrayList<String>());
+        data.put(DatabaseConstants.evPosterKey, "default");     // default event poster
+        data.put(DatabaseConstants.evOwnerKey, MainActivity.user.getUserId());
+
+        db.collection(DatabaseConstants.eventColName).add(data).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentReference> task) {
+                if (task.isSuccessful()) {
+                    DocumentReference documentReference = task.getResult();
+                    if (documentReference != null) {
+                        testEventId = documentReference.getId();
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * adding a test profile so the profile pages can be tested
+     */
+    public void addTestProfile() {
+        // test user data
+        Map<String, Object> data = new HashMap<>();
+        data.put(DatabaseConstants.userFullNameKey, "Test User");
+        data.put(DatabaseConstants.userHomePageKey, "Test Homepage");
+        data.put(DatabaseConstants.userPhoneKey, "111-111-1111");
+        data.put(DatabaseConstants.userEmailKey, "test@gmail.com");
+        data.put(DatabaseConstants.userTypeKey, UserType.ATTENDEE);
+        data.put(DatabaseConstants.userGeoLocKey, false);
+        data.put(DatabaseConstants.userCheckedEventsKey, new ArrayList<String>());
+        data.put(DatabaseConstants.userSignedUpEventsKey, new ArrayList<String>());
+        data.put(DatabaseConstants.userImageKey, DatabaseConstants.userDefaultImageID);
+        db.collection(DatabaseConstants.usersColName).add(data).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentReference> task) {
+                if (task.isSuccessful()) {
+                    DocumentReference documentReference = task.getResult();
+                    if (documentReference != null) {
+                        testUserId = documentReference.getId();
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * adding a test image so the image pages can be tested
+     */
+    public void addTestImage() {
+        // test image data
+        Map<String, Object> imageData = new HashMap<>();
+        imageData.put(DatabaseConstants.imgDataKey, "iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAIAAADTED8xAAADMElEQVR4nOzVwQnAIBQFQYXff81RUkQCOyDj1YOPnbXWPmeTRef+/3O/OyBjzh3CD95BfqICMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMO0TAAD//2Anhf4QtqobAAAAAElFTkSuQmCC\n");
+        db.collection("images").add(imageData).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentReference> task) {
+                if (task.isSuccessful()) {
+                    DocumentReference documentReference = task.getResult();
+                    if (documentReference != null) {
+                        testImageId = documentReference.getId();
+                    }
+                }
+            }
+        });
+    }
+
+    /**
      * go to admin browse events
      * check that we're on the browse events page
      */
@@ -102,10 +244,10 @@ public class AdminNavigationTest {
      * go to organizer events list
      * click the browse images button and check that it's being showed
      */
-//    @Test
+    @Test
     public void testBrowseImagesBtn() {
         onView(withId(R.id.nav_ad_images_btn)).perform(click());
-//        onView(withId(R.id.admin_browse_images)).check(matches(isDisplayed()));   // TODO: page not implemented yet
+        onView(withId(R.id.admin_browse_images)).check(matches(isDisplayed()));
     }
 
     /**
@@ -140,6 +282,7 @@ public class AdminNavigationTest {
      */
     @Test
     public void testManageEvent() {
+        addTestEvent();
         onView(withId(R.id.nav_ad_events_btn)).perform(click());
         onView(ViewMatchers.withId(R.id.view_event_list)).perform(RecyclerViewActions.actionOnItemAtPosition(0, clickEventSettings()));
         onView(withId(R.id.admin_manage_event_page)).check(matches(isDisplayed()));
@@ -152,10 +295,27 @@ public class AdminNavigationTest {
      */
     @Test
     public void testManageProfile() {
+        addTestProfile();
         onView(withId(R.id.nav_ad_users_btn)).perform(click());
         onView(withId(R.id.adm_profile_list)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         onView(withId(R.id.admin_manage_profile_page)).check(matches(isDisplayed()));
     }
 
-    // TODO: write test for accessing the manage image page
+    /**
+     * go to browse images page
+     * click on a image in the list
+     * check that the manage image page is being shown
+     */
+    @Test
+    public void testManageImage() {
+        addTestImage();
+        try {
+            Thread.sleep(2000L);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        onView(withId(R.id.nav_ad_images_btn)).perform(click());
+        onView(withId(R.id.view_img_list)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        onView(withId(R.id.admin_manage_img_page)).check(matches(isDisplayed()));
+    }
 }

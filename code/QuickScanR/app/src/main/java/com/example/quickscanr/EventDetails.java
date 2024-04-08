@@ -2,11 +2,10 @@ package com.example.quickscanr;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
-
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -44,9 +43,18 @@ public class EventDetails extends InnerPageFragment {
     private boolean showSignUpDialog;
     MainActivity mainActivity = (MainActivity) getActivity();
     User user = mainActivity.user;
+    private LocationHelper locationHelper;
 
+    /**
+     * empty constructor (required)
+     */
     public EventDetails() {}
 
+    /**
+     * get event details fragment
+     * @param event event that the fragment is for
+     * @return event details fragment
+     */
     public static EventDetails newInstance(Event event) {
         EventDetails fragment = new EventDetails();
         Bundle args = new Bundle();
@@ -55,6 +63,11 @@ public class EventDetails extends InnerPageFragment {
         return fragment;
     }
 
+    /**
+     * valled when fragment is created
+     * @param savedInstanceState If the fragment is being re-created from
+     * a previous saved state, this is the state.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,8 +86,32 @@ public class EventDetails extends InnerPageFragment {
                 }
             }
         }
+        locationHelper = new LocationHelper(getActivity());
+        locationHelper.startLocationUpdates();
     }
 
+    /**
+     * called when fragment is destroyed. stop the location updates.
+     */
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // Stop receiving unnecessary location updates
+        locationHelper.stopLocationUpdates();
+    }
+
+    /**
+     * called when the view is created
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return the event details view
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -135,31 +172,17 @@ public class EventDetails extends InnerPageFragment {
                     Long timestamp = System.currentTimeMillis();
                     DocumentReference attRef = db.collection(EVENT_COLLECTION).document(eventID).collection(ATTENDEE_COLLECTION).document(userID);
 
-                    // db request
-                    attRef.get().addOnCompleteListener(doc -> {
-                        if (doc.isSuccessful()) {
-                            DocumentSnapshot attendees = doc.getResult();
-                            if (attendees.exists()) {
-                                // user already checked in prior
-                                addEventToUser(event);
-                                attRef.update("timestamps", FieldValue.arrayUnion(timestamp))
-                                        .addOnSuccessListener(aVoid -> Log.d("DEBUG", "Event notified of check-in"))
-                                        .addOnFailureListener(e -> Log.w("DEBUG", "Event notified of check-in", e));
-                            } else {
-                                // first time user check in
-                                addEventToUser(event);
-                                Map<String, Object> newAttendee = new HashMap<>();
-                                newAttendee.put("timestamps", Arrays.asList(timestamp));
-                                newAttendee.put("name", user.getName());
-
-                                attRef.set(newAttendee)
-                                        .addOnSuccessListener(e -> Log.d("DEBUG", "Event notified of 1st check-in"))
-                                        .addOnFailureListener(e -> Log.d("DEBUG", "Error notifying 1st check-in"));
-                            }
-                        } else {
-                            Log.d("DEBUG", "Failed to add event to DB");
+                    boolean isGeoLocOn = user.getGeoLoc();
+                    if (isGeoLocOn) {
+                        Location currentLocation = locationHelper.getCurrentLocation();
+                        if (currentLocation != null) {
+                            Log.d("DEBUG", "Updating with location");
+                            updateAttendeeWithLocation(attRef, timestamp, currentLocation);
                         }
-                    });
+                    } else {
+                        Log.d("DEBUG", "Updating without location");
+                        updateAttendeeWithoutLocation(attRef, timestamp);
+                    }
                 })
                 .setNegativeButton(android.R.string.no, null)
                 .show();
@@ -232,5 +255,68 @@ public class EventDetails extends InnerPageFragment {
         map.put(DatabaseConstants.userSignedUpEventsKey, FieldValue.arrayUnion(e.getId()));
         ref.update(map);
         Log.d("DEBUG","Added event to user signedUp");
+    }
+
+    /**
+     * add or update the attendee in the attendees collection
+     * @param attRef attendee reference in the attendee collection
+     * @param timestamp timestamp that they checked in at
+     * @param currentLocation location that they're checking in from
+     */
+    private void updateAttendeeWithLocation(DocumentReference attRef, Long timestamp, Location currentLocation) {
+        attRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    Log.d("DEBUG", "Updating existing attendee (with location)");
+                    // Update existing entry
+                    attRef.update("timestamps", FieldValue.arrayUnion(timestamp),
+                            "name", MainActivity.user.getName(),
+                            "latitude", currentLocation.getLatitude(),
+                            "longitude", currentLocation.getLongitude(),
+                            "geoLoc", true);
+                } else {
+                    Log.d("DEBUG", "Creating new attendee doc (with location)");
+                    // Create a new entry
+                    Map<String, Object> attendeeData = new HashMap<>();
+                    attendeeData.put("timestamps", Arrays.asList(timestamp));
+                    attendeeData.put("name", MainActivity.user.getName());
+                    attendeeData.put("latitude", currentLocation.getLatitude());
+                    attendeeData.put("longitude", currentLocation.getLongitude());
+                    attendeeData.put("geoLoc", true);
+                    attRef.set(attendeeData);
+                    addEventToUser(event);
+                }
+            }
+        });
+    }
+
+    /**
+     * add or update the attendee in the attendees collection
+     * @param attRef attendee reference in the attendee collection
+     * @param timestamp timestamp that they checked in at
+     */
+    private void updateAttendeeWithoutLocation(DocumentReference attRef, Long timestamp) {
+        attRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    Log.d("DEBUG", "Updating existing attendee (without location)");
+                    // Update existing entry
+                    attRef.update("timestamps", FieldValue.arrayUnion(timestamp),
+                            "name", MainActivity.user.getName(),
+                            "geoLoc", false);
+                } else {
+                    Log.d("DEBUG", "Creating new attendee doc (without location)");
+                    // Create a entry
+                    Map<String, Object> attendeeData = new HashMap<>();
+                    attendeeData.put("timestamps", Arrays.asList(timestamp));
+                    attendeeData.put("geoLoc", false);
+                    attendeeData.put("name", MainActivity.user.getName());
+                    attRef.set(attendeeData);
+                    addEventToUser(event);
+                }
+            }
+        });
     }
 }
