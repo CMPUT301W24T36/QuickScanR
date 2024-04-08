@@ -187,27 +187,27 @@ public class MainActivity extends AppCompatActivity {
                                         ImgHandler img = new ImgHandler(getBaseContext());
                                         img.getImage(event.getPosterID(), bitmap -> {
                                             event.setPoster(bitmap);
-                                        });
-                                        event.setSignedUp((ArrayList<String>) doc.get(DatabaseConstants.evSignedUpUsersKey));
 
-                                        String organizerID = doc.getString(DatabaseConstants.evOwnerKey);
-                                        usersRef.document(organizerID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                if (task.isSuccessful()) {
-                                                    DocumentSnapshot userDoc = task.getResult();
-                                                    if (userDoc.exists()) {
-                                                        User organizer = userDoc.toObject(User.class);
-                                                        String imageID = userDoc.getString(DatabaseConstants.userImageKey);
-                                                        organizer.setUserId(userDoc.getId());
-                                                        organizer.setImageID(imageID,false);
-                                                        event.setOrganizer(organizer);
-                                                        showEvDash(event);
+                                            event.setSignedUp((ArrayList<String>) doc.get(DatabaseConstants.evSignedUpUsersKey));
+
+                                            String organizerID = doc.getString(DatabaseConstants.evOwnerKey);
+                                            usersRef.document(organizerID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                    if (task.isSuccessful()) {
+                                                        DocumentSnapshot userDoc = task.getResult();
+                                                        if (userDoc.exists()) {
+                                                            User organizer = userDoc.toObject(User.class);
+                                                            String imageID = userDoc.getString(DatabaseConstants.userImageKey);
+                                                            organizer.setUserId(userDoc.getId());
+                                                            organizer.setImageID(imageID,false);
+                                                            event.setOrganizer(organizer);
+                                                            showEvDash(event);
+                                                        }
                                                     }
                                                 }
-                                            }
+                                            });
                                         });
-                                        
                                     }
                                 }
                             }
