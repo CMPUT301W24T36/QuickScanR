@@ -28,7 +28,8 @@ public class Event implements Serializable {
     private String start;
     private String end;
     private String restrictions;
-    private Bitmap poster;
+    private transient Bitmap poster;
+    private String posterID;
     private User organizer;
     private ArrayList<User> attendees;
     private HashMap<User, Integer> checkedInCounts;
@@ -53,6 +54,7 @@ public class Event implements Serializable {
         this.name = name;
         this.description = description;
         this.locationName = locationName;
+        this.locationId = locationId;
         this.start = start;
         this.end = end;
         this.restrictions = restrictions;
@@ -195,6 +197,12 @@ public class Event implements Serializable {
         this.organizer = organizer;
         this.maxAttendees = maxAttendees;
     }
+
+    /**
+     * Constructor #7
+     * empty constructor
+     */
+    public Event() {}
 
     /**
      * Getter: ID
@@ -522,5 +530,28 @@ public class Event implements Serializable {
      */
     public boolean isAtCapacity() {
         return getMaxAttendees() != -1? signedUpUsers.size() >= getMaxAttendees() : false;
+    }
+
+    /**
+     * remove the poster from the event
+     */
+    public void removePoster() {
+        poster = null;
+    }
+
+    /**
+     * get poster id of event
+     * @return poster id
+     */
+    public String getPosterID() {
+        return posterID;
+    }
+
+    /**
+     * set poster id of event
+     * @param posterID of event
+     */
+    public void setPosterID(String posterID) {
+        this.posterID = posterID;
     }
 }
