@@ -219,16 +219,7 @@
                 android:layout_height="40dp"
                 android:layout_marginStart="5dp"
                 android:orientation="horizontal"
-                android:padding="2dp">
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="4dp"
-                    app:cardPreventCornerOverlap="false"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="0">
+                android:padding="3dp">
 
                 <ImageView
                     android:id="@+id/evdash_img_stat3"
@@ -238,7 +229,6 @@
                     app:srcCompat="@drawable/people_symbol"
                     android:background="@drawable/rect_rounded_button"
                     android:backgroundTint="@color/qr_active"/>
-                </androidx.cardview.widget.CardView>
 
                 <TextView
                     android:id="@+id/evdash_txt_stat3"
@@ -302,16 +292,7 @@
                 android:layout_height="40dp"
                 android:layout_marginStart="5dp"
                 android:orientation="horizontal"
-                android:padding="2dp">
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="4dp"
-                    app:cardPreventCornerOverlap="false"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="0">
+                android:padding="3dp">
 
                     <ImageView
                         android:id="@+id/evdash_img_stat4"
@@ -321,7 +302,6 @@
                         app:srcCompat="@drawable/people_symbol"
                         android:background="@drawable/rect_rounded_button"
                         android:backgroundTint="@color/qr_active"/>
-                </androidx.cardview.widget.CardView>
 
                 <TextView
                     android:id="@+id/evdash_txt_stat4"
@@ -353,18 +333,6 @@
                 android:layout_height="match_parent"
                 android:gravity="bottom"
                 android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/evdash_btn_notify"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:layout_weight="1"
-                    android:backgroundTint="@color/qr_active"
-                    android:text="Notify"
-                    android:textColor="#000000"
-                    android:textSize="20sp"
-                    tools:ignore="ButtonStyle" />
 
                 <Button
                     android:id="@+id/evdash_btn_checkin"
