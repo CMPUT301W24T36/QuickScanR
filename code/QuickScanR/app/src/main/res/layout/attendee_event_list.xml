@@ -44,7 +44,8 @@
                 android:layout_weight="1"
                 android:background="@drawable/rect_rounded_button"
                 android:backgroundTint="@color/qr_active"
-                android:textAlignment="center" />
+                android:textAlignment="center"
+                android:visibility="visible" />
 
         </LinearLayout>
 

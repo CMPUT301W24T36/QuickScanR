@@ -113,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-
         // Check if camera permission has been granted
 //        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
 //            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA}, 100);
@@ -158,12 +157,12 @@ public class MainActivity extends AppCompatActivity {
                         user.setUserId(userId);
                         user.setImageID(imageID,false);
                         showHome(user.getUserType());
-
                     } else {
                         // if new user, then add them to the database
                         user = new User("New User", "", "", UserType.ATTENDEE);
                         user.setHomepage("");
                         user.setGeoLoc(false);
+                        user.setUserId(userId);
                         user.setFcmToken(fcmToken);
                         Map<String, Object> data = new HashMap<>();
                         data.put(DatabaseConstants.userFullNameKey, user.getName());
@@ -227,4 +226,5 @@ public class MainActivity extends AppCompatActivity {
      */
     public static void updateUser(User newUserInfo) {
         user = newUserInfo;
-    }}
+    }
+}
