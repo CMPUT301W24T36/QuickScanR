@@ -42,6 +42,12 @@ import org.junit.runner.RunWith;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This is to test the functionality of announcements
+ * @see Announcement
+ * @see OrganizerHome
+ * @see AddAnnouncementFragment
+ */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 
@@ -166,7 +172,7 @@ public class AnnouncementTest {
     }
 
     /**
-     * add a test event
+     * Add a test event to help with announcements
      */
     public void addTestEvent() {
 
@@ -222,6 +228,10 @@ public class AnnouncementTest {
                 });
     }
 
+    /**
+     * This deletes all the events to test adding an announcement with no events
+     * @param userId the user to delete all events from
+     */
     private void deleteAllEvents(String userId) {
         db.collection("events")
                 .whereEqualTo("ownerID", userId)
@@ -252,8 +262,8 @@ public class AnnouncementTest {
                 });
     }
     /**
-     * This tests if the organizer can make an announcement and signed up attendees receive it
-     * To mimic the organizer/attendee interaction: signed up the same event that same user made
+     * This tests if the organizer can make an announcement and see if signed up attendees receive it
+     * To mimic the organizer/signed up attendee interaction: signed the user to the same event they created
      */
 
     @Test
@@ -300,7 +310,7 @@ public class AnnouncementTest {
 
 
     /**
-     * See if the user has no events, they can't announce
+     * See if the user has no events, they can't announce if they have no events.
      */
     @Test
     public void testFailedAnnouncement() {
@@ -337,9 +347,6 @@ public class AnnouncementTest {
 
 
     }
-
-
-
 
 
 }
