@@ -7,6 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -15,6 +19,7 @@ import com.journeyapps.barcodescanner.BarcodeCallback;
 import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -31,9 +36,11 @@ public class ScanQR extends AttendeeFragment {
     private FirebaseFirestore db;
     public static String EVENT_COLLECTION = "events";
     private String lastScan;
+    private static ScanQR instance;
 
     public static ScanQR newInstance(String param1, String param2) {
         ScanQR fragment = new ScanQR();
+        instance = fragment;
         return fragment;
     }
 
@@ -51,6 +58,13 @@ public class ScanQR extends AttendeeFragment {
         initScanner(v);
         AttendeeFragment.setNavActive(v, 2);
         return v;
+    }
+
+    /**
+     * Returns current instance of ScanQR. Needed for testing.
+     */
+    public ScanQR getInstance() {
+        return instance;
     }
 
     /**
@@ -96,7 +110,7 @@ public class ScanQR extends AttendeeFragment {
      * and actions are performed on it.
      * @param data Data from latest scan
      */
-    private void onScan(String data) {
+    public void onScan(String data) {
         if (!checkQR(data)) return;  // validity check
         String[] qrInfo = parseQRData(data);
         String type = qrInfo[0];
@@ -144,35 +158,49 @@ public class ScanQR extends AttendeeFragment {
      * Scanning Case: Check-in QR code scanned
      * @param eventID ID of event
      */
-    // TO BE UPDATED: AttEvList should provide this info but for current deadlines we'll do this
     private void checkIn(String eventID) {
         db.collection(EVENT_COLLECTION).document(eventID).get()
                 .addOnSuccessListener(doc -> {
                     if (doc.exists()) {
                         Bundle args = new Bundle();
                         Event newEvent = buildEvent(doc);
-                        EventDetails evDetFragment = EventDetails.newInstance(newEvent);
-                        args.putBoolean("showCheckInDialog", true);
-                        args.putSerializable("event", newEvent);
-                        evDetFragment.setArguments(args);
-
                         String eventPosterID = doc.getString(DatabaseConstants.evPosterKey);
-                        if (!Objects.equals(eventPosterID, "")) {
-                            ImgHandler imgHandler = new ImgHandler(getContext());
-                            imgHandler.getImage(eventPosterID, bitmap -> {
-                                newEvent.setPoster(bitmap);
 
-                                // transition to event after async grab
-                                getActivity().getSupportFragmentManager().beginTransaction()
-                                        .replace(R.id.content_main, evDetFragment)
-                                        .addToBackStack(null).commit();
-                            });
-                        } else {
-                            // transition to event
-                            getActivity().getSupportFragmentManager().beginTransaction()
-                                    .replace(R.id.content_main, evDetFragment)
-                                    .addToBackStack(null).commit();
-                        }
+                        db.collection(DatabaseConstants.usersColName).document(doc.getString(DatabaseConstants.evOwnerKey)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot doc = task.getResult();
+                                    if (doc.exists()) {
+                                        User organizer = doc.toObject(User.class);
+                                        organizer.setUserId(doc.getId());
+                                        newEvent.setOrganizer(organizer);
+                                        EventDetails evDetFragment = EventDetails.newInstance(newEvent);
+                                        args.putBoolean("showCheckInDialog", true);
+                                        args.putSerializable("event", newEvent);
+                                        evDetFragment.setArguments(args);
+
+
+                                        if (!Objects.equals(eventPosterID, "")) {
+                                            ImgHandler imgHandler = new ImgHandler(getContext());
+                                            imgHandler.getImage(eventPosterID, bitmap -> {
+                                                newEvent.setPoster(bitmap);
+
+                                                // transition to event after async grab
+                                                getActivity().getSupportFragmentManager().beginTransaction()
+                                                        .replace(R.id.content_main, evDetFragment, "CI_EVENT")
+                                                        .addToBackStack(null).commit();
+                                            });
+                                        } else {
+                                            // transition to event
+                                            getActivity().getSupportFragmentManager().beginTransaction()
+                                                    .replace(R.id.content_main, evDetFragment, "CI_EVENT")
+                                                    .addToBackStack(null).commit();
+                                        }
+                                    }
+                                }
+                            }
+                        });
                     } else {
                         Log.d("DEBUG", "Attempted to retrieve event that did not exist");
                     }
@@ -184,37 +212,78 @@ public class ScanQR extends AttendeeFragment {
      * Scanning Case: Promotional QR code scanned
      * @param eventID ID of event
      */
-    // TO BE UPDATED: AttEvList should provide this info but for current deadlines we'll do this
     private void viewPromo(String eventID) {
         db.collection(EVENT_COLLECTION).document(eventID).get()
                 .addOnSuccessListener(doc -> {
                     if (doc.exists()) {
                         Event newEvent = buildEvent(doc);
-
-                        // add image async
                         String eventPosterID = doc.getString(DatabaseConstants.evPosterKey);
-                        if (!Objects.equals(eventPosterID, "")) {
-                            ImgHandler imgHandler = new ImgHandler(getContext());
-                            imgHandler.getImage(eventPosterID, bitmap -> {
-                                newEvent.setPoster(bitmap);
 
-                                // transition to event after async grab
-                                getActivity().getSupportFragmentManager().beginTransaction()
-                                        .replace(R.id.content_main, EventDetails.newInstance(newEvent))
-                                        .addToBackStack(null).commit();
-                            });
-                        } else {
-                            // transition to event
-                            getActivity().getSupportFragmentManager().beginTransaction()
-                                    .replace(R.id.content_main, EventDetails.newInstance(newEvent))
-                                    .addToBackStack(null).commit();
-                        }
+                        // get user data + imgs
+                        db.collection(DatabaseConstants.usersColName).document(doc.getString(DatabaseConstants.evOwnerKey)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot doc = task.getResult();
+                                    if (doc.exists()) {
+                                        User organizer = doc.toObject(User.class);
+                                        organizer.setUserId(doc.getId());
+                                        newEvent.setOrganizer(organizer);
+                                        EventDetails evDetFragment = EventDetails.newInstance(newEvent);
 
+                                        if (!Objects.equals(eventPosterID, "")) {
+                                            ImgHandler imgHandler = new ImgHandler(getContext());
+                                            imgHandler.getImage(eventPosterID, bitmap -> {
+                                                newEvent.setPoster(bitmap);
+                                                showSignUpOrNot(eventID, evDetFragment, newEvent);
+                                            });
+                                        } else {
+                                            showSignUpOrNot(eventID, evDetFragment, newEvent);
+                                        }
+                                    }
+                                }
+                            }
+                        });
                     } else {
                         Log.d("DEBUG", "Attempted to retrieve event that did not exist");
                     }
                 })
                 .addOnFailureListener(e -> Log.d("DEBUG", "Failed to grab event: %e", e));
+    }
+
+    /**
+     * shows the sign up button on the event details page if the user is not signed up or checked in for the event
+     * @param eventID id of the event to show details page for
+     * @param evDetFragment event details fragment for the event
+     * @param newEvent event object with event data
+     */
+    public void showSignUpOrNot(String eventID, EventDetails evDetFragment, Event newEvent) {
+        // show sign up button for event if user is not already signed up or checked in
+        db.collection(DatabaseConstants.usersColName).document(MainActivity.user.getUserId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot userDoc = task.getResult();
+                    if (userDoc.exists()) {
+                        ArrayList<String> checkedEvents = (ArrayList<String>) userDoc.get(DatabaseConstants.userCheckedEventsKey);
+                        ArrayList<String> signedUpEvents = (ArrayList<String>) userDoc.get(DatabaseConstants.userSignedUpEventsKey);
+                        boolean showSignUp = false;
+                        if (!checkedEvents.contains(eventID) && !signedUpEvents.contains(eventID)) {
+                            showSignUp = true;
+                        }
+                        Bundle args = new Bundle();
+                        args.putSerializable("event", newEvent);
+                        args.putBoolean("showSignUpDialog", showSignUp);
+                        evDetFragment.setArguments(args);
+
+                        // transition to event after async grab
+                        getActivity().getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.content_main, evDetFragment, "PR_EVENT")
+                                .addToBackStack(null).commit();
+                    }
+                }
+            }
+        });
     }
 
     /**
@@ -233,7 +302,7 @@ public class ScanQR extends AttendeeFragment {
         String eventEnd = doc.getString(DatabaseConstants.evEndKey);
         String eventID = doc.getId();
 
-        User orgTemp = new User("Test","Test","test",0);  // TO BE REMOVED
+        User orgTemp = new User("Loading","Loading","Loading",0);
         Event newEvent = new Event(eventName, eventDesc, eventLocName, eventLocId, eventStart, eventEnd, eventRest, orgTemp);
         newEvent.setId(eventID);
         Log.d("DEBUG", String.format("Event (%s) fetched", eventName));

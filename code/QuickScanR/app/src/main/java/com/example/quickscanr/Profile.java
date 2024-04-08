@@ -131,7 +131,7 @@ public class Profile extends Fragment {
         editProfileBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getParentFragmentManager().beginTransaction().replace(R.id.content_main, EditProfile.newInstance(MainActivity.user))
+                getParentFragmentManager().beginTransaction().replace(R.id.content_main, EditProfile.newInstance(MainActivity.user), "EDIT_PROFILE")
                         .addToBackStack(null).commit();
             }
         });

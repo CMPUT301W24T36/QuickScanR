@@ -29,6 +29,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:boxBackgroundColor="@android:color/background_light"
+            app:boxStrokeColor="@color/quantum_grey"
+            app:cursorColor="@color/quantum_grey"
             app:boxCornerRadiusBottomEnd="20dp"
             app:boxCornerRadiusBottomStart="20dp"
             app:boxCornerRadiusTopEnd="20dp"
@@ -59,17 +61,17 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@drawable/spinner_box"
+            android:paddingStart="10dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp">
 
             <Spinner
                 android:id="@+id/edit_profile_usertype"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/drop_down_selection" />
-
+                android:layout_height="match_parent" />
         </FrameLayout>
-
-
 
     </LinearLayout>
 
@@ -91,6 +93,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:boxBackgroundColor="@android:color/background_light"
+            app:boxStrokeColor="@color/quantum_grey"
+            app:cursorColor="@color/quantum_grey"
             app:boxCornerRadiusBottomEnd="20dp"
             app:boxCornerRadiusBottomStart="20dp"
             app:boxCornerRadiusTopEnd="20dp"
@@ -148,6 +152,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:boxBackgroundColor="@android:color/background_light"
+            app:boxStrokeColor="@color/quantum_grey"
+            app:cursorColor="@color/quantum_grey"
             app:boxCornerRadiusBottomEnd="20dp"
             app:boxCornerRadiusBottomStart="20dp"
             app:boxCornerRadiusTopEnd="20dp"
@@ -179,6 +185,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:boxBackgroundColor="@android:color/background_light"
+            app:boxStrokeColor="@color/quantum_grey"
+            app:cursorColor="@color/quantum_grey"
             app:boxCornerRadiusBottomEnd="20dp"
             app:boxCornerRadiusBottomStart="20dp"
             app:boxCornerRadiusTopEnd="20dp"

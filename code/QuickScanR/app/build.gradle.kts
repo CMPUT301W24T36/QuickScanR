@@ -57,6 +57,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1") {
         exclude(module = "protobuf-lite")
     }
+    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.3.0");
 
     androidTestImplementation("androidx.test:core:1.5.0")
     androidTestImplementation("androidx.test:runner:1.5.2")
