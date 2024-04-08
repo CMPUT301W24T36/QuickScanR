@@ -161,6 +161,8 @@ public class EventDetails extends InnerPageFragment {
                 })
                 .setNegativeButton(android.R.string.no, null)
                 .show();
+        alertDialog.getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
+        alertDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(Color.GRAY);
     }
 
     private void updateAttendeeWithLocation(DocumentReference attRef, Long timestamp, Location currentLocation) {
