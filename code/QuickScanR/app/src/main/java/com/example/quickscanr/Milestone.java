@@ -66,10 +66,18 @@ public class Milestone {
         this.description = description;
     }
 
+    /**
+     * Gets event name associated with attendee-related milestones
+     * @return eventName
+     */
     public String getEventName() {
         return eventName;
     }
 
+    /**
+     * Sets event name associated with attendee-related milestones
+     * @param eventName
+     */
     public void setEventName(String eventName) {
         this.eventName = eventName;
     }

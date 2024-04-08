@@ -112,7 +112,6 @@ public class CheckedInAttendeeList extends Fragment {
                         Map<String, Object> attendeeData = new HashMap<>();
                         attendeeData.put("userId", doc.getId());
                         attendeeData.put("name", doc.getString("name"));
-                        // Assuming 'timestamps' is the field you are interested in
                         attendeeData.put("timestamps", doc.get("timestamps"));
                         updatedAttendeesData.add(attendeeData);
                     }

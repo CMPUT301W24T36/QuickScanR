@@ -51,6 +51,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class contains test cases to validate the functionality related to checked in
+ *  attendee lists (tests name and appropriate count are updated after check-in.
+ * @see MainActivity
+ * @see UserType
+ */
+
+/**
+ * 1. Reference for UIAutomator allow permissions idea:
+ * https://stackoverflow.com/questions/34439072/espresso-click-on-the-button-of-the-dialog
+ */
+
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class AttendeeListTest {
@@ -64,6 +76,10 @@ public class AttendeeListTest {
 
     private String testEventId = "testEvent";
 
+    /**
+     * Uses UIAutomator to allow permissions on startup
+     * REFERENCE 1
+     */
     private static void allowPermissionsIfNeeded() {
         UiDevice device = UiDevice.getInstance(getInstrumentation());
         UiObject allowButton = device.findObject(new UiSelector()
@@ -86,7 +102,7 @@ public class AttendeeListTest {
         if (!userSet) {
             allowPermissionsIfNeeded();
             try {
-                Thread.sleep(2000L);    // let database setup
+                Thread.sleep(5000L);    // let database setup
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -110,8 +126,9 @@ public class AttendeeListTest {
             onView(withId(R.id.save_profile_btn)).perform(click());
             userSet = true;
         }
+        // wait to ensure activity callback
         try {
-            Thread.sleep(2000L);
+            Thread.sleep(500L);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -152,6 +169,10 @@ public class AttendeeListTest {
                 });
     }
 
+    /**
+     * Simulates checking in an attendee to a test event.
+     * @param testEventId the ID of the test event
+     */
     public void checkInAttendee(String testEventId) {
         // Simulate checking in an attendee
         Map<String, Object> attendeeData = new HashMap<>();
@@ -174,13 +195,19 @@ public class AttendeeListTest {
                     }
                 });
     }
+
+    /**
+     * Test method to verify attendee list after check-in.
+     * Checks if attendees are properly listed after check-in process.
+     * @throws UiObjectNotFoundException if UI object is not found during testing
+     */
     @Test
     public void testAttendeeListAfterCheckIn() throws UiObjectNotFoundException {
 
         checkInAttendee(testEventId);
 
         try {
-            Thread.sleep(2000);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -206,7 +233,7 @@ public class AttendeeListTest {
         // Check if the event dashboard page is displayed
         onView(withId(R.id.event_dashboard_page)).check(matches(isDisplayed()));
         try {
-            Thread.sleep(10000);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -216,7 +243,7 @@ public class AttendeeListTest {
         // Check if the checked users list is displayed
         onView(withId(R.id.chkd_usrs_list)).check(matches(isDisplayed()));
         try {
-            Thread.sleep(10000);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -225,6 +252,11 @@ public class AttendeeListTest {
         onView(withId(R.id.chkd_usr_count)).check(matches(withText("2")));
     }
 
+
+    /**
+     * Tear down method to clean up after tests.
+     * Deletes test event and related attendees from the database.
+     */
     @After
     public void tearDown() {
         db.collection("events").document(testEventId).collection("attendees").get()

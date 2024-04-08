@@ -333,7 +333,6 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
     }
 
 
-
     /**
      * What the milestones will show based on the total attendee count
      * @param totalAttendeeCount the number of attendees

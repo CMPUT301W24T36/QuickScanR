@@ -148,11 +148,13 @@ public class EditProfile extends Fragment {
                 String email = emailField.getText().toString();
                 Integer type = UserType.valueOf((String) accountTypeField.getSelectedItem());
 
+                //checks for valid format of phone number
                 if (phone.length() != 10 || !phone.matches("\\d{10}")) {
                     numberField.setError("Please enter a valid 10-digit phone number.");
                     return;
                 }
 
+                //checks for valid format of email address
                 if (isValidEmail(email)) {
                     if (!user.isErrors(nameField)) {
                         user.setName(name);

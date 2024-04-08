@@ -73,7 +73,6 @@ public class CheckedInAttendeeAdapter extends RecyclerView.Adapter<CheckedInAtte
      * @param position : position of the item within the adapter's data set
      */
 
-
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Map<String, Object> attendeeData = attendeeDataList.get(position);
@@ -82,8 +81,6 @@ public class CheckedInAttendeeAdapter extends RecyclerView.Adapter<CheckedInAtte
         String name = (String) attendeeData.get("name");
         holder.nameTextView.setText(name);
 
-        // Assuming 'timestamps' is stored as List<Long> based on your description.
-        // Safely handling potential null or missing 'timestamps' field.
         List<Long> timestamps=null;
         if (attendeeData.get("timestamps") instanceof List) {
             timestamps = (List<Long>) attendeeData.get("timestamps");
@@ -92,7 +89,6 @@ public class CheckedInAttendeeAdapter extends RecyclerView.Adapter<CheckedInAtte
 
         holder.checkInCountTextView.setText(String.valueOf(checkInCount));
 
-        // Assuming the userId is used for fetching profile images
         String userId = (String) attendeeData.get("userId");
         ProfileImage.getProfileImage(context, userId, new ProfileImage.ProfileImageCallback() {
             @Override
