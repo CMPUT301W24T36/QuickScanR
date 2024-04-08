@@ -170,7 +170,7 @@ public class AnnouncementTest {
         data.put(DatabaseConstants.evEndKey, "26-03-2024");
         data.put(DatabaseConstants.evRestricKey, "Restrictions");
         data.put(DatabaseConstants.evTimestampKey, System.currentTimeMillis());
-        data.put(DatabaseConstants.evPosterKey, "");
+        data.put(DatabaseConstants.evPosterKey, "default");
         data.put(DatabaseConstants.evOwnerKey, MainActivity.user.getUserId());
 
         // Get reference to the document with the custom ID
