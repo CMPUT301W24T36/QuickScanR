@@ -143,7 +143,9 @@ public class MainActivity extends AppCompatActivity {
         // all needed perms (notif + camera + loc)
         String[] perms = {
                 Manifest.permission.POST_NOTIFICATIONS,
-                Manifest.permission.CAMERA
+                Manifest.permission.CAMERA,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION
         };
 
         // get counts of current perms and needed perms

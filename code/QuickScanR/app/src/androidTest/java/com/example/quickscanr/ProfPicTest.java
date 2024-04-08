@@ -67,12 +67,12 @@ public class ProfPicTest {
                 .className("android.widget.Button")
                 .textContains("While using the app"));
 
-        // look for Allow for 1s
-        if (allowButton.waitForExists(1000)) {
+        // look for While using the app for 1s
+        if (whileButton.waitForExists(1000)) {
             try {
-                allowButton.click();
+                whileButton.click();
             } catch (Exception e) {
-                Log.d("PERMS", "Failed to allow notification permissions for testing");
+                Log.d("PERMS", "Failed to allow camera permissions for testing");
             }
         }
 
@@ -81,7 +81,16 @@ public class ProfPicTest {
             try {
                 whileButton.click();
             } catch (Exception e) {
-                Log.d("PERMS", "Failed to allow camera permissions for testing");
+                Log.d("PERMS", "Failed to allow location permissions for testing");
+            }
+        }
+
+        // look for Allow for 1s
+        if (allowButton.waitForExists(1000)) {
+            try {
+                allowButton.click();
+            } catch (Exception e) {
+                Log.d("PERMS", "Failed to allow notification permissions for testing");
             }
         }
     }
