@@ -58,7 +58,7 @@ public class AnnouncementTest {
 
 
     /**
-     * To delete the tested announcement & test event
+     * To delete the tested announcement, signed up event for user, & test event
      */
 
     @After
@@ -66,7 +66,13 @@ public class AnnouncementTest {
 
         db.collection(DatabaseConstants.eventColName).document(testEventId).delete(); // delete the test event made
 
-        // iterate through announcements and delete the test announcement
+        // Get a reference to the user document in Firestore
+        DocumentReference userRef = db.collection("users").document(MainActivity.user.getUserId());
+
+        // Update the user document to delete the signed-up event
+        userRef.update("signedUp", FieldValue.arrayRemove(testEventId));
+
+        // Iterate through announcements and delete the test announcement
         db.collection("announcements")
                 .whereEqualTo("eventId", testEventId)
                 .get()
