@@ -54,13 +54,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:ellipsize="end"
-                    android:maxLength="13"
-                    android:maxLines="1"
+                    android:gravity="center_vertical"
                     android:paddingLeft="15dp"
-                    android:paddingTop="55dp"
+                    android:paddingTop="45dp"
+                    android:paddingEnd="20dp"
                     android:text="Event Name"
-                    android:textSize="24sp" />
+                    android:textSize="22sp" />
 
                 <ImageButton
                     android:id="@+id/edit_event"
