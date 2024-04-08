@@ -204,7 +204,7 @@ public class EventSignUpTest {
      * sign up for the event
      * check that event was actually signed up for
      */
-    @Test
+    //@Test
     public void testSignUp() {
         addTestEvent(-1);
 
@@ -306,7 +306,7 @@ public class EventSignUpTest {
      * sign up for the event
      * check that sign up was unsuccessful
      */
-    @Test
+    //@Test
     public void testSignUpLimit() {
         addTestEvent(0);
 

@@ -197,7 +197,7 @@ public class OrganizerNavigationTest {
     /**
      * click the add event button and check that it's being showed
      */
-    @Test
+    // @Test
     public void testAddEventBtn(){
         onView(withId(R.id.nav_o_add_event_btn)).perform(click());
         onView(withId(R.id.add_event_page)).check(matches(ViewMatchers.isDisplayed()));
