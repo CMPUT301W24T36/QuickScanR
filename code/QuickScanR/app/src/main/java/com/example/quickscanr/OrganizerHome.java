@@ -1,3 +1,7 @@
+/**
+ * This file is the home page for the organizer.
+ * Deals with: announcements, milestones
+ */
 package com.example.quickscanr;
 
 import android.annotation.SuppressLint;
@@ -6,6 +10,7 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 
+import com.example.quickscanr.OrganizerFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -34,9 +39,10 @@ import java.util.List;
 /**
  * Represents the home page for the organizer, also deals with the
  * functionality of displaying milestones relevant for the organizer/'s events
-
+ * Also is responsible for organizers announcing to their signed up attendees
  * @see Milestone
  * @see Announcement
+ * @see AddAnnouncementFragment
  */
 
 public class OrganizerHome extends OrganizerFragment implements AddAnnouncementFragment.AddAnnounceDialogListener{
@@ -55,9 +61,6 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
     private List<String> eventIds = new ArrayList<>();
     private ImageView profPic;
 
-    int lastEventCount; // to help with the ranges; may be temporary
-    int lastAttendeeCount; // to help with the ranges; may be temporary
-
     private boolean hasFirstAttendeeCheck;
     private boolean hasSecondAttendeeCheck;
     private boolean hasThirdAttendeeCheck;
@@ -69,6 +72,7 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
     private boolean hasThirdEventCheck = false;
     private boolean hasFourthEventCheck = false;
     private boolean hasFifthEventCheck = false;
+
     /**
      * Constructor
      */
@@ -79,7 +83,7 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
 
     /**
      * adds the announcement to the database
-     *
+     * @see AddAnnouncementFragment
      * @param announcement to announce by the organizer.
      */
     @Override
@@ -112,7 +116,7 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
 
     /**
      * This allows dialog fragment and organizer home to talk to each other.
-     * TODO: get rid of this, change announcement_trigger to a button instead.
+     * @see AddAnnouncementFragment
      */
     @Override
     public void inDismiss() {
@@ -210,7 +214,7 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
     }
 
     /**
-     * gets the organizer event ids
+     * Gets the organizer event ids
      */
     private void getOrganizerEventIds() {
         db.collection("events")
@@ -235,7 +239,7 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
 
 
     /**
-     * sets up the real time data
+     * Sets up the real time data
      */
     private void setupRealtimeData() {
         realtimeData = new RealtimeData();

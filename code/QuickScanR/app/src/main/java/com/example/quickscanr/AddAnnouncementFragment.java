@@ -1,3 +1,9 @@
+/**
+ * This file is responsible for prompting to the User to make an announcement
+ * References:
+ * For rounded corners: https://stackoverflow.com/questions/15421271/custom-fragmentdialog-with-round-corners-and-not-100-screen-width
+ * For positive button: https://stackoverflow.com/questions/15912124/android-disable-dialogfragment-ok-cancel-buttons
+ */
 package com.example.quickscanr;
 
 import android.app.AlertDialog;
@@ -23,6 +29,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.example.quickscanr.Announcement;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -195,6 +202,9 @@ public class AddAnnouncementFragment extends DialogFragment {
         return view;
     }
 
+    /**
+     * Fetches the events from the database
+     */
     private void fetchEvents() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         MainActivity mainActivity = (MainActivity) getActivity();

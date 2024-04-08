@@ -1,3 +1,10 @@
+/**
+ * This file receives the notification triggers from Firebase Cloud Function
+ * Resources used:
+ *  1) For Notification Channel & Heads-Up Information: https://developer.android.com/develop/ui/views/notifications/channels#java, Android
+ *  2) The connection of Android App to Push Notifications (Automated) : https://www.youtube.com/watch?v=If2eDphtutI&t=408s, Codeible
+ *  3) Followed the Firebase Documentation for setting it up: https://firebase.google.com/docs/cloud-messaging
+ */
 package com.example.quickscanr;
 
 import android.app.NotificationChannel;
@@ -11,6 +18,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import com.example.quickscanr.Announcement;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -21,9 +29,7 @@ import com.google.firebase.messaging.RemoteMessage;
  *
  * @see Announcement
  *
- * Resources used:
- * 1) For Notification Channel & Heads-Up Information: https://developer.android.com/develop/ui/views/notifications/channels#java, Android
- * 2) The connection of Android App to Push Notifications (Automated) : https://www.youtube.com/watch?v=If2eDphtutI&t=408s, Codeible
+
  */
 public class NotificationHandler extends FirebaseMessagingService {
     final String CHANNEL_ID = "headsup"; // NOTE: If you make changes to the notification channel, change CHANNEL_ID for the saves to change.
@@ -31,7 +37,6 @@ public class NotificationHandler extends FirebaseMessagingService {
     /**
      * This creates a notification channel
      * The code below is inspired by Android's official documentation for NotificationChannel
-     * Link: https://developer.android.com/develop/ui/views/notifications/channels#java, Android
      */
     private void createNotificationChannel() {
         // Create the NotificationChannel (only on API 26+ due to differences in libraries)

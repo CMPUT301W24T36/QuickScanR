@@ -1,3 +1,7 @@
+/**
+ * This file holds all the constants used for connecting to Firebase, the database.
+ */
+
 package com.example.quickscanr;
 
 /**
