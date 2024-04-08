@@ -293,7 +293,7 @@ public class EventSignUpTest {
 
         // wait for page to update
         try {
-            Thread.sleep(2000L);
+            Thread.sleep(3000L);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -312,7 +312,7 @@ public class EventSignUpTest {
         } catch (Exception e) {}
 
         try {
-            Thread.sleep(1000L);
+            Thread.sleep(3000L);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
