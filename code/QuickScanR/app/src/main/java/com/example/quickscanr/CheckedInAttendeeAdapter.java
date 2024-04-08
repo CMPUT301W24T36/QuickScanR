@@ -1,3 +1,7 @@
+/**
+ * manages the results shown for CheckedInAttendeeList
+ */
+
 package com.example.quickscanr;
 
 import android.content.Context;

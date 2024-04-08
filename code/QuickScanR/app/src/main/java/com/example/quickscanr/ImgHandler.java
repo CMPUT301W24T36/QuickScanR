@@ -1,3 +1,6 @@
+/**
+ * This file is responsible for handling images from firesbase DB and implementing them in the app
+ */
 package com.example.quickscanr;
 
 import android.content.ContentResolver;

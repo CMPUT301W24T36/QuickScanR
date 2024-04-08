@@ -1,3 +1,7 @@
+/**
+ * This file is responsible for displaying the list of attendees who have signed-up to the event after scanning
+ * displays attendee name by fetching realtime data from db
+ */
 package com.example.quickscanr;
 
 import android.os.Bundle;

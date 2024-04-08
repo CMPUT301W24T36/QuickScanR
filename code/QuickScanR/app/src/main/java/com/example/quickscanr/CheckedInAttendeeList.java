@@ -1,3 +1,7 @@
+/**
+ * This file is responsible for displaying the list of attendees who have checked in to the event after scanning
+ * displays attendee name and the number of time they have checked-in by fetching realtime data from db
+ */
 package com.example.quickscanr;
 
 import android.os.Bundle;

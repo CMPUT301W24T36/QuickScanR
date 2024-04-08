@@ -1,3 +1,6 @@
+/**
+ * This file is responsible for checking the correct profile image for users
+ */
 package com.example.quickscanr;
 
 import android.graphics.Bitmap;
