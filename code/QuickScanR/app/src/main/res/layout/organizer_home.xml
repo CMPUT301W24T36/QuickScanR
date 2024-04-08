@@ -81,7 +81,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/rounded_bg"
-                android:hint="Share your event updates with attendees here!"
+                android:hint="@string/share_your_event_updates_with_attendees_here"
                 android:focusable="true"
                 android:padding="18dp"
                 android:layout_gravity="fill_horizontal"
@@ -105,7 +105,7 @@
             android:id="@+id/milestones_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="60dp"
+            android:layout_marginBottom="40dp"
             android:paddingBottom="30dp"
 
             tools:listitem="@layout/milestone_item" />

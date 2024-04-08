@@ -4,9 +4,7 @@
 
 package com.example.quickscanr;
 
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -27,7 +25,6 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -201,7 +198,7 @@ public class EditProfile extends Fragment {
         ActivityResultLauncher<PickVisualMediaRequest> imgPicker =
                 registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
                     if (uri != null) {
-                        tempURI = uri;
+                        setTempURI(uri);
                         Bitmap bmp = new ImgHandler(getContext()).uriToBitmap(uri);
                         imgDeleted = false;
                         profPic.setImageBitmap(bmp);
@@ -221,6 +218,13 @@ public class EditProfile extends Fragment {
             ProfileImage profileImage = new ProfileImage(getContext());
             profPic.setImageBitmap(profileImage.createProfileImage(getContext(), "x",200,200));
         });
+    }
+
+    /**
+     * Sets the tempURI. Needed for testing.
+     */
+    public void setTempURI(Uri uri) {
+        this.tempURI = uri;
     }
 
     /**
