@@ -2,22 +2,19 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="AttendeeListTest">
+      <entry key="AddEventTest">
         <State />
       </entry>
-      <entry key="OrganizerNavigationTest">
+      <entry key="AttendeeNavigationTest">
         <State />
       </entry>
-      <entry key="ProfPicTest">
-        <State />
-      </entry>
-      <entry key="PushNotificationTest">
-        <State />
-      </entry>
-      <entry key="addTestEvent()">
+      <entry key="Tests in 'com.example.quickscanr'">
         <State />
       </entry>
       <entry key="app">
+        <State />
+      </entry>
+      <entry key="testOpenEventDetails()">
         <State />
       </entry>
     </value>

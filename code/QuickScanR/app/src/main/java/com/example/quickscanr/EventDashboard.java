@@ -1,6 +1,5 @@
 package com.example.quickscanr;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -23,13 +22,15 @@ import java.util.Collections;
 public class EventDashboard extends InnerPageFragment {
 
     private static final String EVENT = "event";
+    private static final String FROM_MAIN = "fromMainActivity";
     private Event event;
 
 
     private RealtimeData attendeeCounter;
 
-    // Required empty constructor
-
+    /**
+     * required empty constructor
+     */
     public EventDashboard() {}
 
     /**
@@ -57,24 +58,8 @@ public class EventDashboard extends InnerPageFragment {
         if (getArguments() != null) {
             event = (Event) getArguments().getSerializable(EVENT);
             attendeeCounter = new RealtimeData();
-
-            // Set the event listener with improved null safety and UI thread handling
-            attendeeCounter.setEventListener(new RealtimeData.EventAttendeeCountListener() {
-                @Override
-                public void onTotalCountUpdated(int newCount) {
-                    Activity activity = getActivity();
-                    View view = getView();
-                    if (activity != null && view != null) {
-                        activity.runOnUiThread(() -> {
-                            TextView attendeeCountView = view.findViewById(R.id.evdash_txt_stat4);
-                            attendeeCountView.setText(String.valueOf(newCount));
-                        });
-                    }
-                }
-            });
         }
     }
-
 
     /**
      * To create the view relevant to EventDashboard
@@ -103,6 +88,23 @@ public class EventDashboard extends InnerPageFragment {
             MaterialButton mapBtn = v.findViewById(R.id.evdash_btn_map);
             mapBtn.setVisibility(View.INVISIBLE);
         }
+        boolean fromMain = getArguments().getBoolean(FROM_MAIN, false);
+        if (fromMain) {
+            ImgHandler img = new ImgHandler(getContext());
+            img.getImage(event.getPosterID(), bitmap -> {
+                event.setPoster(bitmap);
+                ((ImageView) v.findViewById(R.id.evdash_img_poster)).setImageBitmap(event.getPoster());
+            });
+        }
+        attendeeCounter.setEventListener(new RealtimeData.EventAttendeeCountListener() {
+            @Override
+            public void onTotalCountUpdated(int newCount) {
+                getActivity().runOnUiThread(() -> {
+                    TextView attendeeCountView = v.findViewById(R.id.evdash_txt_stat4);
+                    attendeeCountView.setText(String.valueOf(newCount));
+                });
+            }
+        });
         return v;
     }
 
@@ -125,8 +127,8 @@ public class EventDashboard extends InnerPageFragment {
         });
 
         v.findViewById(R.id.evdash_btn_map).setOnClickListener(view -> {
-            Intent myIntent = new Intent(EventDashboard.this.getContext(), CheckInMap.class);
-            myIntent.putExtra("event", event);
+            Intent myIntent = new Intent(getContext(), CheckInMap.class);
+            myIntent.putExtra("eventID", event.getId());
             EventDashboard.this.startActivity(myIntent);
         });
 
