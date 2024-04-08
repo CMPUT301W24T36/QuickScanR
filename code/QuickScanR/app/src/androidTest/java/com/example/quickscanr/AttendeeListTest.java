@@ -267,7 +267,9 @@ public class AttendeeListTest {
                         for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
                             // Get the reference to the document and delete it
                             db.collection("events").document(testEventId).collection("attendees")
-                                    .document(documentSnapshot.getId()).delete()
+                                    .document(documentSnapshot.getId()).delete();
+                            db.collection("events").document(testEventId)
+                                    .delete()
                                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
