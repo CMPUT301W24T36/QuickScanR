@@ -79,7 +79,7 @@ public class CheckedInAttendeeAdapter extends RecyclerView.Adapter<CheckedInAtte
         Map<String, Object> attendeeData = attendeeDataList.get(position);
         String name = (String) attendeeData.get("name");
         String userId = (String) attendeeData.get("userId");
-        List<Timestamp> checkIns = (List<Timestamp>) attendeeData.get("checkIns");
+        List<Timestamp> checkIns = (List<Timestamp>) attendeeData.get("attendees");
 
         holder.nameTextView.setText(name);
         holder.checkInCountTextView.setText(String.valueOf(checkIns != null ? checkIns.size() : 0));

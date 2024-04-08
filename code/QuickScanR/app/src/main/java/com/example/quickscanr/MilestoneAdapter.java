@@ -63,6 +63,7 @@ public class MilestoneAdapter extends RecyclerView.Adapter<MilestoneViewHolder> 
         } else {
             holder.eventNameTextView.setVisibility(View.GONE);
         }
+
     }
 
 
