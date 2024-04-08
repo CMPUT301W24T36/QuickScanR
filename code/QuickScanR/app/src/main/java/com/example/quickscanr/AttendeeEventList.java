@@ -1,3 +1,7 @@
+/**
+ * browse events page for attendees
+ */
+
 package com.example.quickscanr;
 
 import android.os.Bundle;

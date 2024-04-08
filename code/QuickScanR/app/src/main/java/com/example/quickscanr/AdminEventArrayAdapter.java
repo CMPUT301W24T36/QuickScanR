@@ -1,3 +1,7 @@
+/**
+ * manages the array adapter on the admin browse event page
+ */
+
 package com.example.quickscanr;
 
 import android.content.Context;

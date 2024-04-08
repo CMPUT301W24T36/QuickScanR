@@ -1,3 +1,7 @@
+/**
+ * array adapter for events in the attendee event list
+ */
+
 package com.example.quickscanr;
 
 import android.content.Context;

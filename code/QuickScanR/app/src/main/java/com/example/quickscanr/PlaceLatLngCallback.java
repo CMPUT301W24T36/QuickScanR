@@ -1,3 +1,7 @@
+/**
+ * the callback interface for getting latitude and longitude from location
+ */
+
 package com.example.quickscanr;
 
 import com.google.android.gms.maps.model.LatLng;

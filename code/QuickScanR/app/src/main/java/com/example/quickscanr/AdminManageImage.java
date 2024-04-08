@@ -1,3 +1,8 @@
+/**
+ * admin manage image page
+ * admin can see image details and the iamge
+ */
+
 package com.example.quickscanr;
 
 import android.graphics.Bitmap;

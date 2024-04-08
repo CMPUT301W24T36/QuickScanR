@@ -1,3 +1,7 @@
+/**
+ * the browse events page for admins
+ */
+
 package com.example.quickscanr;
 
 import android.graphics.Bitmap;
@@ -11,6 +15,10 @@ import android.widget.Button;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.quickscanr.AdminFragment;
+import com.example.quickscanr.AdminManageEvent;
+import com.example.quickscanr.DatabaseConstants;
+import com.example.quickscanr.ImgHandler;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;

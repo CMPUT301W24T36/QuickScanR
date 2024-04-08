@@ -1,3 +1,7 @@
+/**
+ * organizer browse event list
+ */
+
 package com.example.quickscanr;
 
 import android.os.Bundle;

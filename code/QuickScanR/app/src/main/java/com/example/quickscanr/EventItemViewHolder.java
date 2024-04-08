@@ -1,3 +1,7 @@
+/**
+ * view holder for events in the attendee event list
+ */
+
 package com.example.quickscanr;
 
 import android.view.View;

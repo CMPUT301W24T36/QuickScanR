@@ -1,3 +1,7 @@
+/**
+ * the attendee home page
+ */
+
 package com.example.quickscanr;
 
 import android.annotation.SuppressLint;

@@ -1,3 +1,7 @@
+/**
+ * allows for qr code generation
+ */
+
 package com.example.quickscanr;
 
 import android.graphics.Bitmap;

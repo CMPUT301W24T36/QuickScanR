@@ -1,3 +1,7 @@
+/**
+ * milestone model
+ */
+
 package com.example.quickscanr;
 
 /**

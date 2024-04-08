@@ -1,3 +1,7 @@
+/**
+ * all possible user types
+ */
+
 package com.example.quickscanr;
 
 /**
