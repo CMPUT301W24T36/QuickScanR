@@ -1,3 +1,7 @@
+/**
+ * the view holder for the images in admin browse image
+ */
+
 package com.example.quickscanr;
 
 import android.content.Context;

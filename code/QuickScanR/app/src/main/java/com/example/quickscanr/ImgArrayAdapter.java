@@ -1,3 +1,7 @@
+/**
+ * populates the browse image page recycler view for admins
+ */
+
 package com.example.quickscanr;
 
 import android.content.Context;

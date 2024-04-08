@@ -1,9 +1,15 @@
+/**
+ * manages the results shown from location auto suggestion
+ */
+
 package com.example.quickscanr;
 
 import android.content.Context;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
+
+import com.example.quickscanr.PlaceAPI;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +33,11 @@ public class PlaceAutoSuggestAdapter extends ArrayAdapter<String> implements Fil
 
     private PlaceAPI placeAPI;
 
+    /**
+     * the constructor
+     * @param context context of the page we're on
+     * @param resId
+     */
     public PlaceAutoSuggestAdapter(Context context, int resId) {
         super(context, resId);
         this.context = context;
@@ -35,16 +46,31 @@ public class PlaceAutoSuggestAdapter extends ArrayAdapter<String> implements Fil
         this.placeAPI = new PlaceAPI(getContext());
     }
 
+    /**
+     * gets number of things in the array
+     * @return number of things in the array
+     */
     @Override
     public int getCount() {
         return results.size();
     }
 
+    /**
+     * get the item at a position in the array
+     * @param pos Position of the item whose data we want within the adapter's
+     * data set.
+     * @return name of the place
+     */
     @Override
     public String getItem(int pos) {
         return results.get(pos).name;
     }
 
+    /**
+     * get place data given a position
+     * @param position
+     * @return Place object at that position
+     */
     public Place getItemInfo(int position) {
         if (position >= 0 && position < results.size()) {
             return results.get(position);
@@ -52,6 +78,10 @@ public class PlaceAutoSuggestAdapter extends ArrayAdapter<String> implements Fil
         return null;
     }
 
+    /**
+     * filter for the result
+     * @return filter object
+     */
     @Override
     public Filter getFilter() {
         Filter filter = new Filter() {

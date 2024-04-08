@@ -1,3 +1,7 @@
+/**
+ * view holder for items in the admin browse profiles page
+ */
+
 package com.example.quickscanr;
 
 import android.util.Log;
