@@ -34,6 +34,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -146,15 +147,17 @@ public class QRScanTest {
      * When called, adds a basic test event to the database for later use
      */
     public void addTestEvent() {
-        // test event data
         Map<String, Object> data = new HashMap<>();
-        data.put(DatabaseConstants.evNameKey, "Test Event");
+        data.put(DatabaseConstants.evNameKey, "QRScan Test Event");
         data.put(DatabaseConstants.evDescKey, "Event Description");
-        data.put(DatabaseConstants.evLocNameKey, "Location");
+        data.put(DatabaseConstants.evLocIdKey, "ChIJI__egEUioFMRXRX2SgygH0E");  // place id of Edmonton
+        data.put(DatabaseConstants.evLocNameKey, "Edmonton");
         data.put(DatabaseConstants.evStartKey, "26-03-2024");
         data.put(DatabaseConstants.evEndKey, "26-03-2024");
-        data.put(DatabaseConstants.evRestricKey, "");
-        data.put(DatabaseConstants.evPosterKey, "default");
+        data.put("maxAttendees", 5);
+        data.put(DatabaseConstants.evTimestampKey, System.currentTimeMillis());
+        data.put(DatabaseConstants.evSignedUpUsersKey, new ArrayList<String>());
+        data.put(DatabaseConstants.evPosterKey, "default");     // default event poster
         data.put(DatabaseConstants.evOwnerKey, MainActivity.user.getUserId());
 
         db.collection(DatabaseConstants.eventColName).add(data).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
