@@ -74,6 +74,9 @@ dependencies {
     androidTestImplementation("org.mockito:mockito-android:5.11.0")
     testImplementation("net.bytebuddy:byte-buddy:1.14.12")
 
+    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.2.0")
+
+
 }
 
 secrets {
