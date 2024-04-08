@@ -278,10 +278,17 @@ public class AnnouncementTest {
         onView(withText(UserType.getString(UserType.ATTENDEE))).perform(click());
         onView(withId(R.id.save_profile_btn)).perform(click());
 
+        // Let app load
+        try {
+            Thread.sleep(2000L);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
         onView(withId(R.id.nav_a_announcements_btn)).perform(click());
 
         try {
-            Thread.sleep(2000);
+            Thread.sleep(2000L);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -307,6 +314,14 @@ public class AnnouncementTest {
         onView(withId(R.id.edit_profile_usertype)).perform(click());
         onView(withText(UserType.getString(UserType.ORGANIZER))).perform(click());
         onView(withId(R.id.save_profile_btn)).perform(click());
+
+        // Let app load
+        try {
+            Thread.sleep(2000L);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
 
         // Go to homepage
         onView(withId(R.id.nav_o_announcements_btn)).perform(click());
