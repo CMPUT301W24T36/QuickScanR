@@ -4,6 +4,7 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 
@@ -31,7 +32,7 @@ import org.junit.runner.RunWith;
  */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class CombinedTest {
+public class ProfilePageTest {
 
     @Rule
     public ActivityScenarioRule<MainActivity> scenario = new ActivityScenarioRule<MainActivity>(MainActivity.class);
@@ -75,28 +76,25 @@ public class CombinedTest {
      */
     @Test
     public void testProfileButton() {
-        boolean onProfilePage = false;
         try {
             onView(withId(R.id.nav_a_profile_btn)).perform(click());
-            onView(withId(R.id.attendee_profile_page))
-                    .check(matches(hasDescendant(withId(R.id.profile_page))));
-            onProfilePage = true;
+            onView(withId(R.id.attendee_profile_page)).check(matches(isDisplayed()));
         }
-        catch (NoMatchingViewException e) {}
-        try {
-            onView(withId(R.id.nav_o_profile_btn)).perform(click());
-            onView(withId(R.id.organizer_profile_page))
-                    .check(matches(hasDescendant(withId(R.id.profile_page))));
-            onProfilePage = true;
+        catch (NoMatchingViewException e) {
+            try {
+                onView(withId(R.id.nav_o_profile_btn)).perform(click());
+                onView(withId(R.id.organizer_profile_page)).check(matches(isDisplayed()));
+            }
+            catch (NoMatchingViewException e2) {
+                try {
+                    onView(withId(R.id.nav_ad_profile_btn)).perform(click());
+                    onView(withId(R.id.admin_profile_page)).check(matches(isDisplayed()));
+                }
+                catch (NoMatchingViewException e3) {
+                    throw(e3);
+                }
+            }
+
         }
-        catch (NoMatchingViewException e) {}
-        try {
-            onView(withId(R.id.nav_ad_profile_btn)).perform(click());
-            onView(withId(R.id.admin_profile_page))
-                    .check(matches(hasDescendant(withId(R.id.profile_page))));
-            onProfilePage = true;
-        }
-        catch (NoMatchingViewException e) {}
-        assertEquals(onProfilePage, true);
     }
 }
