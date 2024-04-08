@@ -11,6 +11,9 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+/**
+ * generates qr codes
+ */
 public class GenerateQR {
     /**
      * Generates a QR code bitmap from given text.
