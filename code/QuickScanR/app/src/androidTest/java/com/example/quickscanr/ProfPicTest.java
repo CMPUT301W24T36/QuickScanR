@@ -57,20 +57,39 @@ public class ProfPicTest {
      */
     private static void allowPermissionsIfNeeded() {
         UiDevice device = UiDevice.getInstance(getInstrumentation());
+        // for notifications
         UiObject allowButton = device.findObject(new UiSelector()
                 .className("android.widget.Button")
                 .textContains("Allow"));
 
-        // wait for 1000 ms to see if appears
+        // for camera perms
+        UiObject whileButton = device.findObject(new UiSelector()
+                .className("android.widget.Button")
+                .textContains("While using the app"));
+
+        // look for Allow for 1s
         if (allowButton.waitForExists(1000)) {
             try {
-                 allowButton.click();
+                allowButton.click();
             } catch (Exception e) {
-                Log.d("PERMS", "Failed to allow permissions for testing");
+                Log.d("PERMS", "Failed to allow notification permissions for testing");
+            }
+        }
+
+        // look for While using the app for 1s
+        if (whileButton.waitForExists(1000)) {
+            try {
+                whileButton.click();
+            } catch (Exception e) {
+                Log.d("PERMS", "Failed to allow camera permissions for testing");
             }
         }
     }
 
+    /**
+     * Sets up all relevant database fields before beginning test.
+     * Also grabs a copy of the MainActivity and brings us to the right page.
+     */
     @Before
     public void setUp() {
         // set proper user type
@@ -123,6 +142,11 @@ public class ProfPicTest {
         }
     }
 
+    /**
+     * Test to remove a profile picture from a user.
+     * After the button is clicked and save is pressed, user's
+     * imageID is "default_user"
+     */
     @Test
     public void testRemove() {
         onView(withId(R.id.remove_pfp_btn)).perform(click());
@@ -130,6 +154,11 @@ public class ProfPicTest {
         assertEquals(user.getImageID(), "default_user");
     }
 
+    /**
+     * Image upload test. Upload an image, press save
+     * and check if the user's imageID reflects as the
+     * documentID of the upload.
+     */
     @Test
     public void testUploadNew() {
         // get access to test uri
@@ -153,6 +182,9 @@ public class ProfPicTest {
         assertEquals(user.getImageID(), imgID);
     }
 
+    /**
+     * Reset user's image to default_user
+     */
     @After
     public void resetUser() {
         user.setImageID("default_user",true);

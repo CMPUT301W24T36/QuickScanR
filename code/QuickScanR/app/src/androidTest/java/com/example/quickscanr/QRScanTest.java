@@ -105,25 +105,46 @@ public class QRScanTest {
      */
     private static void allowPermissionsIfNeeded() {
         UiDevice device = UiDevice.getInstance(getInstrumentation());
+        // for notifications
         UiObject allowButton = device.findObject(new UiSelector()
                 .className("android.widget.Button")
                 .textContains("Allow"));
 
-        // wait for 1000 ms to see if appears
+        // for camera perms
+        UiObject whileButton = device.findObject(new UiSelector()
+                .className("android.widget.Button")
+                .textContains("While using the app"));
+
+        // look for Allow for 1s
         if (allowButton.waitForExists(1000)) {
             try {
                 allowButton.click();
             } catch (Exception e) {
-                Log.d("PERMS", "Failed to allow permissions for testing");
+                Log.d("PERMS", "Failed to allow notification permissions for testing");
+            }
+        }
+
+        // look for While using the app for 1s
+        if (whileButton.waitForExists(1000)) {
+            try {
+                whileButton.click();
+            } catch (Exception e) {
+                Log.d("PERMS", "Failed to allow camera permissions for testing");
             }
         }
     }
 
+    /**
+     * Remove all testing events from DB and reset to orignal state
+     */
     @After
     public void tearDown() {
         db.collection(DatabaseConstants.eventColName).document(testEventId).delete();
     }
 
+    /**
+     * When called, adds a basic test event to the database for later use
+     */
     public void addTestEvent() {
         // test event data
         Map<String, Object> data = new HashMap<>();
@@ -149,6 +170,10 @@ public class QRScanTest {
         });
     }
 
+    /**
+     * Tests a promotional event QR code scan.
+     * Checks if it is on the page PR_EVENT at end.
+     */
     @Test
     public void testPromoScan() {
         onView(withId(R.id.qr_scanning_page)).check(matches(ViewMatchers.isDisplayed())); // on scanner page?
@@ -165,6 +190,10 @@ public class QRScanTest {
         assertTrue(visibleFragment.isVisible());
     }
 
+    /**
+     * Tests a checkin event QR code scan.
+     * Checks if it is on the page CI_EVENT at end.
+     */
     @Test
     public void testCheckInScan() {
         onView(withId(R.id.qr_scanning_page)).check(matches(ViewMatchers.isDisplayed())); // on scanner page?
@@ -181,6 +210,11 @@ public class QRScanTest {
         assertTrue(visibleFragment.isVisible());
     }
 
+    /**
+     * Tests an invalid QR code scan.
+     * A fake string is inputted and we check if
+     * the device remains on the fragment SCANNER.
+     */
     @Test
     public void testInvalidScan() {
         onView(withId(R.id.qr_scanning_page)).check(matches(ViewMatchers.isDisplayed()));  // check scanner page
@@ -193,6 +227,12 @@ public class QRScanTest {
         assertTrue(visibleFragment.isVisible());
     }
 
+    /**
+     * Tests an invalid QR code scan with a valid format.
+     * A correctly formatted checkin QR is given but
+     * the Event ID is incorrect. Checks if the device remains
+     * on the fragment SCANNER.
+     */
     @Test
     public void testInvalidEventScan() {
         onView(withId(R.id.qr_scanning_page)).check(matches(ViewMatchers.isDisplayed()));  // check scanner page
