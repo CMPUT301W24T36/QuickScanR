@@ -64,11 +64,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        // This asks for permission
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_DENIED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1);
-        }
-
+        requestPerms();
 
         // Gets the FCM token of the user.
         FirebaseMessaging.getInstance().getToken()
@@ -135,6 +131,31 @@ public class MainActivity extends AppCompatActivity {
                 .update(updates)
                 .addOnSuccessListener(aVoid -> Log.d("FCM", "FCM token updated for user: " + userId))
                 .addOnFailureListener(e -> Log.e("FCM", "Error updating FCM token for user: " + userId, e));
+    }
+
+    /**
+     * Requests user to give all necessary perms for app
+     */
+    private void requestPerms() {
+        // all needed perms (notif + camera + loc)
+        String[] perms = {
+                Manifest.permission.POST_NOTIFICATIONS,
+                Manifest.permission.CAMERA
+        };
+
+        // get counts of current perms and needed perms
+        int permCount = perms.length;
+        int permCurrent = 0;
+        for (String perm : perms) {
+            if (ContextCompat.checkSelfPermission(this, perm) != PackageManager.PERMISSION_GRANTED) {
+                permCurrent += 1;
+            }
+        }
+
+        // if mismatch, request again
+        if (permCount != permCurrent) {
+            ActivityCompat.requestPermissions(this, perms, 1);
+        }
     }
 
     /**
