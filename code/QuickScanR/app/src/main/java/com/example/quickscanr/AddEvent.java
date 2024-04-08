@@ -1,3 +1,7 @@
+/**
+ * the page that allows organizers to add an event
+ */
+
 package com.example.quickscanr;
 
 import android.app.DatePickerDialog;

@@ -1,3 +1,7 @@
+/**
+ * admin browse profiles page
+ */
+
 package com.example.quickscanr;
 
 import android.os.Bundle;

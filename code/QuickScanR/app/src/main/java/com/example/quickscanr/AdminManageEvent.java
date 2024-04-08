@@ -1,3 +1,7 @@
+/**
+ * admin manage event page. admins can view event details
+ */
+
 package com.example.quickscanr;
 
 import android.app.AlertDialog;

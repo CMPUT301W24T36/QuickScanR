@@ -1,3 +1,7 @@
+/**
+ * specialized fragment that sets the nav bar listeners for admins
+ */
+
 package com.example.quickscanr;
 
 import android.view.View;

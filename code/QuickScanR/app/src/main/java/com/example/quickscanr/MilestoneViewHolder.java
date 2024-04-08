@@ -1,3 +1,7 @@
+/**
+ * view holder for milestones in the milestone list (organizer home page)
+ */
+
 package com.example.quickscanr;
 
 import android.view.View;

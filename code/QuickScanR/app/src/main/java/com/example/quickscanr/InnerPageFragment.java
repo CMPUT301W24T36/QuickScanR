@@ -1,3 +1,8 @@
+/**
+ * specialized fragment for inner pages (pages with back buttons)
+ * sets up listener for back button
+ */
+
 package com.example.quickscanr;
 
 import android.view.View;

@@ -1,3 +1,8 @@
+/**
+ * specialized fragment for organizers
+ * sets up nav bar for organizers
+ */
+
 package com.example.quickscanr;
 
 import android.media.Image;

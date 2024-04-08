@@ -1,3 +1,8 @@
+/**
+ * event dashboard page for organizers
+ * view event details, poster, checked in attendees, and signed up attendees
+ */
+
 package com.example.quickscanr;
 
 import android.content.Intent;

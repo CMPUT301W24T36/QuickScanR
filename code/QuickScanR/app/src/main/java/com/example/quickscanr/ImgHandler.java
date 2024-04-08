@@ -1,6 +1,10 @@
 /**
- * This file is responsible for handling images from firesbase DB and implementing them in the app
+ * image handler for handling image upload and retrieval
+ * Referenced:
+ * https://stackoverflow.com/questions/9357668/how-to-store-image-in-sqlite-database
+ * https://stackoverflow.com/a/65211072
  */
+
 package com.example.quickscanr;
 
 import android.content.ContentResolver;
@@ -27,9 +31,6 @@ import java.util.Map;
  * A class to upload and serve images from our firebase DB.
  * For uploads: URI -> Bitmap -> Base64
  * For downloads: Base64 -> Bitmap
- * Referenced:
- * https://stackoverflow.com/questions/9357668/how-to-store-image-in-sqlite-database
- * https://stackoverflow.com/a/65211072
  */
 public class ImgHandler {
     private final FirebaseFirestore db;
