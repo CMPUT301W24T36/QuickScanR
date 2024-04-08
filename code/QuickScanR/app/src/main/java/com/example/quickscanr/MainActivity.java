@@ -13,7 +13,6 @@ import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -155,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
                         user = new User("New User", "", "", UserType.ATTENDEE);
                         user.setHomepage("");
                         user.setGeoLoc(false);
+                        user.setUserId(userId);
                         user.setFcmToken(fcmToken);
                         Map<String, Object> data = new HashMap<>();
                         data.put(DatabaseConstants.userFullNameKey, user.getName());
@@ -283,4 +283,5 @@ public class MainActivity extends AppCompatActivity {
      */
     public static void updateUser(User newUserInfo) {
         user = newUserInfo;
-    }}
+    }
+}

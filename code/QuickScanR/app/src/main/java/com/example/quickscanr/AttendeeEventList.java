@@ -39,6 +39,8 @@ import java.util.Set;
 /**
  * Attendee Event List Page functionality
  * Deals with getting the events out of the database and displaying it on the UI.
+ * referenced https://stackoverflow.com/questions/5283047/intersection-and-union-of-arraylists-in-java
+ *      for only showing an event once if the user has signed up and checked in to an event
  * @see Event
  * @see EventItemArrayAdapter
  */
