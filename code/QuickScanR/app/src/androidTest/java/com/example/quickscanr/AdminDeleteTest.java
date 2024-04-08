@@ -177,7 +177,7 @@ public class AdminDeleteTest {
         db.collection("images").document(testImgId).set(dataImg);
 
         try {
-            Thread.sleep(4000L);    // give 5 second between tests to be safe
+            Thread.sleep(5000L);    // give 5 second between tests to be safe
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -220,7 +220,7 @@ public class AdminDeleteTest {
         });
 
         try {
-            Thread.sleep(4000L);    // give 5 second between tests to be safe
+            Thread.sleep(6000L);    // give 5 second between tests to be safe
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -376,7 +376,7 @@ public class AdminDeleteTest {
             });
 
             try {
-                Thread.sleep(2000L);    // give 5 second between tests to be safe
+                Thread.sleep(5000L);    // give 5 second between tests to be safe
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
