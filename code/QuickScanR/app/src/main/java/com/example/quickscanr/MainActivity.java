@@ -145,10 +145,10 @@ public class MainActivity extends AppCompatActivity {
 
         // get counts of current perms and needed perms
         int permCount = perms.length;
-        int permCurrent = 0;
+        int permCurrent = permCount;
         for (String perm : perms) {
             if (ContextCompat.checkSelfPermission(this, perm) != PackageManager.PERMISSION_GRANTED) {
-                permCurrent += 1;
+                permCurrent -= 1;
             }
         }
 
