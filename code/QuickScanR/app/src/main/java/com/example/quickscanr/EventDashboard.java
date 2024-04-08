@@ -57,15 +57,6 @@ public class EventDashboard extends InnerPageFragment {
         if (getArguments() != null) {
             event = (Event) getArguments().getSerializable(EVENT);
             attendeeCounter = new RealtimeData();
-            attendeeCounter.setEventListener(new RealtimeData.EventAttendeeCountListener() {
-                @Override
-                public void onTotalCountUpdated(int newCount) {
-                    getActivity().runOnUiThread(() -> {
-                        TextView attendeeCountView = getView().findViewById(R.id.evdash_txt_stat4);
-                        attendeeCountView.setText(String.valueOf(newCount));
-                    });
-                }
-            });
         }
     }
 
@@ -97,7 +88,6 @@ public class EventDashboard extends InnerPageFragment {
             mapBtn.setVisibility(View.INVISIBLE);
         }
         boolean fromMain = getArguments().getBoolean(FROM_MAIN, false);
-        Object args = getArguments().get(FROM_MAIN);
         if (fromMain) {
             ImgHandler img = new ImgHandler(getContext());
             img.getImage(event.getPosterID(), bitmap -> {
@@ -105,6 +95,15 @@ public class EventDashboard extends InnerPageFragment {
                 ((ImageView) v.findViewById(R.id.evdash_img_poster)).setImageBitmap(event.getPoster());
             });
         }
+        attendeeCounter.setEventListener(new RealtimeData.EventAttendeeCountListener() {
+            @Override
+            public void onTotalCountUpdated(int newCount) {
+                getActivity().runOnUiThread(() -> {
+                    TextView attendeeCountView = v.findViewById(R.id.evdash_txt_stat4);
+                    attendeeCountView.setText(String.valueOf(newCount));
+                });
+            }
+        });
         return v;
     }
 
