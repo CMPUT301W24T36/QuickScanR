@@ -28,8 +28,9 @@ public class EventDashboard extends InnerPageFragment {
 
     private RealtimeData attendeeCounter;
 
-    // Required empty constructor
-
+    /**
+     * required empty constructor
+     */
     public EventDashboard() {}
 
     /**
