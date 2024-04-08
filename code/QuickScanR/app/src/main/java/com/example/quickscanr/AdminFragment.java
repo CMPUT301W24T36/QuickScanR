@@ -10,6 +10,9 @@ import android.widget.ImageButton;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
+/**
+ * specialized fragment that sets the nav bar listeners for admins
+ */
 public class AdminFragment extends Fragment {
     public void addNavBarListeners(FragmentActivity activity, View v) {
         ImageButton eventListBtn = v.findViewById(R.id.nav_ad_events_btn);
