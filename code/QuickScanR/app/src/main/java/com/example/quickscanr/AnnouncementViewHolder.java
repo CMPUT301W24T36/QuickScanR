@@ -1,3 +1,6 @@
+/**
+ * ViewHolder helps our announcement be displayed in the RecyclerView
+ */
 package com.example.quickscanr;
 
 import android.view.View;

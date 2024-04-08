@@ -1,3 +1,6 @@
+/**
+ * This file represents the announcement object
+ */
 package com.example.quickscanr;
 import android.graphics.Bitmap;
 
@@ -7,11 +10,8 @@ import java.util.*; // for Date
 /**
  * This represents the object, announcement, that Organizers will make to show to the Attendees.
  * Will be stored in the database.
- * title: user input
- * body: user input
- * date: date of post, date and time
- * userName: the user's name for display
- *
+ * @see OrganizerHome where announcements are from
+ * @see AttendeeHome where announcments arrive to
  */
 public class Announcement {
     private String title;
@@ -103,31 +103,39 @@ public class Announcement {
 
     /**
      * Setter: sets the user's name of who posted the announcement
-     * @param userName
+     * @param userName the user
      */
     public void setUserName(String userName) {
         this.userName = userName;
     }
 
+    /**
+     * Getter: gets the event id of the announcement
+     * @return the event ID
+     */
     public String getEventID() {
         return selectedEventId;
     }
 
+    /**
+     * Setter: sets the event ID for the announcement
+     * @param eventID the relevant event
+     */
     public void setEventID(String eventID) {
         this.selectedEventId = selectedEventId;
     }
 
-        /**
-         * Setter: sets the announcement bitmap
-         * @param bmp
-         */
+    /**
+     * Setter: sets the announcement bitmap
+     * @param bmp the image to be set
+     */
     public void setBitmap(Bitmap bmp) {
         this.bitmap = bmp;
     }
 
     /**
      * Getter: gets the announcement bitmap
-     * @return bmp
+     * @return bmp the image of the announcement
      */
     public Bitmap getBitmap() {
         return bitmap;

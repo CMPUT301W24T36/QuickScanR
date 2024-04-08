@@ -1,5 +1,6 @@
 /**
  * This file acts as the main hub when a user opens the app.
+ * Reference: https://stackoverflow.com/questions/7793576/switching-between-fragment-view
  */
 
 package com.example.quickscanr;
@@ -46,6 +47,14 @@ public class MainActivity extends AppCompatActivity {
     String fcmToken;
 
 
+    /**
+     *
+     * This is called when the activity is starting.
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,8 +96,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        // Subscribe to announcements
-        // TODO: Subscribe each user to a specific announcement (more code) / stop notifications if they don't meet a condition (i.e. not signed up, opt this way if possible)
+        // Subscribe to announcements: Firebase Cloud Functions deals with the filtering.
         FirebaseMessaging.getInstance().subscribeToTopic("announcements")
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -115,7 +123,9 @@ public class MainActivity extends AppCompatActivity {
 //        }
     }
 
-    /** Stores the FCM token for the current user in Firestore.
+
+    /**
+     * Stores the FCM token for the current user in Firestore.
      *
      * @param token The FCM token to store.
      */
@@ -259,7 +269,6 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * shows a different home page depending on the type of user you are
-     * Reference: https://stackoverflow.com/questions/7793576/switching-between-fragment-view
      * @param userType type of the user
      */
     public void showHome(Integer userType) {
