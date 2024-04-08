@@ -213,18 +213,32 @@
 
             </LinearLayout>
 
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_marginStart="5dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:padding="2dp">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="4dp"
+                    app:cardPreventCornerOverlap="false"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="0">
 
                 <ImageView
                     android:id="@+id/evdash_img_stat3"
-                    android:layout_width="30dp"
+                    android:layout_width="40dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="0"
-                    app:srcCompat="@drawable/people_symbol"/>
+                    android:padding="5dp"
+                    app:srcCompat="@drawable/people_symbol"
+                    android:background="@drawable/rect_rounded_button"
+                    android:backgroundTint="@color/qr_active"/>
+                </androidx.cardview.widget.CardView>
 
                 <TextView
                     android:id="@+id/evdash_txt_stat3"
@@ -282,18 +296,32 @@
 
             </LinearLayout>
 
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_marginStart="5dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:padding="2dp">
 
-                <ImageView
-                    android:id="@+id/evdash_img_stat4"
-                    android:layout_width="30dp"
-                    android:layout_height="match_parent"
-                    android:contentDescription="Event Statistic 4"
-                    app:srcCompat="@drawable/people_symbol" />
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="4dp"
+                    app:cardPreventCornerOverlap="false"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="0">
+
+                    <ImageView
+                        android:id="@+id/evdash_img_stat4"
+                        android:layout_width="40dp"
+                        android:layout_height="match_parent"
+                        android:padding="5dp"
+                        app:srcCompat="@drawable/people_symbol"
+                        android:background="@drawable/rect_rounded_button"
+                        android:backgroundTint="@color/qr_active"/>
+                </androidx.cardview.widget.CardView>
 
                 <TextView
                     android:id="@+id/evdash_txt_stat4"
