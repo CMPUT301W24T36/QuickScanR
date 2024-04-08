@@ -1,3 +1,7 @@
+/**
+ * This file is responsible for fetching realtime data from firestore DB
+ * this data is used it getting the updated check-in count for EventDashboard and OragnizerHome
+ */
 package com.example.quickscanr;
 
 import android.app.Activity;
