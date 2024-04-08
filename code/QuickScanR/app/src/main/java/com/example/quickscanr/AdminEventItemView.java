@@ -41,7 +41,6 @@ public class AdminEventItemView extends RecyclerView.ViewHolder {
         eventImage = itemView.findViewById(R.id.event_poster);
         editEvent = itemView.findViewById(R.id.edit_event);
 
-
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,6 +64,11 @@ public class AdminEventItemView extends RecyclerView.ViewHolder {
 
     }
 
+    /**
+     * getEventId
+     * @param position
+     * @return - the id position of the event
+     */
     private String getEventId(int position){
         if(position < ids.size()){
             return ids.get(position);

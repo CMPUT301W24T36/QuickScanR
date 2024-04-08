@@ -238,6 +238,12 @@ public class AdminImageList extends AdminFragment{
         });
     }
 
+    /**
+     * addSnapshotListenerImgProfile
+     * - the same as the origin addSnapshotListener but it only adds img profile pictures
+     *   to the image lists
+     *   - used for filtering through images
+     */
     //filter profile images only
     private void addSnapshotListenerImgProfile() {
 
@@ -290,6 +296,11 @@ public class AdminImageList extends AdminFragment{
         });
     }
 
+    /**
+     * addSnapshotListenerImgEvent
+     * - adds all event posters to image lists
+     * - used for filtering through images
+     */
     //filter event posters
     private void addSnapshotListenerImgEvent() {
 

@@ -27,6 +27,13 @@ public class ImgArrayAdapter extends RecyclerView.Adapter<ImgItemView> {
     private final Context context;
     private final ImgArrayAdapter.buttonListener listener;
 
+    /**
+     *
+     * @param context
+     * @param images - list of images collected in the browse
+     * @param ids - list of image document id's
+     * @param listener
+     */
     public ImgArrayAdapter(Context context, ArrayList<Bitmap> images, ArrayList<String> ids, ImgArrayAdapter.buttonListener listener) {
         this.images = images;
         this.ids = ids;
@@ -34,6 +41,14 @@ public class ImgArrayAdapter extends RecyclerView.Adapter<ImgItemView> {
         this.listener = listener;
     }
 
+    /**
+     *
+     * @param parent   The ViewGroup into which the new View will be added after it is bound to
+     *                 an adapter position.
+     * @param viewType The view type of the new View.
+     * @return
+     *      - the new item for all the images in the lsit
+     */
     @NonNull
     @Override
     public ImgItemView onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -41,6 +56,12 @@ public class ImgArrayAdapter extends RecyclerView.Adapter<ImgItemView> {
         return new ImgItemView(view, listener, ids);
     }
 
+    /**
+     *
+     * @param holder   The ViewHolder which should be updated to represent the contents of the
+     *                 item at the given position in the data set.
+     * @param position The position of the item within the adapter's data set.
+     */
     @Override
     public void onBindViewHolder(@NonNull ImgItemView holder, int position) {
         Bitmap image = images.get(position);
@@ -48,10 +69,18 @@ public class ImgArrayAdapter extends RecyclerView.Adapter<ImgItemView> {
         holder.image.setImageBitmap(image);
     }
 
+    /**
+     *
+     * @return : the size of the image list
+     */
     public int getItemCount() {
         return images.size();
     }
 
+    /**
+     * button Listener
+     * - gathering the position and imageid needed
+     */
     public interface buttonListener {
         /**
          *

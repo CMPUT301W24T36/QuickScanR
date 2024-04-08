@@ -59,6 +59,12 @@ public class AdminProfileItemView extends RecyclerView.ViewHolder {
 //
     }
 
+    /**
+     * getUserID
+     * @param position
+     * @return
+     *  - position of the userid in the list
+     */
     private String getUserId(int position){
         if(position < ids.size()){
             return ids.get(position);
