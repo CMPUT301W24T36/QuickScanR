@@ -14,6 +14,7 @@ public class Milestone {
 
     private String title;
     private String description;
+    private String eventName;
 
     /**
      * Constructor
@@ -23,6 +24,13 @@ public class Milestone {
     public Milestone(String title, String description) {
         this.title = title;
         this.description = description;
+        this.eventName = null;
+    }
+
+    public Milestone(String title, String description, String eventName) {
+        this.title = title;
+        this.description = description;
+        this.eventName = eventName;
     }
 
     /**
@@ -57,4 +65,21 @@ public class Milestone {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    /**
+     * Gets event name associated with attendee-related milestones
+     * @return eventName
+     */
+    public String getEventName() {
+        return eventName;
+    }
+
+    /**
+     * Sets event name associated with attendee-related milestones
+     * @param eventName
+     */
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
+    }
+
 }

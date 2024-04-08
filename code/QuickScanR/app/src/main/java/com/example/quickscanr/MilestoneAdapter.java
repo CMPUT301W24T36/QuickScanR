@@ -57,6 +57,14 @@ public class MilestoneAdapter extends RecyclerView.Adapter<MilestoneViewHolder> 
         Milestone milestone = milestoneList.get(position);
         holder.titleTextView.setText(milestone.getTitle());
         holder.descriptionTextView.setText(milestone.getDescription());
+        //show eventName only if associated with attendee-related milestones
+        if (milestone.getEventName() != null && !milestone.getEventName().isEmpty()) {
+            holder.eventNameTextView.setText(milestone.getEventName());
+            holder.eventNameTextView.setVisibility(View.VISIBLE);
+        } else {
+            holder.eventNameTextView.setVisibility(View.GONE);
+        }
+
     }
 
 
