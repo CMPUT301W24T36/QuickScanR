@@ -144,7 +144,7 @@ public class EventSignUpTest {
     /**
      * add a test event for testing
      */
-    public void addTestEvent() {
+    public void addTestEvent(Integer maxAttendees) {
         eventName = String.format("Test Event (%s)", System.currentTimeMillis());
         // test event data
         Map<String, Object> data = new HashMap<>();
@@ -154,7 +154,7 @@ public class EventSignUpTest {
         data.put(DatabaseConstants.evLocNameKey, "Edmonton");
         data.put(DatabaseConstants.evStartKey, "26-03-2024");
         data.put(DatabaseConstants.evEndKey, "26-03-2024");
-        data.put("maxAttendees", -1);
+        data.put("maxAttendees", maxAttendees);
         data.put(DatabaseConstants.evTimestampKey, System.currentTimeMillis());
         data.put(DatabaseConstants.evSignedUpUsersKey, new ArrayList<String>());
         data.put(DatabaseConstants.evPosterKey, "default");     // default event poster
@@ -182,7 +182,7 @@ public class EventSignUpTest {
      */
     @Test
     public void testSignUp() {
-        addTestEvent();
+        addTestEvent(-1);
 
         // go to event details page for newly added event
         onView(withId(R.id.nav_a_events_btn)).perform(click());
@@ -272,6 +272,102 @@ public class EventSignUpTest {
 
         assertEquals(eventInSignedUp[0], userInSignedUpUsers[0]);   // check that the event id is in the user's signedUp field
         assertEquals(eventInSignedUp[0], true);     // check that the user id is in the event's signedUpUsers field
+
+    }
+
+    /**
+     * go to attendee event list
+     * set filter to all
+     * select the event in the list that was added for testing purposes
+     * sign up for the event
+     * check that sign up was unsuccessful
+     */
+    @Test
+    public void testSignUpLimit() {
+        addTestEvent(0);
+
+        // go to event details page for newly added event
+        onView(withId(R.id.nav_a_events_btn)).perform(click());
+        onView(withId(R.id.atd_ev_list_filter)).perform(click());
+        onView(withText(AttendeeEventList.Filters.ALL.getLabel())).perform(click());
+
+        // wait for page to update
+        try {
+            Thread.sleep(2000L);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        UiScrollable scroll = new UiScrollable(new UiSelector().scrollable(true).className("android.widget.ScrollView"));
+        scroll.setAsVerticalList();
+
+        UiSelector selector = new UiSelector().text(eventName);
+        try {
+            scroll.scrollIntoView(selector);
+            UiObject eventToClick = device.findObject(selector);
+            if (eventToClick.exists()) {
+                eventToClick.click();
+            }
+        } catch (Exception e) {}
+
+        try {
+            Thread.sleep(1000L);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        // sign up for event
+        UiObject signUpButton = device.findObject(new UiSelector()
+                .className("android.widget.Button")
+                .textContains("Sign Up"));
+        try {
+            signUpButton.click();
+        } catch (Exception ignored) {}
+
+        final boolean[] eventInSignedUp = {false};
+        final boolean[] userInSignedUpUsers = {false};
+
+        // check if user's signed up list got updated
+        usersRef.document(MainActivity.user.getUserId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot doc = task.getResult();
+                    if (doc.exists()) {
+                        ArrayList<String> signedUp = (ArrayList<String>) doc.get(DatabaseConstants.userSignedUpEventsKey);
+                        if (signedUp.contains(testEventId)) {
+                            eventInSignedUp[0] = true;
+                        }
+                    }
+                }
+            }
+        });
+
+        // check if event's signed up users list got update
+        eventsRef.document(testEventId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot doc = task.getResult();
+                    if (doc.exists()) {
+                        ArrayList<String> signedUpUsers = (ArrayList<String>) doc.get(DatabaseConstants.evSignedUpUsersKey);
+                        if (signedUpUsers.contains(MainActivity.user.getUserId())) {
+                            userInSignedUpUsers[0] = true;
+                        }
+                    }
+                }
+            }
+        });
+
+        try {
+            Thread.sleep(3000L);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        assertEquals(eventInSignedUp[0], userInSignedUpUsers[0]);   // check that the event id is not in the user's signedUp field
+        assertEquals(eventInSignedUp[0], false);     // check that the user id is not in the event's signedUpUsers field
 
     }
 }
