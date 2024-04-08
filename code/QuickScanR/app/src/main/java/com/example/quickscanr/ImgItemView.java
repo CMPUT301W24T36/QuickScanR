@@ -1,3 +1,7 @@
+/**
+ * the view holder for the images in admin browse image
+ */
+
 package com.example.quickscanr;
 
 import android.content.Context;
@@ -50,6 +54,11 @@ public class ImgItemView extends RecyclerView.ViewHolder {
 
     }
 
+    /**
+     * getImgId
+     * @param position
+     * @return - the id value of the position
+     */
     private String getImgId(int position){
         if(position < ids.size()){
             return ids.get(position);

@@ -280,6 +280,7 @@ public class AdminManageProfile extends InnerPageFragment{
         phone.setText(user.getPhoneNumber());
         email.setText(user.getEmail());
 
+        //gets the related profile picture
         new ProfileImage(getContext()).getProfileImage(getContext(), user.getUserId(), new ProfileImage.ProfileImageCallback() {
             @Override
             public void onImageReady(Bitmap image) {

@@ -1,3 +1,7 @@
+/**
+ * manages announcement recycler view
+ */
+
 package com.example.quickscanr;
 
 import android.util.Log;

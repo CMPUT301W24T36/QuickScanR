@@ -265,6 +265,7 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
     }
 
 
+
     /**
      * Creates the view for OrganizerHome fragment, deals with the functionality
      * for displaying the list of milestones AND AddAnnouncementFragment call
@@ -336,7 +337,6 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
     }
 
 
-
     /**
      * What the milestones will show based on the total attendee count
      * @param totalAttendeeCount the number of attendees
@@ -399,4 +399,3 @@ public class OrganizerHome extends OrganizerFragment implements AddAnnouncementF
 
 
 }
-

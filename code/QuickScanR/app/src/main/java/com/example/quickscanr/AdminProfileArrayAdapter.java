@@ -76,6 +76,11 @@ public class AdminProfileArrayAdapter extends RecyclerView.Adapter<AdminProfileI
         loadProfileImage(holder.profileImage, user);
     }
 
+    /**
+     * loadProfileImage
+     * @param imageView - where the image lies
+     * @param user - the specific user
+     */
     private void loadProfileImage(ImageView imageView, User user) {
         String userId = user.getUserId();
         if (userId == null || userId.trim().isEmpty()) {

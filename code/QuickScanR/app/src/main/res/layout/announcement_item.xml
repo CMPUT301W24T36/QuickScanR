@@ -55,6 +55,13 @@
                 android:text="Organizer Name"
                 android:layout_marginTop="4dp" />
         </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/announcement_item_close_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:src="@drawable/close_btn_x" />
         
 
     </LinearLayout>

@@ -1,3 +1,7 @@
+/**
+ * This file is responsible for displaying the list of attendees who have checked in to the event after scanning
+ * displays attendee name and the number of time they have checked-in by fetching realtime data from db
+ */
 package com.example.quickscanr;
 
 import android.os.Bundle;
@@ -105,10 +109,14 @@ public class CheckedInAttendeeList extends Fragment {
                 List<Map<String, Object>> updatedAttendeesData = new ArrayList<>();
                 if (snapshots != null) {
                     for (DocumentSnapshot doc : snapshots.getDocuments()) {
+                        // Corrected debug log statement
+                        Log.d("CheckedInAttendeeList", "Timestamps size for user " + doc.getId() + ": " +
+                                (doc.get("timestamps") instanceof List ? ((List<?>) doc.get("timestamps")).size() : "null or not a list"));
+
                         Map<String, Object> attendeeData = new HashMap<>();
                         attendeeData.put("userId", doc.getId());
                         attendeeData.put("name", doc.getString("name"));
-                        attendeeData.put("checkIns", doc.get("checkIns"));
+                        attendeeData.put("timestamps", doc.get("timestamps"));
                         updatedAttendeesData.add(attendeeData);
                     }
                 }
@@ -119,4 +127,5 @@ public class CheckedInAttendeeList extends Fragment {
             }
         });
     }
+
 }
