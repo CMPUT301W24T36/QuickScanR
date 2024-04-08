@@ -77,13 +77,23 @@ public class CheckedInAttendeeAdapter extends RecyclerView.Adapter<CheckedInAtte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Map<String, Object> attendeeData = attendeeDataList.get(position);
+
+        // Extract the name of the attendee
         String name = (String) attendeeData.get("name");
-        String userId = (String) attendeeData.get("userId");
-        List<Timestamp> checkIns = (List<Timestamp>) attendeeData.get("attendees");
-
         holder.nameTextView.setText(name);
-        holder.checkInCountTextView.setText(String.valueOf(checkIns != null ? checkIns.size() : 0));
 
+        // Assuming 'timestamps' is stored as List<Long> based on your description.
+        // Safely handling potential null or missing 'timestamps' field.
+        List<Long> timestamps=null;
+        if (attendeeData.get("timestamps") instanceof List) {
+            timestamps = (List<Long>) attendeeData.get("timestamps");
+        }
+        int checkInCount = (timestamps != null) ? timestamps.size() : 0;
+
+        holder.checkInCountTextView.setText(String.valueOf(checkInCount));
+
+        // Assuming the userId is used for fetching profile images
+        String userId = (String) attendeeData.get("userId");
         ProfileImage.getProfileImage(context, userId, new ProfileImage.ProfileImageCallback() {
             @Override
             public void onImageReady(Bitmap image) {
@@ -91,13 +101,11 @@ public class CheckedInAttendeeAdapter extends RecyclerView.Adapter<CheckedInAtte
             }
         });
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int pos = holder.getAdapterPosition();
-                if (onItemClickListener != null && pos != RecyclerView.NO_POSITION) {
-                    onItemClickListener.onItemClick(pos);
-                }
+        // Setting up a click listener for the itemView, if needed
+        holder.itemView.setOnClickListener(v -> {
+            int pos = holder.getAdapterPosition();
+            if (onItemClickListener != null && pos != RecyclerView.NO_POSITION) {
+                onItemClickListener.onItemClick(pos);
             }
         });
     }

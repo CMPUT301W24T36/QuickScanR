@@ -1,5 +1,6 @@
 package com.example.quickscanr;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -56,13 +57,16 @@ public class EventDashboard extends InnerPageFragment {
         if (getArguments() != null) {
             event = (Event) getArguments().getSerializable(EVENT);
             attendeeCounter = new RealtimeData();
+
+            // Set the event listener with improved null safety and UI thread handling
             attendeeCounter.setEventListener(new RealtimeData.EventAttendeeCountListener() {
                 @Override
-                public void onTotalCountUpdated(int newCount, String eventId) {
-                    // Since this fragment deals with a single event, you could check if eventId matches event.getId()
-                    if (eventId.equals(event.getId())) {
-                        getActivity().runOnUiThread(() -> {
-                            TextView attendeeCountView = getView().findViewById(R.id.evdash_txt_stat4);
+                public void onTotalCountUpdated(int newCount) {
+                    Activity activity = getActivity();
+                    View view = getView();
+                    if (activity != null && view != null) {
+                        activity.runOnUiThread(() -> {
+                            TextView attendeeCountView = view.findViewById(R.id.evdash_txt_stat4);
                             attendeeCountView.setText(String.valueOf(newCount));
                         });
                     }
@@ -70,6 +74,7 @@ public class EventDashboard extends InnerPageFragment {
             });
         }
     }
+
 
     /**
      * To create the view relevant to EventDashboard

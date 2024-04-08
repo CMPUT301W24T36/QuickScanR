@@ -1,5 +1,6 @@
 package com.example.quickscanr;
 
+import android.app.Activity;
 import android.util.Log;
 import androidx.annotation.Nullable;
 
@@ -18,7 +19,7 @@ public class RealtimeData {
     private EventCountListener eventCountListener;
 
     public interface EventAttendeeCountListener {
-        void onTotalCountUpdated(int totalAttendeeCount, String eventId);
+        void onTotalCountUpdated(int totalAttendeeCount);
     }
 
     public interface EventCountListener {
@@ -47,9 +48,7 @@ public class RealtimeData {
                             if (snapshots != null) {
                                 int currentCount = snapshots.size();
                                 eventToAttendeeCountMap.put(eventId, currentCount);
-                                if (listener != null) {
-                                    listener.onTotalCountUpdated(currentCount, eventId);
-                                }
+                                notifyTotalCountUpdated();
                             }
                         }
                     });
@@ -78,15 +77,10 @@ public class RealtimeData {
     }
 
     private void notifyTotalCountUpdated() {
-        for (Map.Entry<String, Integer> entry : eventToAttendeeCountMap.entrySet()) {
-            String eventId = entry.getKey();
-            int attendeeCount = entry.getValue();
-
-            if (listener != null) {
-                listener.onTotalCountUpdated(attendeeCount, eventId);
-            }
+        int totalAttendeeCount = eventToAttendeeCountMap.values().stream().mapToInt(Integer::intValue).sum();
+        if (listener != null) {
+            listener.onTotalCountUpdated(totalAttendeeCount);
         }
     }
-
 }
 

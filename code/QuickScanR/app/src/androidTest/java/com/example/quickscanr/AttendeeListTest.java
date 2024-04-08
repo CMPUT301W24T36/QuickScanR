@@ -9,9 +9,10 @@ import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentat
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 
 import android.util.Log;
-
+import org.junit.Assert;
 
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.ViewAssertion;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -19,14 +20,15 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.annotation.NonNull;
 
-import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.uiautomator.By;
+import androidx.test.uiautomator.Direction;
 import androidx.test.uiautomator.UiDevice;
-import androidx.test.uiautomator.UiObject;
 import androidx.test.uiautomator.UiObject2;
 import androidx.test.uiautomator.UiObjectNotFoundException;
+import androidx.test.uiautomator.UiScrollable;
 import androidx.test.uiautomator.UiSelector;
-import androidx.test.uiautomator.Until;
+import androidx.test.uiautomator.UiObject;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -131,7 +133,7 @@ public class AttendeeListTest {
         eventData.put("posterID", "default");
         eventData.put("ownerID", MainActivity.user.getUserId());
         eventData.put("LocationName", "Los Pollos Hermanos, Isleta Boulevard Southwest, Albuquerque, NM, USA");
-        eventData.put("maxAttendees", "-1");
+        eventData.put("maxAttendees", -1);
         List<String> signedUpUsers = Arrays.asList("user123", "user222", "user333");
         eventData.put("signedUpUsers", signedUpUsers);
 
@@ -151,31 +153,29 @@ public class AttendeeListTest {
     }
 
     public void checkInAttendee(String testEventId) {
+        // Simulate checking in an attendee
         Map<String, Object> attendeeData = new HashMap<>();
         attendeeData.put("name", "John Doe");
         List<Long> timestamps = Arrays.asList(1712517089266L, 1712443722028L);
         attendeeData.put("timestamps", timestamps);
 
-        DocumentReference attendeeRef = db.collection("events")
+        db.collection("events")
                 .document(testEventId)
                 .collection("attendees")
-                .document("user123"); // Set the document ID here
-
-        attendeeRef.set(attendeeData)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                .add(attendeeData)
+                .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                     @Override
-                    public void onComplete(@NonNull Task<Void> task) {
+                    public void onComplete(@NonNull Task<DocumentReference> task) {
                         if (task.isSuccessful()) {
-                            Log.d("AttendeeListTest", "Attendee added successfully with ID: user123");
+                            Log.d("AttendeeListTest", "Attendee added successfully to event: " + testEventId);
                         } else {
-                            Log.e("AttendeeListTest", "Failed to add attendee with ID: user123", task.getException());
+                            Log.e("AttendeeListTest", "Failed to add attendee to event", task.getException());
                         }
                     }
                 });
     }
-
     @Test
-    public void testAttendeeListAfterCheckIn() {
+    public void testAttendeeListAfterCheckIn() throws UiObjectNotFoundException {
 
         checkInAttendee(testEventId);
 
@@ -188,14 +188,38 @@ public class AttendeeListTest {
         onView(withId(R.id.nav_o_events_btn)).perform(click());
 
         onView(withId(R.id.organizer_event_list)).check(matches(isDisplayed()));
-        onView(withText("Test Event For Attendee List")).check(matches(isDisplayed())).perform(click());
 
+        UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        UiScrollable recyclerView = new UiScrollable(new UiSelector().className(RecyclerView.class.getName()));
+        recyclerView.scrollTextIntoView("Test Event For Attendee List");
+
+        UiObject eventToClick = device.findObject(new UiSelector().text("Test Event For Attendee List"));
+        if (eventToClick.exists()) {
+            try {
+                eventToClick.click();
+            } catch (UiObjectNotFoundException e) {
+                // Handle exception if event is not clickable
+                e.printStackTrace();
+            }
+        }
+
+        // Check if the event dashboard page is displayed
         onView(withId(R.id.event_dashboard_page)).check(matches(isDisplayed()));
-
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        // Perform action to navigate to checked users list
         onView(withId(R.id.evdash_img_stat4)).perform(click());
 
+        // Check if the checked users list is displayed
         onView(withId(R.id.chkd_usrs_list)).check(matches(isDisplayed()));
-
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         // Verify that the attendee appears on the checked-in attendees list
         onView(withId(R.id.chkd_usr_text)).check(matches(withText("John Doe")));
         onView(withId(R.id.chkd_usr_count)).check(matches(withText("2")));

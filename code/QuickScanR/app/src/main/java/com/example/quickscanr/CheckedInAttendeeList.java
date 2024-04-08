@@ -105,10 +105,15 @@ public class CheckedInAttendeeList extends Fragment {
                 List<Map<String, Object>> updatedAttendeesData = new ArrayList<>();
                 if (snapshots != null) {
                     for (DocumentSnapshot doc : snapshots.getDocuments()) {
+                        // Corrected debug log statement
+                        Log.d("CheckedInAttendeeList", "Timestamps size for user " + doc.getId() + ": " +
+                                (doc.get("timestamps") instanceof List ? ((List<?>) doc.get("timestamps")).size() : "null or not a list"));
+
                         Map<String, Object> attendeeData = new HashMap<>();
                         attendeeData.put("userId", doc.getId());
                         attendeeData.put("name", doc.getString("name"));
-                        attendeeData.put("checkIns", doc.get("checkIns"));
+                        // Assuming 'timestamps' is the field you are interested in
+                        attendeeData.put("timestamps", doc.get("timestamps"));
                         updatedAttendeesData.add(attendeeData);
                     }
                 }
@@ -119,4 +124,5 @@ public class CheckedInAttendeeList extends Fragment {
             }
         });
     }
+
 }
