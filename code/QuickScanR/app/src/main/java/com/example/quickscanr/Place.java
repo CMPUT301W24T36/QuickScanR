@@ -1,3 +1,7 @@
+/**
+ * the place model
+ */
+
 package com.example.quickscanr;
 
 /***

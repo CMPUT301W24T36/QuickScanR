@@ -1,3 +1,7 @@
+/**
+ * the browse images admin page
+ */
+
 package com.example.quickscanr;
 
 import android.graphics.Bitmap;
@@ -59,8 +63,9 @@ public class AdminImageList extends AdminFragment{
     public static String event_COLLECTION = "events";
 
 
-
-
+    /**
+     * required empty constructor
+     */
     public AdminImageList() {}
 
     /**

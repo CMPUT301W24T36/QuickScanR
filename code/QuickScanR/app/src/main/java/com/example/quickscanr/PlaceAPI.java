@@ -1,3 +1,7 @@
+/**
+ * api for Places (used for location autocomplete on the add event page)
+ */
+
 package com.example.quickscanr;
 
 import android.content.Context;

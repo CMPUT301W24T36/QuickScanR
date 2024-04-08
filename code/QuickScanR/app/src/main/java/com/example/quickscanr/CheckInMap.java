@@ -1,3 +1,7 @@
+/**
+ * the map page for seeing where users checked in from
+ */
+
 package com.example.quickscanr;
 
 import androidx.annotation.NonNull;
@@ -22,6 +26,9 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * the map page to see where users checked in from
+ */
 public class CheckInMap extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
