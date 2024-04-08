@@ -7,11 +7,11 @@ import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 
 import static org.hamcrest.CoreMatchers.allOf;
 
 import androidx.annotation.NonNull;
-import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.contrib.RecyclerViewActions;
@@ -19,7 +19,9 @@ import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
-import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.uiautomator.UiDevice;
+import androidx.test.uiautomator.UiObject;
+import androidx.test.uiautomator.UiSelector;
 
 import org.hamcrest.Matcher;
 import org.junit.After;
@@ -28,6 +30,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
@@ -45,6 +48,8 @@ import java.util.Map;
  * Tests navigation between the 4 main pages.
  * referenced https://medium.com/azimolabs/guide-to-make-custom-viewaction-solving-problem-of-nestedscrollview-in-espresso-35b133850254
  *      for clicking on gear icon on the admin browse events page (the ViewAction)
+ * referenced https://stackoverflow.com/questions/34439072/espresso-click-on-the-button-of-the-dialog
+ *      for UIAutomator allow permissions idea
  */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
@@ -60,10 +65,30 @@ public class AdminNavigationTest {
     private static String testImageId;
 
     /**
+     * Uses UIAutomator to allow permissions on startup
+     */
+    private static void allowPermissionsIfNeeded() {
+        UiDevice device = UiDevice.getInstance(getInstrumentation());
+        UiObject allowButton = device.findObject(new UiSelector()
+                .className("android.widget.Button")
+                .textContains("Allow"));
+
+        // wait for 1000 ms to see if appears
+        if (allowButton.waitForExists(1000)) {
+            try {
+                allowButton.click();
+            } catch (Exception e) {
+                Log.d("PERMS", "Failed to allow permissions for testing");
+            }
+        }
+    }
+
+    /**
      * makes the current user an admin
      */
     @Before
     public void setUp() {
+        allowPermissionsIfNeeded();
         // only setup once
         if (!userSet) {
             try {

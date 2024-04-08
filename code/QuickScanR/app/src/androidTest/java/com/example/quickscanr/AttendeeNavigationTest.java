@@ -5,6 +5,9 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
+
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.test.espresso.contrib.RecyclerViewActions;
@@ -12,6 +15,9 @@ import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
+import androidx.test.uiautomator.UiDevice;
+import androidx.test.uiautomator.UiObject;
+import androidx.test.uiautomator.UiSelector;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -34,6 +40,8 @@ import java.util.Map;
 /**
  * Tests for attendee navigation.
  * Tests navigation between the 4 main pages.
+ * referenced https://stackoverflow.com/questions/34439072/espresso-click-on-the-button-of-the-dialog
+ *      for UIAutomator allow permissions idea
  */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
@@ -47,10 +55,30 @@ public class AttendeeNavigationTest {
     private static String testEventId;
 
     /**
+     * Uses UIAutomator to allow permissions on startup
+     */
+    private static void allowPermissionsIfNeeded() {
+        UiDevice device = UiDevice.getInstance(getInstrumentation());
+        UiObject allowButton = device.findObject(new UiSelector()
+                .className("android.widget.Button")
+                .textContains("Allow"));
+
+        // wait for 1000 ms to see if appears
+        if (allowButton.waitForExists(1000)) {
+            try {
+                allowButton.click();
+            } catch (Exception e) {
+                Log.d("PERMS", "Failed to allow permissions for testing");
+            }
+        }
+    }
+
+    /**
      * make the current user an attendee
      */
     @Before
     public void setUp() {
+        allowPermissionsIfNeeded();
         // only setup once
         if (!userSet) {
             try {

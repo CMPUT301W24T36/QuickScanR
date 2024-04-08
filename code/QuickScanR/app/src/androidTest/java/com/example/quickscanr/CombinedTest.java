@@ -5,21 +5,30 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 
 import static junit.framework.TestCase.assertEquals;
 
-import androidx.fragment.app.FragmentActivity;
+import android.util.Log;
+
 import androidx.test.espresso.NoMatchingViewException;
-import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
+import androidx.test.uiautomator.UiDevice;
+import androidx.test.uiautomator.UiObject;
+import androidx.test.uiautomator.UiSelector;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+/**
+ * tests profile button for all user types
+ * referenced https://stackoverflow.com/questions/34439072/espresso-click-on-the-button-of-the-dialog
+ *      for UIAutomator allow permissions idea
+ */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class CombinedTest {
@@ -28,11 +37,31 @@ public class CombinedTest {
     public ActivityScenarioRule<MainActivity> scenario = new ActivityScenarioRule<MainActivity>(MainActivity.class);
 
     /**
+     * Uses UIAutomator to allow permissions on startup
+     */
+    private static void allowPermissionsIfNeeded() {
+        UiDevice device = UiDevice.getInstance(getInstrumentation());
+        UiObject allowButton = device.findObject(new UiSelector()
+                .className("android.widget.Button")
+                .textContains("Allow"));
+
+        // wait for 1000 ms to see if appears
+        if (allowButton.waitForExists(1000)) {
+            try {
+                allowButton.click();
+            } catch (Exception e) {
+                Log.d("PERMS", "Failed to allow permissions for testing");
+            }
+        }
+    }
+
+    /**
      * setUp runs before all the tests run.
      * makes the thread sleep for 5s, to allow for the user to be initialized in Main Activity.
      */
     @Before
     public void setUp() {
+        allowPermissionsIfNeeded();
         // wait for user to be initialized
         try {
             Thread.sleep(5000L);
