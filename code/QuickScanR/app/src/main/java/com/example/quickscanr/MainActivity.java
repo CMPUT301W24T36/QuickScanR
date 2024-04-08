@@ -170,10 +170,49 @@ public class MainActivity extends AppCompatActivity {
                         db.collection(DatabaseConstants.usersColName).document(userId).set(data);
                     }
                     if (openEvDash) {
+                        // if need to go to event dashboard page, set up the Event object again based on the event ID
                         Intent intent = getIntent();
-                        Event event = (Event) intent.getSerializableExtra("event");
-                        event.removePoster();
-                        showEvDash(event);
+                        String eventID = intent.getStringExtra("eventID");
+                        db.collection(DatabaseConstants.eventColName).document(eventID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot doc = task.getResult();
+                                    if (doc.exists()) {
+                                        Event event = doc.toObject(Event.class);
+                                        event.setStart(doc.getString(DatabaseConstants.evStartKey));
+                                        event.setEnd(doc.getString(DatabaseConstants.evEndKey));
+                                        event.setId(doc.getId());
+                                        event.setLocationId(doc.getString(DatabaseConstants.evLocIdKey));
+                                        ImgHandler img = new ImgHandler(getBaseContext());
+                                        img.getImage(event.getPosterID(), bitmap -> {
+                                            event.setPoster(bitmap);
+                                        });
+                                        event.setSignedUp((ArrayList<String>) doc.get(DatabaseConstants.evSignedUpUsersKey));
+
+                                        String organizerID = doc.getString(DatabaseConstants.evOwnerKey);
+                                        usersRef.document(organizerID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                if (task.isSuccessful()) {
+                                                    DocumentSnapshot userDoc = task.getResult();
+                                                    if (userDoc.exists()) {
+                                                        User organizer = userDoc.toObject(User.class);
+                                                        String imageID = userDoc.getString(DatabaseConstants.userImageKey);
+                                                        organizer.setUserId(userDoc.getId());
+                                                        organizer.setImageID(imageID,false);
+                                                        event.setOrganizer(organizer);
+                                                        showEvDash(event);
+                                                    }
+                                                }
+                                            }
+                                        });
+                                        
+                                    }
+                                }
+                            }
+                        });
+
                     } else {
                         showHome(user.getUserType());
                     }
@@ -214,10 +253,6 @@ public class MainActivity extends AppCompatActivity {
      */
     public void showEvDash(Event event) {
         EventDashboard evDash = EventDashboard.newInstance(event);
-        Bundle args = new Bundle();
-        args.putSerializable("event", event);
-        args.putBoolean("fromMainActivity", true);
-        evDash.setArguments(args);
         getSupportFragmentManager().beginTransaction().replace(R.id.content_main, evDash)
                 .addToBackStack(null).commit();
     }

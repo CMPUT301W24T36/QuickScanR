@@ -28,7 +28,7 @@ public class Event implements Serializable {
     private String start;
     private String end;
     private String restrictions;
-    private Bitmap poster;
+    private transient Bitmap poster;
     private String posterID;
     private User organizer;
     private ArrayList<User> attendees;
@@ -197,6 +197,12 @@ public class Event implements Serializable {
         this.organizer = organizer;
         this.maxAttendees = maxAttendees;
     }
+
+    /**
+     * Constructor #7
+     * empty constructor
+     */
+    public Event() {}
 
     /**
      * Getter: ID

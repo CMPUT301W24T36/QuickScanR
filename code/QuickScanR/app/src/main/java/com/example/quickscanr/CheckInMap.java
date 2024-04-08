@@ -1,5 +1,6 @@
 package com.example.quickscanr;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
 import android.content.Intent;
@@ -15,17 +16,16 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.List;
 
 public class CheckInMap extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private Event event;
+    private String eventID;
 
     private FirebaseFirestore db;
     private PlaceAPI placeAPI;
@@ -42,19 +42,17 @@ public class CheckInMap extends FragmentActivity implements OnMapReadyCallback {
 
         setContentView(R.layout.check_in_map);
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-
         Intent intent = getIntent();
-        event = (Event) intent.getSerializableExtra("event");
-
-        setupAdditionalListeners();
+        eventID = intent.getStringExtra("eventID");
 
         db = FirebaseFirestore.getInstance();
-
         mainHandler = new Handler(Looper.getMainLooper());
         placeAPI = new PlaceAPI(getApplicationContext());
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
+        setupAdditionalListeners();
     }
 
     /**
@@ -69,30 +67,38 @@ public class CheckInMap extends FragmentActivity implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        event = (Event) getIntent().getSerializableExtra("event");
-        String eventLocationID = event.getLocationId();
-        placeAPI.getPlaceLatLng(eventLocationID, mainHandler, new PlaceLatLngCallback() {
+        db.collection(DatabaseConstants.eventColName).document(eventID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onLatLngReceived(LatLng latLng) {
-                placePin(latLng.latitude, latLng.longitude, "EVENT: " + event.getName());
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot doc = task.getResult();
+                    if (doc.exists()) {
+                        String eventLoc = doc.getString(DatabaseConstants.evLocIdKey);
+                        String eventName = doc.getString(DatabaseConstants.evNameKey);
+                        placeAPI.getPlaceLatLng(eventLoc, mainHandler, new PlaceLatLngCallback() {
+                            @Override
+                            public void onLatLngReceived(LatLng latLng) {
+                                placePin(latLng.latitude, latLng.longitude, "EVENT: " + eventName);
+                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
+                            }
+                        });
+                        fetchAndDisplayAttendeeLocations();
+                    }
+                }
             }
         });
-        fetchAndDisplayAttendeeLocations();
     }
 
     /**
      * This fetches attendee locations and calls placePin to put their pins on the map
      */
     private void fetchAndDisplayAttendeeLocations() {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        Event event = (Event) getIntent().getSerializableExtra("event");
-        CollectionReference attendeesRef = db.collection(DatabaseConstants.eventColName).document(event.getId()).collection("attendees");
+        CollectionReference attendeesRef = db.collection(DatabaseConstants.eventColName).document(eventID).collection("attendees");
 
         attendeesRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 for (DocumentSnapshot attendeeDocument : task.getResult()) {
-                    Boolean geoLoc = attendeeDocument.getBoolean("geoLoc"); // Get the geoLoc value
+                    Boolean geoLoc = attendeeDocument.getBoolean(DatabaseConstants.userGeoLocKey); // Get the geoLoc value
                     if (geoLoc != null && geoLoc) { // Check if geoLoc is true
                         double latitude = attendeeDocument.getDouble("latitude");
                         double longitude = attendeeDocument.getDouble("longitude");
@@ -128,7 +134,7 @@ public class CheckInMap extends FragmentActivity implements OnMapReadyCallback {
             public void onClick(View v) {
                 Intent myIntent = new Intent(CheckInMap.this, MainActivity.class);
                 myIntent.putExtra("backFromCheckInMap", true);
-                myIntent.putExtra("event", event);
+                myIntent.putExtra("eventID", eventID);
                 CheckInMap.this.startActivity(myIntent);
                 finish();
             }

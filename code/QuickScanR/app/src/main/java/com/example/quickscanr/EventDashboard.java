@@ -127,9 +127,8 @@ public class EventDashboard extends InnerPageFragment {
         });
 
         v.findViewById(R.id.evdash_btn_map).setOnClickListener(view -> {
-            Intent myIntent = new Intent(EventDashboard.this.getContext(), CheckInMap.class);
-            myIntent.putExtra("event", event);
-            event.removePoster();
+            Intent myIntent = new Intent(getContext(), CheckInMap.class);
+            myIntent.putExtra("eventID", event.getId());
             EventDashboard.this.startActivity(myIntent);
         });
 
