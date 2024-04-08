@@ -149,13 +149,15 @@ public class EditProfile extends Fragment {
                 Integer type = UserType.valueOf((String) accountTypeField.getSelectedItem());
 
                 //checks for valid format of phone number
-                if (phone.length() != 10 || !phone.matches("\\d{10}")) {
-                    numberField.setError("Please enter a valid 10-digit phone number.");
-                    return;
+                if (phone.length() != 0) {
+                    if (phone.length() != 10 || !phone.matches("\\d{10}")) {
+                        numberField.setError("Please enter a valid 10-digit phone number.");
+                        return;
+                    }
                 }
 
                 //checks for valid format of email address
-                if (isValidEmail(email)) {
+                if (isValidEmail(email) || email.length() == 0) {
                     if (!user.isErrors(nameField)) {
                         user.setName(name);
                         user.setHomepage(homepage);
