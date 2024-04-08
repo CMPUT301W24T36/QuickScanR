@@ -21,8 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 /**
  * fragment class for displaying a list of attendees who have checked into an event.
  * uses Firebase Firestore to fetch and display the attendees' data in a RecyclerView.
@@ -30,15 +28,10 @@ import javax.inject.Inject;
  */
 
 public class CheckedInAttendeeList extends Fragment {
-    private FirebaseFirestore db;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private List<Map<String, Object>> attendeesData = new ArrayList<>();
     private CheckedInAttendeeAdapter adapter;
     private RecyclerView recyclerView;
-
-
-    public void setFirestore(FirebaseFirestore db) {
-        this.db = db;
-    }
 
     /**
      * creates a new instance of CheckedInAttendeeList fragment with an event ID
@@ -66,10 +59,6 @@ public class CheckedInAttendeeList extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.checked_users_list, container, false);
-
-        if (db == null) {
-            db = FirebaseFirestore.getInstance();
-        }
 
         recyclerView = view.findViewById(R.id.chkd_usrs_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
@@ -119,7 +108,7 @@ public class CheckedInAttendeeList extends Fragment {
                         Map<String, Object> attendeeData = new HashMap<>();
                         attendeeData.put("userId", doc.getId());
                         attendeeData.put("name", doc.getString("name"));
-                        attendeeData.put("attendees", doc.get("attendees"));
+                        attendeeData.put("checkIns", doc.get("checkIns"));
                         updatedAttendeesData.add(attendeeData);
                     }
                 }
