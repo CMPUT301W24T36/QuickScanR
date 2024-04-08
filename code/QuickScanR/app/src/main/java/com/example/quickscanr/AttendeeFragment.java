@@ -52,7 +52,7 @@ public class AttendeeFragment extends Fragment {
             @Override
             public void onClick(View view){
                 activity.getSupportFragmentManager()
-                        .beginTransaction().replace(R.id.content_main, new ScanQR())
+                        .beginTransaction().replace(R.id.content_main, new ScanQR(), "SCANNER")
                         .addToBackStack(null).commit();
             }
         });
