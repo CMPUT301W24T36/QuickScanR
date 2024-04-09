@@ -5,7 +5,6 @@
     android:id="@+id/admin_browse_images"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="5dp"
     android:background="@android:color/white"
     android:paddingLeft="40dp"
     android:paddingTop="50dp"
@@ -65,7 +64,7 @@
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingBottom="10dp">
+            android:paddingBottom="70dp">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/view_img_list"
@@ -83,8 +82,10 @@
 
     </LinearLayout>
 
-
-    <include layout="@layout/admin_nav_bar" />
+    <include layout="@layout/admin_nav_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"/>
 
 
 </FrameLayout>
